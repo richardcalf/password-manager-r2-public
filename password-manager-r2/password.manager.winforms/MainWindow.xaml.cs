@@ -29,12 +29,12 @@ namespace password.manager.winforms
             InitializeButtonsState();
         }
 
-        private void decryptButton_Click(object sender, RoutedEventArgs e)
+        private async void decryptButton_Click(object sender, RoutedEventArgs e)
         {
-            IService service = new EncryptionService();
+            IServiceAsync service = new EncryptionService();
             try
             {
-                decryptedTextBox.Text = service.Decrypt(encryptedTextBox.Text);
+                decryptedTextBox.Text = await service.DecryptAsync(encryptedTextBox.Text);
             }
             catch (Exception ex)
             {
@@ -49,12 +49,12 @@ namespace password.manager.winforms
             errorLabel.Content = message;
         }
 
-        private void encryptButton_Click(object sender, RoutedEventArgs e)
+        private async void encryptButton_Click(object sender, RoutedEventArgs e)
         {
-            IService service = new EncryptionService();
+            IServiceAsync service = new EncryptionService();
             try
             {
-                encryptedTextBox.Text = service.Encrypt(plainTextBox.Text);
+                encryptedTextBox.Text = await service.EncryptAsync(plainTextBox.Text);
             }
             catch (Exception ex)
             {
