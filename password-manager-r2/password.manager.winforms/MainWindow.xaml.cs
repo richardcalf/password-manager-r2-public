@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,18 @@ namespace password.manager.winforms
         {
             Crypto crypt = new Crypto(Crypto.CryptoTypes.encTypeTripleDES);
             encryptedTextBox.Text = crypt.Encrypt(plainTextBox.Text);
+        }
+
+        private void clearAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            ClearTextBoxes();
+        }
+
+        private void ClearTextBoxes()
+        {
+            plainTextBox.Clear();
+            encryptedTextBox.Clear();
+            decryptedTextBox.Clear();
         }
     }
 }
