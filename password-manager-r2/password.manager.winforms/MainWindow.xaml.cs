@@ -25,30 +25,82 @@ namespace password.manager.winforms
         public MainWindow()
         {
             InitializeComponent();
+            InitializeData();
+            InitializeButtonsState();
         }
 
         private void decryptButton_Click(object sender, RoutedEventArgs e)
         {
             IService service = new EncryptionService();
-            decryptedTextBox.Text = service.Decrypt(encryptedTextBox.Text);
+            try
+            {
+                decryptedTextBox.Text = service.Decrypt(encryptedTextBox.Text);
+            }
+            catch (Exception ex)
+            {
+                PrintException(ex.Message);
+            }
+            InitializeButtonsState();
+        }
+
+        private void PrintException(string message)
+        {
+            errorLabel.Foreground = Brushes.Red;
+            errorLabel.Content = message;
         }
 
         private void encryptButton_Click(object sender, RoutedEventArgs e)
         {
             IService service = new EncryptionService();
-            encryptedTextBox.Text = service.Encrypt(plainTextBox.Text);
+            try
+            {
+                encryptedTextBox.Text = service.Encrypt(plainTextBox.Text);
+            }
+            catch (Exception ex)
+            {
+                PrintException(ex.Message);
+            }
+            InitializeButtonsState();
         }
 
         private void clearAllButton_Click(object sender, RoutedEventArgs e)
         {
-            ClearTextBoxes();
+            InitializeData();
+            InitializeButtonsState();
         }
 
-        private void ClearTextBoxes()
+        private void InitializeData()
         {
             plainTextBox.Clear();
             encryptedTextBox.Clear();
             decryptedTextBox.Clear();
+            errorLabel.Content = string.Empty;
+        }
+
+        private void InitializeButtonsState()
+        {
+            decryptButton.IsEnabled = !string.IsNullOrWhiteSpace(encryptedTextBox.Text);
+            encryptButton.IsEnabled = !string.IsNullOrWhiteSpace(plainTextBox.Text);
+        }
+
+        private void plainTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            InitializeButtonsState();
+        }
+
+        private void encryptedTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            InitializeButtonsState();
+        }
+
+        private void decryptedTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            InitializeButtonsState();
+        }
+
+        private void decryptedTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            InitializeButtonsState();
         }
     }
 }
