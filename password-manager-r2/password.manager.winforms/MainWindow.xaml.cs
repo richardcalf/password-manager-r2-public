@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using password.encryption;
+using password.service;
 
 namespace password.manager.winforms
 {
@@ -29,14 +29,14 @@ namespace password.manager.winforms
 
         private void decryptButton_Click(object sender, RoutedEventArgs e)
         {
-            Crypto crypt = new Crypto(Crypto.CryptoTypes.encTypeTripleDES);
-            decryptedTextBox.Text = crypt.Decrypt(encryptedTextBox.Text);
+            IService service = new EncryptionService();
+            decryptedTextBox.Text = service.Decrypt(encryptedTextBox.Text);
         }
 
         private void encryptButton_Click(object sender, RoutedEventArgs e)
         {
-            Crypto crypt = new Crypto(Crypto.CryptoTypes.encTypeTripleDES);
-            encryptedTextBox.Text = crypt.Encrypt(plainTextBox.Text);
+            IService service = new EncryptionService();
+            encryptedTextBox.Text = service.Encrypt(plainTextBox.Text);
         }
 
         private void clearAllButton_Click(object sender, RoutedEventArgs e)
