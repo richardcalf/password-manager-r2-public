@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using password.encryption;
 
 namespace password.manager.winforms
 {
@@ -23,6 +24,18 @@ namespace password.manager.winforms
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void decryptButton_Click(object sender, RoutedEventArgs e)
+        {
+            Crypto crypt = new Crypto(Crypto.CryptoTypes.encTypeTripleDES);
+            decryptedTextBox.Text = crypt.Decrypt(encryptedTextBox.Text);
+        }
+
+        private void encryptButton_Click(object sender, RoutedEventArgs e)
+        {
+            Crypto crypt = new Crypto(Crypto.CryptoTypes.encTypeTripleDES);
+            encryptedTextBox.Text = crypt.Encrypt(plainTextBox.Text);
         }
     }
 }

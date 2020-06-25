@@ -12,8 +12,8 @@
         <Label x:Name="label1" Content="Encrypted Password" HorizontalAlignment="Left" Margin="48,91,0,0" VerticalAlignment="Top" Width="124"/>
         <TextBox x:Name="encryptedTextBox" HorizontalAlignment="Left" Height="23" Margin="208,92,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="235"/>
         <TextBox x:Name="decryptedTextBox" HorizontalAlignment="Left" Height="23" Margin="208,145,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="235" RenderTransformOrigin="-0.033,0.565"/>
-        <Button x:Name="decryptButton" Content="Decrypt" HorizontalAlignment="Left" Margin="208,120,0,0" VerticalAlignment="Top" Width="75"/>
-        <Button x:Name="encryptButton" Content="Encrypt" HorizontalAlignment="Left" Margin="288,120,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="decryptButton" Content="Decrypt" HorizontalAlignment="Left" Margin="208,120,0,0" VerticalAlignment="Top" Width="75" Click="decryptButton_Click"/>
+        <Button x:Name="encryptButton" Content="Encrypt" HorizontalAlignment="Left" Margin="288,120,0,0" VerticalAlignment="Top" Width="75" Click="encryptButton_Click"/>
         <Button x:Name="clearAllButton" Content="Clear All" HorizontalAlignment="Left" Margin="368,120,0,0" VerticalAlignment="Top" Width="75"/>
 
     </Grid>
