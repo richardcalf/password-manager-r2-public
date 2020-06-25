@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using password.encryption;
+using password.service;
 
 namespace password.encryption.tests
 {
@@ -8,10 +8,10 @@ namespace password.encryption.tests
     public class EncryptionTest
     {
         [TestMethod]
-        public void test_encryption_and_decryption()
+        public void test_encryption_and_decryption_service()
         {
             var input = "password1";
-            Crypto c = new Crypto(Crypto.CryptoTypes.encTypeTripleDES);
+            IService c = new EncryptionService();
             var encrypted = c.Encrypt(input);
             var decrypted = c.Decrypt(encrypted);
             Assert.IsTrue(decrypted == input);
