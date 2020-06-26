@@ -17,8 +17,6 @@ namespace password.model
         {
             List<Login> logins = new List<Login>();
 
-
-
             XmlDocument doc = new XmlDocument();
             if (File.Exists("Logins.xml"))
             {
@@ -26,12 +24,7 @@ namespace password.model
                 IterateOverLogins(logins, doc);
             }
 
-            var login = logins.FirstOrDefault(l => l.Site.Equals(site));
-            if (login != null)
-            {
-                return login;
-            }
-            return null;
+            return logins.FirstOrDefault(l => l.Site.Equals(site));
         }
 
         private static void IterateOverLogins(List<Login> logins, XmlDocument doc)
@@ -175,6 +168,52 @@ namespace password.model
 
             document.Add(logins);
             document.Save("Logins.xml");
+        }
+
+        public IEnumerable<Login> GetLogins()
+        {
+            XmlDocument doc = new XmlDocument();
+            List<Login> logins = new List<Login>();
+            if (File.Exists("Logins.xml"))
+            {
+                doc.Load("Logins.xml");
+            }
+            else
+            {
+                return new List<Login>();
+            }
+
+            var Site = string.Empty;
+            foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+            {
+                foreach (XmlNode lgIn in node)
+                {
+                    if (lgIn.Name.Equals("Site"))
+                    {
+                        Site = lgIn.InnerText;
+                        logins.Add(new Login { Site = lgIn.InnerText });
+                    }
+
+                    if (lgIn.Name.Equals("UserName"))
+                    {
+                        var lgin = logins.FirstOrDefault(l => l.Site.Equals(Site));
+                        if (lgin != null)
+                        {
+                            lgin.UserName = lgIn.InnerText;
+                        }
+                    }
+
+                    if (lgIn.Name.Equals("Password"))
+                    {
+                        var lgin = logins.FirstOrDefault(l => l.Site.Equals(Site));
+                        if (lgin != null)
+                        {
+                            lgin.Password = lgIn.InnerText;
+                        }
+                    }
+                }
+            }
+            return logins.OrderBy(l => l.Site);
         }
     }
 }

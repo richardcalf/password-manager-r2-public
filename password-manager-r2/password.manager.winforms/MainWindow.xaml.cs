@@ -108,58 +108,82 @@ namespace password.manager.winforms
         {
             SiteNotfoundlabel3.Content = string.Empty;
             IRepository repo = new XmlPersistence();
-            Login login = repo.GetLogin(FindSiteTextBox.Text);
-            if(login != null)
+            IEnumerable<Login> logins = repo.GetLogins();
+            if(SiteListBox.Items.Count.Equals(0))
+            foreach(var l in logins)
             {
+                
+                SiteListBox.Items.Add(l.Site);
+            }
+            Login login = repo.GetLogin(FindSiteTextBox.Text);
+            if (login != null)
+            {
+                SaveAlreadyEncryptedCheckBox.IsChecked = false;
+                IServiceAsync service = new EncryptionService();
                 SiteTextBox.Text = login.Site;
                 UserNameTextBox.Text = login.UserName;
-                PasswordTextBox.Text = login.Password;
-                if(AutoDecryptCheckBox.IsChecked == true)
+                try
                 {
-                    IServiceAsync service = new EncryptionService();
-                    try
-                    {
-                        DecryptTextBox.Text = await service.DecryptAsync(login.Password);
-                    }
-                    catch (Exception ex)
-                    {
-                        PrintException(ex.Message);
-                    }
+                    PasswordTextBox.Text = await service.DecryptAsync(login.Password);
+                }
+                catch (Exception ex)
+                {
+                    PrintException(ex.Message);
                 }
             }
             else
             {
-                SiteNotfoundlabel3.Foreground = Brushes.Red;
-                SiteNotfoundlabel3.Content = "Site not found";
+                SiteNotFoundLables();
             }
-
+                    
+        }
+        
+        private void SiteNotFoundLables()
+        {
+            SiteNotfoundlabel3.Foreground = Brushes.Red;
+            SiteNotfoundlabel3.Content = "Site not found";
         }
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateErrorlabel.Content = string.Empty;
             XmlPersistence repo = new XmlPersistence();
-            Login login = new Login
+            Login login = GetLoginFromTextBoxes();
+            try
+            {
+                if (SaveAlreadyEncryptedCheckBox.IsChecked == false)
+                {
+                    IService service = new EncryptionService();
+                    login.Password = service.Encrypt(PasswordTextBox.Text);
+                }
+                repo.Save(login);
+            }
+            catch (Exception ex)
+            {
+                UpdateErrorLables(ex);
+            }
+        }
+
+        private void UpdateErrorLables(Exception ex)
+        {
+            UpdateErrorlabel.Foreground = Brushes.Red;
+            UpdateErrorlabel.Content = ex.Message;
+        }
+
+        private Login GetLoginFromTextBoxes()
+        {
+            return new Login
             {
                 Site = SiteTextBox.Text,
                 UserName = UserNameTextBox.Text,
                 Password = PasswordTextBox.Text
             };
-            try
-            {
-                repo.Save(login);
-            }
-            catch (Exception ex)
-            {
-                UpdateErrorlabel.Foreground = Brushes.Red;
-                UpdateErrorlabel.Content = ex.Message;
-            }
-            
         }
 
         private void ClearSearchButton_Click(object sender, RoutedEventArgs e)
         {
             FindSiteTextBox.Clear();
+            SiteListBox.Items.Clear();
         }
 
         private void ClearDataButton_Click(object sender, RoutedEventArgs e)
@@ -167,7 +191,38 @@ namespace password.manager.winforms
             SiteTextBox.Clear();
             UserNameTextBox.Clear();
             PasswordTextBox.Clear();
-            DecryptTextBox.Clear();
+        }
+
+        private void SaveAlreadyEncryptedCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void SaveAlreadyEncryptedCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                IService service = new EncryptionService();
+                if (SaveAlreadyEncryptedCheckBox.IsChecked == true)
+                {
+
+                    PasswordTextBox.Text = service.Encrypt(PasswordTextBox.Text);
+                }
+                else
+                {
+                    PasswordTextBox.Text = service.Decrypt(PasswordTextBox.Text);
+                }
+            }
+            catch (Exception ex)
+            {
+                PrintException(ex.Message);
+            }
+            
+        }
+
+        private void SiteListBox_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            
         }
     }
 }

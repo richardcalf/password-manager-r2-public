@@ -10,5 +10,6 @@ namespace password.model
     {
         int Save(Login model);
         Login GetLogin(string site);
+        IEnumerable<Login> GetLogins();
     }
 }
