@@ -67,7 +67,7 @@ namespace password.model
             return 1;
         }
 
-        public void CreateXmlFile(Login model)
+        private void CreateXmlFile(Login model)
         {
             if (!File.Exists("Logins.xml"))
             {
