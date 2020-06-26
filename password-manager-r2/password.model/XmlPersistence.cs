@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using System.Xml;
 using System.IO;
 using System.Diagnostics.Eventing.Reader;
+using System.Net.Http.Headers;
 
 namespace password.model
 {
@@ -16,9 +17,25 @@ namespace password.model
         {
             List<Login> logins = new List<Login>();
 
-            XmlDocument doc = new XmlDocument();
-            doc.Load("Logins.xml");
 
+
+            XmlDocument doc = new XmlDocument();
+            if (File.Exists("Logins.xml"))
+            {
+                doc.Load("Logins.xml");
+                IterateOverLogins(logins, doc);
+            }
+
+            var login = logins.FirstOrDefault(l => l.Site.Equals(site));
+            if (login != null)
+            {
+                return login;
+            }
+            return null;
+        }
+
+        private static void IterateOverLogins(List<Login> logins, XmlDocument doc)
+        {
             var Site = string.Empty;
             foreach (XmlNode node in doc.DocumentElement.ChildNodes)
             {
@@ -53,12 +70,6 @@ namespace password.model
                     }
                 }
             }
-            var login = logins.FirstOrDefault(l => l.Site.Equals(site));
-            if (login != null)
-            {
-                return login;
-            }
-            return new Login();
         }
 
         public int Save(Login model)
@@ -69,6 +80,10 @@ namespace password.model
 
         private void CreateXmlFile(Login model)
         {
+            if(string.IsNullOrWhiteSpace(model.Site) || string.IsNullOrWhiteSpace(model.UserName) || string.IsNullOrWhiteSpace(model.Password ))
+            {
+                throw new Exception("Fill out all fields.");
+            }
             if (!File.Exists("Logins.xml"))
             {
                 AddNewXmlFile(model);

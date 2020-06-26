@@ -32,10 +32,16 @@ namespace password.encryption.tests
         {
             IRepository repo = new XmlPersistence();
             Login login = repo.GetLogin("amainhobbies.com");
-            
 
-            Assert.IsTrue(!string.IsNullOrEmpty(login.UserName));
-            Assert.IsTrue(login.Password == "a8AzC8EGlsLvyFev5GOI/g==");
+            if (login == null)
+            {
+                Assert.IsNull(login);
+            }
+            else
+            {
+                Assert.IsTrue(!string.IsNullOrEmpty(login.UserName));
+                Assert.IsTrue(login.Password == "a8AzC8EGlsLvyFev5GOI/g==");
+            }
         }
     }
 }

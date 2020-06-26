@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using password.service;
+using password.model;
 
 namespace password.manager.winforms
 {
@@ -101,6 +102,72 @@ namespace password.manager.winforms
         private void decryptedTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             InitializeButtonsState();
+        }
+
+        private async void FindSiteButton_Click(object sender, RoutedEventArgs e)
+        {
+            SiteNotfoundlabel3.Content = string.Empty;
+            IRepository repo = new XmlPersistence();
+            Login login = repo.GetLogin(FindSiteTextBox.Text);
+            if(login != null)
+            {
+                SiteTextBox.Text = login.Site;
+                UserNameTextBox.Text = login.UserName;
+                PasswordTextBox.Text = login.Password;
+                if(AutoDecryptCheckBox.IsChecked == true)
+                {
+                    IServiceAsync service = new EncryptionService();
+                    try
+                    {
+                        DecryptTextBox.Text = await service.DecryptAsync(login.Password);
+                    }
+                    catch (Exception ex)
+                    {
+                        PrintException(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                SiteNotfoundlabel3.Foreground = Brushes.Red;
+                SiteNotfoundlabel3.Content = "Site not found";
+            }
+
+        }
+
+        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateErrorlabel.Content = string.Empty;
+            XmlPersistence repo = new XmlPersistence();
+            Login login = new Login
+            {
+                Site = SiteTextBox.Text,
+                UserName = UserNameTextBox.Text,
+                Password = PasswordTextBox.Text
+            };
+            try
+            {
+                repo.Save(login);
+            }
+            catch (Exception ex)
+            {
+                UpdateErrorlabel.Foreground = Brushes.Red;
+                UpdateErrorlabel.Content = ex.Message;
+            }
+            
+        }
+
+        private void ClearSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            FindSiteTextBox.Clear();
+        }
+
+        private void ClearDataButton_Click(object sender, RoutedEventArgs e)
+        {
+            SiteTextBox.Clear();
+            UserNameTextBox.Clear();
+            PasswordTextBox.Clear();
+            DecryptTextBox.Clear();
         }
     }
 }
