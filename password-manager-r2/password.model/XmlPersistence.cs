@@ -75,63 +75,75 @@ namespace password.model
             }
             else
             {
-                XmlDocument doc = new XmlDocument();
-                doc.Load("Logins.xml");
-                var Site = string.Empty;
-                bool fileHasSite = false;
-                foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+                XmlDocument doc;
+                bool fileHasSite;
+                AmendRecord(model, out doc, out fileHasSite);
+                if (!fileHasSite)
                 {
-                    foreach (XmlNode lgIn in node)
+                    AddNewRecord(model, doc);
+                }
+                doc.Save("Logins.xml");
+            }
+        }
+
+        private static void AddNewRecord(Login model, XmlDocument doc)
+        {
+            //add the Login/site to the file
+            var root = doc.DocumentElement;
+            XmlNode loginNode = doc.CreateNode(XmlNodeType.Element, "Login", "");
+
+            XmlNode siteNode = doc.CreateNode(XmlNodeType.Element, "Site", "");
+            siteNode.InnerText = model.Site;
+            loginNode.AppendChild(siteNode);
+
+            XmlNode userNameNode = doc.CreateNode(XmlNodeType.Element, "UserName", "");
+            userNameNode.InnerText = model.UserName;
+            loginNode.AppendChild(userNameNode);
+
+            XmlNode passwordNode = doc.CreateNode(XmlNodeType.Element, "Password", "");
+            passwordNode.InnerText = model.Password;
+            loginNode.AppendChild(passwordNode);
+
+            root.AppendChild(loginNode);
+        }
+
+        private static void AmendRecord(Login model, out XmlDocument doc, out bool fileHasSite)
+        {
+            doc = new XmlDocument();
+            doc.Load("Logins.xml");
+            var Site = string.Empty;
+            fileHasSite = false;
+            foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+            {
+                foreach (XmlNode lgIn in node)
+                {
+                    if (lgIn.Name.Equals("Site"))
                     {
-                        if (lgIn.Name.Equals("Site"))
+                        if (lgIn.InnerText.Equals(model.Site))
                         {
-                            if (lgIn.InnerText.Equals(model.Site))
-                            {
-                                fileHasSite = true;
-                                Site = model.Site;
-                            }
-                            else
-                            {
-                                Site = string.Empty;
-                            }
+                            fileHasSite = true;
+                            Site = model.Site;
                         }
-                        if (lgIn.Name.Equals("UserName"))
+                        else
                         {
-                            if (Site.Equals(model.Site))
-                            {
-                                lgIn.InnerText = model.UserName;
-                            }
+                            Site = string.Empty;
                         }
-                        if (lgIn.Name.Equals("Password"))
+                    }
+                    if (lgIn.Name.Equals("UserName"))
+                    {
+                        if (Site.Equals(model.Site))
                         {
-                            if (Site.Equals(model.Site))
-                            {
-                                lgIn.InnerText = model.Password;
-                            }
+                            lgIn.InnerText = model.UserName;
+                        }
+                    }
+                    if (lgIn.Name.Equals("Password"))
+                    {
+                        if (Site.Equals(model.Site))
+                        {
+                            lgIn.InnerText = model.Password;
                         }
                     }
                 }
-                if(!fileHasSite)
-                {
-                    //add the Login/site to the file
-                    var root = doc.DocumentElement;
-                    XmlNode loginNode = doc.CreateNode(XmlNodeType.Element, "Login", "");
-
-                    XmlNode siteNode = doc.CreateNode(XmlNodeType.Element, "Site", "");
-                    siteNode.InnerText = model.Site;
-                    loginNode.AppendChild(siteNode);
-
-                    XmlNode userNameNode = doc.CreateNode(XmlNodeType.Element, "UserName", "");
-                    userNameNode.InnerText = model.UserName;
-                    loginNode.AppendChild(userNameNode);
-
-                    XmlNode passwordNode = doc.CreateNode(XmlNodeType.Element, "Password", "");
-                    passwordNode.InnerText = model.Password;
-                    loginNode.AppendChild(passwordNode);
-
-                    root.AppendChild(loginNode);
-                }
-                doc.Save("Logins.xml");
             }
         }
 

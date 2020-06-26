@@ -17,10 +17,10 @@ namespace password.encryption.tests
             XmlPersistence repo = new XmlPersistence();
             Login login = new Login
             {
-                Site = "quake.III.Arena.com",
-                UserName = "richard.calf@gmail.com"
+                Site = "insane.com",
+                UserName = "insano"
                 ,
-                Password = "GsHBkZOMk7oxxTC6xwKfGw=="
+                Password = "LXZvHqS7lob/DuBHMlSvfQ=="
             };
 
             repo.Save(login);
@@ -31,11 +31,11 @@ namespace password.encryption.tests
         public void test_login_fetch()
         {
             IRepository repo = new XmlPersistence();
-            Login login = repo.GetLogin("quake.III.Arena.com");
+            Login login = repo.GetLogin("amainhobbies.com");
             
 
             Assert.IsTrue(!string.IsNullOrEmpty(login.UserName));
-            Assert.IsTrue(login.Password == "GsHBkZOMk7oxxTC6xwKfGw==");
+            Assert.IsTrue(login.Password == "a8AzC8EGlsLvyFev5GOI/g==");
         }
     }
 }
