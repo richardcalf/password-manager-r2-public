@@ -10,5 +10,7 @@ namespace password.model
     {
         int Save(Login model);
         Login GetLogin(string site);
+
+        void CreateXmlFile(Login model);
     }
 }
