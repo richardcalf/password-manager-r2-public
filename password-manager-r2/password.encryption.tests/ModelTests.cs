@@ -14,13 +14,13 @@ namespace password.encryption.tests
         [TestMethod]
         public void test_login_creation()
         {
-            IRepository repo = new XmlPersistence();
+            XmlPersistence repo = new XmlPersistence();
             Login login = new Login
             {
-                Site = "hireOurTools.com",
+                Site = "geforce.com",
                 UserName = "richard.calf@gmail.com"
                 ,
-                Password = "as9vxCuBr18T2NmX0sMSHQ=="
+                Password = "keNgu0hHLXc="
             };
 
             repo.Save(login);
@@ -32,6 +32,7 @@ namespace password.encryption.tests
         {
             IRepository repo = new XmlPersistence();
             Login login = repo.GetLogin("timetravel.com");
+            
 
             Assert.IsTrue(!string.IsNullOrEmpty(login.UserName));
             Assert.IsTrue(login.Password == "YJYABFM5GXp5yee17Kdg1YA1l8onY7iv");

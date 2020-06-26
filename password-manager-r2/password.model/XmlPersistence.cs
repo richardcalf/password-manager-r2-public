@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml;
+using System.IO;
+using System.Diagnostics.Eventing.Reader;
 
 namespace password.model
 {
@@ -18,11 +20,11 @@ namespace password.model
             doc.Load("Logins.xml");
 
             var Site = string.Empty;
-            foreach(XmlNode node in doc.DocumentElement.ChildNodes)
+            foreach (XmlNode node in doc.DocumentElement.ChildNodes)
             {
-                foreach(XmlNode lgIn in node)
+                foreach (XmlNode lgIn in node)
                 {
-                    if(lgIn.Name.Equals("Site"))
+                    if (lgIn.Name.Equals("Site"))
                     {
                         Site = lgIn.InnerText;
                         var lgin = logins.FirstOrDefault(l => l.Site.Equals(Site));
@@ -52,7 +54,7 @@ namespace password.model
                 }
             }
             var login = logins.FirstOrDefault(l => l.Site.Equals(site));
-            if(login != null)
+            if (login != null)
             {
                 return login;
             }
@@ -67,9 +69,77 @@ namespace password.model
 
         public void CreateXmlFile(Login model)
         {
+            if (!File.Exists("Logins.xml"))
+            {
+                AddNewXmlFile(model);
+            }
+            else
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load("Logins.xml");
+                var Site = string.Empty;
+                bool fileHasSite = false;
+                foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+                {
+                    foreach (XmlNode lgIn in node)
+                    {
+                        if (lgIn.Name.Equals("Site"))
+                        {
+                            if (lgIn.InnerText.Equals(model.Site))
+                            {
+                                fileHasSite = true;
+                                Site = model.Site;
+                            }
+                            else
+                            {
+                                Site = string.Empty;
+                            }
+                        }
+                        if (lgIn.Name.Equals("UserName"))
+                        {
+                            if (Site.Equals(model.Site))
+                            {
+                                lgIn.InnerText = model.UserName;
+                            }
+                        }
+                        if (lgIn.Name.Equals("Password"))
+                        {
+                            if (Site.Equals(model.Site))
+                            {
+                                lgIn.InnerText = model.Password;
+                            }
+                        }
+                    }
+                }
+                if(!fileHasSite)
+                {
+                    //add the Login/site to the file
+                    var root = doc.DocumentElement;
+                    XmlNode loginNode = doc.CreateNode(XmlNodeType.Element, "Login", "");
+
+                    XmlNode siteNode = doc.CreateNode(XmlNodeType.Element, "Site", "");
+                    siteNode.InnerText = model.Site;
+                    loginNode.AppendChild(siteNode);
+
+                    XmlNode userNameNode = doc.CreateNode(XmlNodeType.Element, "UserName", "");
+                    userNameNode.InnerText = model.UserName;
+                    loginNode.AppendChild(userNameNode);
+
+                    XmlNode passwordNode = doc.CreateNode(XmlNodeType.Element, "Password", "");
+                    passwordNode.InnerText = model.Password;
+                    loginNode.AppendChild(passwordNode);
+
+                    root.AppendChild(loginNode);
+                }
+                doc.Save("Logins.xml");
+            }
+        }
+
+        private static void AddNewXmlFile(Login model)
+        {
             var document = new XDocument();
             var logins = new XElement("Logins");
-            //--//
+            
             var site = new XElement("Site", model.Site);
             var username = new XElement("UserName", model.UserName);
             var password = new XElement("Password", model.Password);
@@ -79,6 +149,5 @@ namespace password.model
             document.Add(logins);
             document.Save("Logins.xml");
         }
-
     }
 }
