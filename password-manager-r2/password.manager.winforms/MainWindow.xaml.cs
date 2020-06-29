@@ -15,6 +15,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using password.service;
 using password.model;
+using System.Timers;
+using System.Net.Http.Headers;
 
 namespace password.manager.winforms
 {
@@ -28,6 +30,10 @@ namespace password.manager.winforms
             InitializeComponent();
             InitializeData();
             InitializeButtonsState();
+            Timer timer = new Timer();
+            timer.Interval = 550;
+            timer.Start();
+            timer.Elapsed += OnTimedEvent;
         }
 
         private async void decryptButton_Click(object sender, RoutedEventArgs e)
@@ -48,6 +54,29 @@ namespace password.manager.winforms
         {
             errorLabel.Foreground = Brushes.Red;
             errorLabel.Content = message;
+            
+        }
+
+
+        bool visible = false;
+        private void OnTimedEvent(object source, ElapsedEventArgs e)
+        {
+            if (visible)
+            {
+                visible = false;
+                Dispatcher.Invoke(() =>
+                {
+                    errorLabel.Visibility = Visibility.Hidden;
+                });
+            }
+            else
+            {
+                visible = true;
+                Dispatcher.Invoke(() =>
+                {
+                    errorLabel.Visibility = Visibility.Visible;
+                });
+            }
         }
 
         private async void encryptButton_Click(object sender, RoutedEventArgs e)
@@ -146,7 +175,6 @@ namespace password.manager.winforms
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-            UpdateErrorlabel.Content = string.Empty;
             XmlPersistence repo = new XmlPersistence();
             Login login = GetLoginFromTextBoxes();
             try
@@ -160,14 +188,8 @@ namespace password.manager.winforms
             }
             catch (Exception ex)
             {
-                UpdateErrorLables(ex);
+                PrintException(ex.Message); 
             }
-        }
-
-        private void UpdateErrorLables(Exception ex)
-        {
-            UpdateErrorlabel.Foreground = Brushes.Red;
-            UpdateErrorlabel.Content = ex.Message;
         }
 
         private Login GetLoginFromTextBoxes()
@@ -188,9 +210,15 @@ namespace password.manager.winforms
 
         private void ClearDataButton_Click(object sender, RoutedEventArgs e)
         {
+            ClearDataInputs();
+        }
+
+        private void ClearDataInputs()
+        {
             SiteTextBox.Clear();
             UserNameTextBox.Clear();
             PasswordTextBox.Clear();
+            errorLabel.Content = string.Empty;
         }
 
         private void SaveAlreadyEncryptedCheckBox_Checked(object sender, RoutedEventArgs e)
