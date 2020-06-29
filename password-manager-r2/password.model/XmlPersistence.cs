@@ -81,9 +81,7 @@ namespace password.model
             else
             {
                 XmlDocument doc;
-                bool fileHasSite;
-                AmendRecord(model, out doc, out fileHasSite);
-                if (!fileHasSite)
+                if(!AmendRecord(model, out doc))
                 {
                     AddNewRecord(model, doc);
                 }
@@ -112,12 +110,12 @@ namespace password.model
             root.AppendChild(loginNode);
         }
 
-        private static void AmendRecord(Login model, out XmlDocument doc, out bool fileHasSite)
+        private static bool AmendRecord(Login model, out XmlDocument doc)
         {
             doc = new XmlDocument();
             doc.Load("Logins.xml");
             var Site = string.Empty;
-            fileHasSite = false;
+            bool fileHasSite = false;
             foreach (XmlNode node in doc.DocumentElement.ChildNodes)
             {
                 foreach (XmlNode lgIn in node)
@@ -150,6 +148,7 @@ namespace password.model
                     }
                 }
             }
+            return fileHasSite;
         }
 
         private static void AddNewXmlFile(Login model)
