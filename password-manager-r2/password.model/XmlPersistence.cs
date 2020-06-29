@@ -65,18 +65,15 @@ namespace password.model
             }
         }
 
-        public int Save(Login model)
+        public void Save(Login model)
         {
             PersistXmlFile(model);
-            return 1;
         }
 
         private void PersistXmlFile(Login model)
         {
-            if(string.IsNullOrWhiteSpace(model.Site) || string.IsNullOrWhiteSpace(model.UserName) || string.IsNullOrWhiteSpace(model.Password ))
-            {
-                throw new Exception("Fill out all fields.");
-            }
+            if(!IsValid(model)) throw new Exception("Fill out all fields.");
+            
             if (!File.Exists("Logins.xml"))
             {
                 AddNewXmlFile(model);
@@ -160,10 +157,9 @@ namespace password.model
             var document = new XDocument();
             var logins = new XElement("Logins");
             
-            var site = new XElement("Site", model.Site);
-            var username = new XElement("UserName", model.UserName);
-            var password = new XElement("Password", model.Password);
-            var login = new XElement("Login", site, username, password);//functional construction
+            var login = new XElement("Login", new XElement("Site", model.Site),
+                new XElement("UserName", model.UserName), 
+                new XElement("Password", model.Password));//functional construction
             logins.Add(login);
 
             document.Add(logins);
@@ -214,6 +210,14 @@ namespace password.model
                 }
             }
             return logins.OrderBy(l => l.Site);
+        }
+
+        public bool IsValid(Login model)
+        {
+            return !(string.IsNullOrWhiteSpace(model.Site) ||
+                string.IsNullOrWhiteSpace(model.UserName) ||
+                string.IsNullOrWhiteSpace(model.Password));
+                
         }
     }
 }

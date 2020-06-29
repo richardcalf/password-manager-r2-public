@@ -8,8 +8,9 @@ namespace password.model
 {
     public interface IRepository
     {
-        int Save(Login model);
+        void Save(Login model);
         Login GetLogin(string site);
         IEnumerable<Login> GetLogins();
+        bool IsValid(Login model);
     }
 }
