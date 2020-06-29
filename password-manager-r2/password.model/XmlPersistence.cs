@@ -67,11 +67,11 @@ namespace password.model
 
         public int Save(Login model)
         {
-            CreateXmlFile(model);
+            PersistXmlFile(model);
             return 1;
         }
 
-        private void CreateXmlFile(Login model)
+        private void PersistXmlFile(Login model)
         {
             if(string.IsNullOrWhiteSpace(model.Site) || string.IsNullOrWhiteSpace(model.UserName) || string.IsNullOrWhiteSpace(model.Password ))
             {
