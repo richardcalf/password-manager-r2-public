@@ -173,7 +173,7 @@ namespace password.manager.winforms
             SiteNotfoundlabel3.Content = "Site not found";
         }
 
-        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        private async void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
             XmlPersistence repo = new XmlPersistence();
             Login login = GetLoginFromTextBoxes();
@@ -181,8 +181,8 @@ namespace password.manager.winforms
             {
                 if (SaveAlreadyEncryptedCheckBox.IsChecked == false)
                 {
-                    IService service = new EncryptionService();
-                    login.Password = service.Encrypt(PasswordTextBox.Text);
+                    IServiceAsync service = new EncryptionService();
+                    login.Password = await service.EncryptAsync(PasswordTextBox.Text);
                 }
                 repo.Save(login);
             }
