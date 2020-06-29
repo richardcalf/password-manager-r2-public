@@ -115,7 +115,7 @@ namespace password.manager.winforms
                 
                 SiteListBox.Items.Add(l.Site);
             }
-            Login login = repo.GetLogins().Where(l => l.Site.Contains(FindSiteTextBox.Text)).FirstOrDefault();
+            Login login = repo.GetLogins().Where(l => l.Site.StartsWith(FindSiteTextBox.Text)).FirstOrDefault();
             if (login != null)
             {
                 SaveAlreadyEncryptedCheckBox.IsChecked = false;
