@@ -105,7 +105,7 @@ namespace password.manager.winforms
 
         private async Task FindSite(string site)
         {
-            var login = logins.Where(l => l.Site.StartsWith(site)).FirstOrDefault();
+            var login = repo.GetLogin(site);
             await ShowLoginUI(login);
         }
 
@@ -210,8 +210,6 @@ namespace password.manager.winforms
             await Encrypt(plainTextBox.Text);
             InitializeButtonsState();
         }
-
-        
 
         private void plainTextBox_KeyUp(object sender, KeyEventArgs e)
         {

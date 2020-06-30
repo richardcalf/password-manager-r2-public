@@ -24,7 +24,7 @@ namespace password.model
                 IterateOverLogins(logins, doc);
             }
 
-            return logins.FirstOrDefault(l => l.Site.Equals(site));
+            return logins.FirstOrDefault(l => l.Site.StartsWith(site));
         }
 
         private static void IterateOverLogins(List<Login> logins, XmlDocument doc)
