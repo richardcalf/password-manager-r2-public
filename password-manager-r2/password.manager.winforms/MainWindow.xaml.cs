@@ -27,64 +27,61 @@ namespace password.manager.winforms
     {
         IEnumerable<Login> logins;
         IRepository repo = new XmlPersistence();
+        IServiceAsync service = new EncryptionService();
         public MainWindow()
         {
             InitializeComponent();
             InitializeData();
             InitializeButtonsState();
-            
-            Timer timer = new Timer();
-            timer.Interval = 550;
-            timer.Start();
-            timer.Elapsed += OnTimedEvent;
+            GetAllRecordsAsync();
+        }
+
+        private void GetAllRecords()
+        {
+            System.Threading.Thread.Sleep(2500);
+            logins = repo.GetLogins();
+        }
+
+        private async Task GetAllRecordsAsync()
+        {
+            await Task.Run(() =>
+            {
+                GetAllRecords();
+            });
+            SearchingIsReady(true);
+        }
+
+        private void SearchingIsReady(bool ready)
+        {
+            FindSiteButton.IsEnabled = ready;
         }
 
         private async void decryptButton_Click(object sender, RoutedEventArgs e)
         {
-            IServiceAsync service = new EncryptionService();
+            await Decrypt(encryptedTextBox.Text);
+            InitializeButtonsState();
+        }
+
+        private async Task Decrypt(string encryptedValue)
+        {
             try
             {
-                decryptedTextBox.Text = await service.DecryptAsync(encryptedTextBox.Text);
+                decryptedTextBox.Text = await service.DecryptAsync(encryptedValue);
             }
             catch (Exception ex)
             {
                 PrintException(ex.Message);
             }
-            InitializeButtonsState();
         }
 
         private void PrintException(string message)
         {
             errorLabel.Foreground = Brushes.Red;
             errorLabel.Content = message;
-            
-        }
-
-
-        bool visible = false;
-        private void OnTimedEvent(object source, ElapsedEventArgs e)
-        {
-            if (visible)
-            {
-                visible = false;
-                Dispatcher.Invoke(() =>
-                {
-                    errorLabel.Visibility = Visibility.Hidden;
-                });
-            }
-            else
-            {
-                visible = true;
-                Dispatcher.Invoke(() =>
-                {
-                    errorLabel.Visibility = Visibility.Visible;
-                });
-            }
         }
 
         private async void encryptButton_Click(object sender, RoutedEventArgs e)
         {
-            IServiceAsync service = new EncryptionService();
             try
             {
                 encryptedTextBox.Text = await service.EncryptAsync(plainTextBox.Text);
@@ -138,43 +135,45 @@ namespace password.manager.winforms
 
         private async void FindSiteButton_Click(object sender, RoutedEventArgs e)
         {
-            Login login = logins.Where(l => l.Site.StartsWith(FindSiteTextBox.Text)).FirstOrDefault();
-            if (login != null)
-            {
-                SaveAlreadyEncryptedCheckBox.IsChecked = false;
-                IServiceAsync service = new EncryptionService();
-                SiteTextBox.Text = login.Site;
-                UserNameTextBox.Text = login.UserName;
-                try
-                {
-                    PasswordTextBox.Text = await service.DecryptAsync(login.Password);
-                }
-                catch (Exception ex)
-                {
-                    PrintException(ex.Message);
-                }
-            }
-            else
-            {
-                SiteNotFoundLables();
-            }
+            await FindSite(FindSiteTextBox.Text);
         }
-        
-        private void SiteNotFoundLables()
+
+        private async Task FindSite(string site)
         {
-            SiteNotfoundlabel3.Foreground = Brushes.Red;
-            SiteNotfoundlabel3.Content = "Site not found";
+            var login = logins.Where(l => l.Site.StartsWith(site)).FirstOrDefault();
+            await ShowLoginUI(login);
+        }
+
+
+        /// <summary>
+        /// Show Login Model in TextBoxes
+        /// </summary>
+        /// <param name="login"></param>
+        /// <returns></returns>
+        private async Task ShowLoginUI(Login login)
+        {
+            ClearDataInputs();
+            if (login == null) { SiteTextBox.Text = "Not found"; return; }
+            SaveAlreadyEncryptedCheckBox.IsChecked = false;
+            SiteTextBox.Text = login.Site;
+            UserNameTextBox.Text = login.UserName;
+            try
+            {
+                PasswordTextBox.Text = await service.DecryptAsync(login.Password);
+            }
+            catch (Exception ex)
+            {
+                PrintException(ex.Message);
+            }
         }
 
         private async void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-            XmlPersistence repo = new XmlPersistence();
-            Login login = GetLoginFromTextBoxes();
+            var login = GetLoginFromTextBoxes();
             try
             {
                 if (SaveAlreadyEncryptedCheckBox.IsChecked == false)
                 {
-                    IServiceAsync service = new EncryptionService();
                     login.Password = await service.EncryptAsync(PasswordTextBox.Text);
                 }
                 repo.Save(login);
@@ -198,7 +197,6 @@ namespace password.manager.winforms
         private void ClearSearchButton_Click(object sender, RoutedEventArgs e)
         {
             FindSiteTextBox.Clear();
-            SiteListBox.Items.Clear();
         }
 
         private void ClearDataButton_Click(object sender, RoutedEventArgs e)
@@ -251,9 +249,10 @@ namespace password.manager.winforms
             SetSearchText();
         }
 
-        private void SiteListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private async void SiteListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             SetSearchText();
+            await FindSite(FindSiteTextBox.Text);
         }
 
         private void SetSearchText()
@@ -261,10 +260,27 @@ namespace password.manager.winforms
             FindSiteTextBox.Text = (string)SiteListBox.SelectedItem;
         }
 
-        private void GetRecordsButton_Click(object sender, RoutedEventArgs e)
+        private async void GetRecordsButton_Click(object sender, RoutedEventArgs e)
         {
-            logins = repo.GetLogins();
+            await RefreshList();
+        }
+
+        private async Task RefreshList()
+        {
+            SearchingIsReady(false);
             SiteListBox.Items.Clear();
+            await Task.Run(() =>
+            {
+                GetAllRecords();
+            });
+            SearchingIsReady(true);
+            PopulateListBox();
+        }
+        
+
+        private void PopulateListBox()
+        {
+            
             foreach (var l in logins)
             {
                 SiteListBox.Items.Add(l.Site);
