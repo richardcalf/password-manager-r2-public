@@ -36,11 +36,15 @@ namespace password.manager.winforms
             GetAllRecordsAsync();
         }
 
+        #region private non UI methods 
         private void GetAllRecords()
         {
             System.Threading.Thread.Sleep(2500);
             logins = repo.GetLogins();
         }
+        #endregion
+
+        #region private UI coupled methods
 
         private async Task GetAllRecordsAsync()
         {
@@ -54,12 +58,6 @@ namespace password.manager.winforms
         private void SearchingIsReady(bool ready)
         {
             FindSiteButton.IsEnabled = ready;
-        }
-
-        private async void decryptButton_Click(object sender, RoutedEventArgs e)
-        {
-            await Decrypt(encryptedTextBox.Text);
-            InitializeButtonsState();
         }
 
         private async Task Decrypt(string encryptedValue)
@@ -80,25 +78,6 @@ namespace password.manager.winforms
             errorLabel.Content = message;
         }
 
-        private async void encryptButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                encryptedTextBox.Text = await service.EncryptAsync(plainTextBox.Text);
-            }
-            catch (Exception ex)
-            {
-                PrintException(ex.Message);
-            }
-            InitializeButtonsState();
-        }
-
-        private void clearAllButton_Click(object sender, RoutedEventArgs e)
-        {
-            InitializeData();
-            InitializeButtonsState();
-        }
-
         private void InitializeData()
         {
             plainTextBox.Clear();
@@ -113,37 +92,11 @@ namespace password.manager.winforms
             encryptButton.IsEnabled = !string.IsNullOrWhiteSpace(plainTextBox.Text);
         }
 
-        private void plainTextBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            InitializeButtonsState();
-        }
-
-        private void encryptedTextBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            InitializeButtonsState();
-        }
-
-        private void decryptedTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            InitializeButtonsState();
-        }
-
-        private void decryptedTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            InitializeButtonsState();
-        }
-
-        private async void FindSiteButton_Click(object sender, RoutedEventArgs e)
-        {
-            await FindSite(FindSiteTextBox.Text);
-        }
-
         private async Task FindSite(string site)
         {
             var login = logins.Where(l => l.Site.StartsWith(site)).FirstOrDefault();
             await ShowLoginUI(login);
         }
-
 
         /// <summary>
         /// Show Login Model in TextBoxes
@@ -180,7 +133,7 @@ namespace password.manager.winforms
             }
             catch (Exception ex)
             {
-                PrintException(ex.Message); 
+                PrintException(ex.Message);
             }
         }
 
@@ -194,6 +147,91 @@ namespace password.manager.winforms
             };
         }
 
+        private void ClearDataInputs()
+        {
+            SiteTextBox.Clear();
+            UserNameTextBox.Clear();
+            PasswordTextBox.Clear();
+            errorLabel.Content = string.Empty;
+        }
+
+        private void SetSearchText()
+        {
+            FindSiteTextBox.Text = (string)SiteListBox.SelectedItem;
+        }
+
+        private void PopulateListBox()
+        {
+            foreach (var l in logins)
+            {
+                SiteListBox.Items.Add(l.Site);
+            }
+        }
+
+        private async Task RefreshList()
+        {
+            SearchingIsReady(false);
+            SiteListBox.Items.Clear();
+            await Task.Run(() =>
+            {
+                GetAllRecords();
+            });
+            SearchingIsReady(true);
+            PopulateListBox();
+        }
+
+        #endregion
+
+        #region UI events, Click events
+        private void clearAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            InitializeData();
+            InitializeButtonsState();
+        }
+        private async void decryptButton_Click(object sender, RoutedEventArgs e)
+        {
+            await Decrypt(encryptedTextBox.Text);
+            InitializeButtonsState();
+        }
+
+        private async void encryptButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                encryptedTextBox.Text = await service.EncryptAsync(plainTextBox.Text);
+            }
+            catch (Exception ex)
+            {
+                PrintException(ex.Message);
+            }
+            InitializeButtonsState();
+        }
+
+        private void plainTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            InitializeButtonsState();
+        }
+
+        private void encryptedTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            InitializeButtonsState();
+        }
+
+        private void decryptedTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            InitializeButtonsState();
+        }
+
+        private void decryptedTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            InitializeButtonsState();
+        }
+
+        private async void FindSiteButton_Click(object sender, RoutedEventArgs e)
+        {
+            await FindSite(FindSiteTextBox.Text);
+        }
+
         private void ClearSearchButton_Click(object sender, RoutedEventArgs e)
         {
             FindSiteTextBox.Clear();
@@ -204,17 +242,9 @@ namespace password.manager.winforms
             ClearDataInputs();
         }
 
-        private void ClearDataInputs()
-        {
-            SiteTextBox.Clear();
-            UserNameTextBox.Clear();
-            PasswordTextBox.Clear();
-            errorLabel.Content = string.Empty;
-        }
-
         private void SaveAlreadyEncryptedCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
         private void SaveAlreadyEncryptedCheckBox_Click(object sender, RoutedEventArgs e)
@@ -236,12 +266,12 @@ namespace password.manager.winforms
             {
                 PrintException(ex.Message);
             }
-            
+
         }
 
         private void SiteListBox_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            
+
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
@@ -255,36 +285,10 @@ namespace password.manager.winforms
             await FindSite(FindSiteTextBox.Text);
         }
 
-        private void SetSearchText()
-        {
-            FindSiteTextBox.Text = (string)SiteListBox.SelectedItem;
-        }
-
         private async void GetRecordsButton_Click(object sender, RoutedEventArgs e)
         {
             await RefreshList();
         }
-
-        private async Task RefreshList()
-        {
-            SearchingIsReady(false);
-            SiteListBox.Items.Clear();
-            await Task.Run(() =>
-            {
-                GetAllRecords();
-            });
-            SearchingIsReady(true);
-            PopulateListBox();
-        }
-        
-
-        private void PopulateListBox()
-        {
-            
-            foreach (var l in logins)
-            {
-                SiteListBox.Items.Add(l.Site);
-            }
-        }
+        #endregion
     }
 }
