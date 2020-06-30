@@ -135,22 +135,18 @@ namespace password.manager.winforms
             var login = GetLoginFromTextBoxes();
             try
             {
-                await Task.Run(async () =>
-               {
-                   await Dispatcher.Invoke(async () =>
-                   {
-                       login.Password = await service.EncryptAsync(PasswordTextBox.Text);
-                   });
+                login.Password = await service.EncryptAsync(PasswordTextBox.Text);
 
-                   repo.Save(login);
-               });
+                await Task.Run(() =>
+                {
+                    repo.Save(login);
+                });
             }
             catch (Exception ex)
             {
                 PrintException(ex.Message);
             }
         }
-
 
         private Login GetLoginFromTextBoxes()
         {
