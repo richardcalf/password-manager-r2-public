@@ -39,7 +39,6 @@ namespace password.manager.winforms
         #region private non UI methods 
         private void GetAllRecords()
         {
-            System.Threading.Thread.Sleep(2500);
             logins = repo.GetLogins();
         }
         #endregion
@@ -65,6 +64,18 @@ namespace password.manager.winforms
             try
             {
                 decryptedTextBox.Text = await service.DecryptAsync(encryptedValue);
+            }
+            catch (Exception ex)
+            {
+                PrintException(ex.Message);
+            }
+        }
+
+        private async Task Encrypt(string value)
+        {
+            try
+            {
+                encryptedTextBox.Text = await service.EncryptAsync(value);
             }
             catch (Exception ex)
             {
@@ -107,7 +118,6 @@ namespace password.manager.winforms
         {
             ClearDataInputs();
             if (login == null) { SiteTextBox.Text = "Not found"; return; }
-            SaveAlreadyEncryptedCheckBox.IsChecked = false;
             SiteTextBox.Text = login.Site;
             UserNameTextBox.Text = login.UserName;
             try
@@ -120,22 +130,27 @@ namespace password.manager.winforms
             }
         }
 
-        private async void UpdateButton_Click(object sender, RoutedEventArgs e)
+        private async Task UpdateLogin()
         {
             var login = GetLoginFromTextBoxes();
             try
             {
-                if (SaveAlreadyEncryptedCheckBox.IsChecked == false)
-                {
-                    login.Password = await service.EncryptAsync(PasswordTextBox.Text);
-                }
-                repo.Save(login);
+                await Task.Run(async () =>
+               {
+                   await Dispatcher.Invoke(async () =>
+                   {
+                       login.Password = await service.EncryptAsync(PasswordTextBox.Text);
+                   });
+
+                   repo.Save(login);
+               });
             }
             catch (Exception ex)
             {
                 PrintException(ex.Message);
             }
         }
+
 
         private Login GetLoginFromTextBoxes()
         {
@@ -196,16 +211,11 @@ namespace password.manager.winforms
 
         private async void encryptButton_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                encryptedTextBox.Text = await service.EncryptAsync(plainTextBox.Text);
-            }
-            catch (Exception ex)
-            {
-                PrintException(ex.Message);
-            }
+            await Encrypt(plainTextBox.Text);
             InitializeButtonsState();
         }
+
+        
 
         private void plainTextBox_KeyUp(object sender, KeyEventArgs e)
         {
@@ -249,23 +259,6 @@ namespace password.manager.winforms
 
         private void SaveAlreadyEncryptedCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                IService service = new EncryptionService();
-                if (SaveAlreadyEncryptedCheckBox.IsChecked == true)
-                {
-
-                    PasswordTextBox.Text = service.Encrypt(PasswordTextBox.Text);
-                }
-                else
-                {
-                    PasswordTextBox.Text = service.Decrypt(PasswordTextBox.Text);
-                }
-            }
-            catch (Exception ex)
-            {
-                PrintException(ex.Message);
-            }
 
         }
 
@@ -288,6 +281,11 @@ namespace password.manager.winforms
         private async void GetRecordsButton_Click(object sender, RoutedEventArgs e)
         {
             await RefreshList();
+        }
+
+        private async void UpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            await UpdateLogin();
         }
         #endregion
     }
