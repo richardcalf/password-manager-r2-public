@@ -16,20 +16,22 @@
         <Button x:Name="encryptButton" Content="Encrypt" HorizontalAlignment="Left" Margin="249,70,0,0" VerticalAlignment="Top" Width="75" Click="encryptButton_Click"/>
         <Button x:Name="clearAllButton" Content="Clear All" HorizontalAlignment="Left" Margin="329,70,0,0" VerticalAlignment="Top" Width="75" Click="clearAllButton_Click"/>
         <Label x:Name="errorLabel"  Content="Error content here" HorizontalAlignment="Left" Margin="654,581,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.9,0.423" Width="484"/>
-        <Label x:Name="findSiteLabel" Content="Find Site" HorizontalAlignment="Left" Margin="469,14,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.289,-0.038"/>
-        <TextBox x:Name="FindSiteTextBox" HorizontalAlignment="Left" Height="26" Margin="555,14,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
-        <Button x:Name="FindSiteButton" Content="Find" HorizontalAlignment="Left" Margin="822,17,0,0" VerticalAlignment="Top" Width="75" Click="FindSiteButton_Click"/>
-        <Label x:Name="label2" Content="Site" HorizontalAlignment="Left" Margin="469,66,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.474,0.462" Width="56"/>
-        <TextBox x:Name="SiteTextBox" HorizontalAlignment="Left" Height="23" Margin="555,67,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
-        <Label x:Name="UserNamelabel" Content="User Name" HorizontalAlignment="Left" Margin="469,104,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="23" Margin="555,108,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
-        <Label x:Name="PasswordLabel" Content="Password" HorizontalAlignment="Left" Margin="469,165,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.263,0.462"/>
-        <TextBox x:Name="PasswordTextBox" HorizontalAlignment="Left" Height="23" Margin="555,165,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
-        <Button x:Name="UpdateButton" Content="Update" HorizontalAlignment="Left" Margin="822,186,0,0" VerticalAlignment="Top" Width="75" Click="UpdateButton_Click"/>
+        <Label x:Name="findSiteLabel" Content="Find Site" HorizontalAlignment="Left" Margin="469,130,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.289,-0.038"/>
+        <TextBox x:Name="FindSiteTextBox" HorizontalAlignment="Left" Height="26" Margin="555,130,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
+        <Button x:Name="FindSiteButton" Content="Find" HorizontalAlignment="Left" Margin="822,133,0,0" VerticalAlignment="Top" Width="75" Click="FindSiteButton_Click"/>
+        <Label x:Name="label2" Content="Site" HorizontalAlignment="Left" Margin="469,182,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.474,0.462" Width="56"/>
+        <TextBox x:Name="SiteTextBox" HorizontalAlignment="Left" Height="23" Margin="555,183,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
+        <Label x:Name="UserNamelabel" Content="User Name" HorizontalAlignment="Left" Margin="469,220,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="23" Margin="555,224,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
+        <Label x:Name="PasswordLabel" Content="Password" HorizontalAlignment="Left" Margin="469,281,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.263,0.462"/>
+        <TextBox x:Name="PasswordTextBox" HorizontalAlignment="Left" Height="23" Margin="555,281,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
+        <Button x:Name="UpdateButton" Content="Update" HorizontalAlignment="Left" Margin="822,302,0,0" VerticalAlignment="Top" Width="75" Click="UpdateButton_Click"/>
         <Label x:Name="SiteNotfoundlabel3" Content="" HorizontalAlignment="Left" Margin="555,45,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="ClearSearchButton" Content="Clear Search" HorizontalAlignment="Left" Margin="921,17,0,0" VerticalAlignment="Top" Width="75" Click="ClearSearchButton_Click"/>
-        <Button x:Name="ClearDataButton" Content="Clear Data" HorizontalAlignment="Left" Margin="822,154,0,0" VerticalAlignment="Top" Width="75" Click="ClearDataButton_Click"/>
-        <CheckBox x:Name="SaveAlreadyEncryptedCheckBox" IsChecked="True" Content="Save already encrypted" HorizontalAlignment="Left" Margin="555,142,0,0" VerticalAlignment="Top" Width="224" Checked="SaveAlreadyEncryptedCheckBox_Checked" Click="SaveAlreadyEncryptedCheckBox_Click"/>
-        <ListBox x:Name="SiteListBox" HorizontalAlignment="Left" Height="376" Margin="229,123,0,0" VerticalAlignment="Top" Width="175" MouseDown="SiteListBox_MouseDown"/>
+        <Button x:Name="ClearSearchButton" Content="Clear Search" HorizontalAlignment="Left" Margin="921,133,0,0" VerticalAlignment="Top" Width="75" Click="ClearSearchButton_Click"/>
+        <Button x:Name="ClearDataButton" Content="Clear Data" HorizontalAlignment="Left" Margin="822,270,0,0" VerticalAlignment="Top" Width="75" Click="ClearDataButton_Click"/>
+        <CheckBox x:Name="SaveAlreadyEncryptedCheckBox" IsChecked="True" Content="Save already encrypted" HorizontalAlignment="Left" Margin="555,258,0,0" VerticalAlignment="Top" Width="224" Checked="SaveAlreadyEncryptedCheckBox_Checked" Click="SaveAlreadyEncryptedCheckBox_Click"/>
+        <ListBox x:Name="SiteListBox" HorizontalAlignment="Left" Height="376" Margin="229,123,0,0" VerticalAlignment="Top" Width="175" MouseDown="SiteListBox_MouseDown" MouseDoubleClick="SiteListBox_MouseDoubleClick"/>
+        <Button x:Name="SelectSiteButton" Content=">>" HorizontalAlignment="Left" Margin="422,133,0,0" VerticalAlignment="Top" Width="32" Click="button_Click" RenderTransformOrigin="0.5,0.5" />
+        <Button x:Name="GetRecordsButton" Content="Get All" HorizontalAlignment="Left" Margin="134,123,0,0" VerticalAlignment="Top" Width="75" Click="GetRecordsButton_Click"/>
     </Grid>
 </Window>

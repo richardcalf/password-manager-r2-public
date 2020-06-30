@@ -25,11 +25,14 @@ namespace password.manager.winforms
     /// </summary>
     public partial class MainWindow : Window
     {
+        IEnumerable<Login> logins;
+        IRepository repo = new XmlPersistence();
         public MainWindow()
         {
             InitializeComponent();
             InitializeData();
             InitializeButtonsState();
+            
             Timer timer = new Timer();
             timer.Interval = 550;
             timer.Start();
@@ -135,16 +138,7 @@ namespace password.manager.winforms
 
         private async void FindSiteButton_Click(object sender, RoutedEventArgs e)
         {
-            SiteNotfoundlabel3.Content = string.Empty;
-            IRepository repo = new XmlPersistence();
-            IEnumerable<Login> logins = repo.GetLogins();
-            if(SiteListBox.Items.Count.Equals(0))
-            foreach(var l in logins)
-            {
-                
-                SiteListBox.Items.Add(l.Site);
-            }
-            Login login = repo.GetLogins().Where(l => l.Site.StartsWith(FindSiteTextBox.Text)).FirstOrDefault();
+            Login login = logins.Where(l => l.Site.StartsWith(FindSiteTextBox.Text)).FirstOrDefault();
             if (login != null)
             {
                 SaveAlreadyEncryptedCheckBox.IsChecked = false;
@@ -164,7 +158,6 @@ namespace password.manager.winforms
             {
                 SiteNotFoundLables();
             }
-                    
         }
         
         private void SiteNotFoundLables()
@@ -251,6 +244,31 @@ namespace password.manager.winforms
         private void SiteListBox_MouseDown(object sender, MouseButtonEventArgs e)
         {
             
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            SetSearchText();
+        }
+
+        private void SiteListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            SetSearchText();
+        }
+
+        private void SetSearchText()
+        {
+            FindSiteTextBox.Text = (string)SiteListBox.SelectedItem;
+        }
+
+        private void GetRecordsButton_Click(object sender, RoutedEventArgs e)
+        {
+            logins = repo.GetLogins();
+            SiteListBox.Items.Clear();
+            foreach (var l in logins)
+            {
+                SiteListBox.Items.Add(l.Site);
+            }
         }
     }
 }
