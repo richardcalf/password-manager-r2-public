@@ -21,52 +21,65 @@ namespace password.model
             if (File.Exists("Logins.xml"))
             {
                 doc.Load("Logins.xml");
-                IterateOverLogins(logins, doc);
+                BuildLoginList(logins, doc);
             }
 
             return logins.FirstOrDefault(l => l.Site.StartsWith(site));
         }
 
-        private static void IterateOverLogins(List<Login> logins, XmlDocument doc)
+        private static void BuildLoginList(List<Login> logins, XmlDocument doc)
         {
             var Site = string.Empty;
             foreach (XmlNode node in doc.DocumentElement.ChildNodes)
             {
                 foreach (XmlNode lgIn in node)
                 {
+                    #region site if
                     if (lgIn.Name.Equals("Site"))
                     {
+                        #region site code
                         Site = lgIn.InnerText;
                         var lgin = logins.FirstOrDefault(l => l.Site.Equals(Site));
                         if (lgin == null)
                         {
                             logins.Add(new Login { Site = Site });
                         }
+                        #endregion
                     }
+                    #endregion
 
+                    #region username if
                     if (lgIn.Name.Equals("UserName"))
                     {
+                        #region username code
                         var lgin = logins.FirstOrDefault(l => l.Site.Equals(Site));
                         if (lgin != null)
                         {
                             lgin.UserName = lgIn.InnerText;
                         }
+                        #endregion
                     }
+                    #endregion
 
+                    #region password if
                     if (lgIn.Name.Equals("Password"))
                     {
+                        #region password code
                         var lgin = logins.FirstOrDefault(l => l.Site.Equals(Site));
                         if (lgin != null)
                         {
                             lgin.Password = lgIn.InnerText;
                         }
+                        #endregion
                     }
+                    #endregion
                 }
             }
         }
 
         public IEnumerable<Login> GetLogins()
         {
+            #region doc creation, and return empty list
             XmlDocument doc = new XmlDocument();
             List<Login> logins = new List<Login>();
             if (File.Exists("Logins.xml"))
@@ -77,38 +90,109 @@ namespace password.model
             {
                 return new List<Login>();
             }
+            #endregion
 
             var Site = string.Empty;
             foreach (XmlNode node in doc.DocumentElement.ChildNodes)
             {
                 foreach (XmlNode lgIn in node)
                 {
+                    #region site if
                     if (lgIn.Name.Equals("Site"))
                     {
+                        #region site code
                         Site = lgIn.InnerText;
                         logins.Add(new Login { Site = lgIn.InnerText });
+                        #endregion
                     }
+                    #endregion
 
+                    #region username if
                     if (lgIn.Name.Equals("UserName"))
                     {
+                        #region username code
                         var lgin = logins.FirstOrDefault(l => l.Site.Equals(Site));
                         if (lgin != null)
                         {
                             lgin.UserName = lgIn.InnerText;
                         }
+                        #endregion
                     }
+                    #endregion
 
+                    #region password if
                     if (lgIn.Name.Equals("Password"))
                     {
+                        #region password code
                         var lgin = logins.FirstOrDefault(l => l.Site.Equals(Site));
                         if (lgin != null)
                         {
                             lgin.Password = lgIn.InnerText;
                         }
+                        #endregion
                     }
+                    #endregion
                 }
             }
             return logins.OrderBy(l => l.Site);
+        }
+
+        private static bool AmendRecord(Login model, out XmlDocument doc)
+        {
+            #region amend startup
+            doc = new XmlDocument();
+            doc.Load("Logins.xml");
+            var Site = string.Empty;
+            bool fileHasSite = false;
+            #endregion
+
+            foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+            {
+                foreach (XmlNode lgIn in node)
+                {
+                    #region site if
+                    if (lgIn.Name.Equals("Site"))
+                    {
+                        #region site code
+                        if (lgIn.InnerText.Equals(model.Site))
+                        {
+                            fileHasSite = true;
+                            Site = model.Site;
+                        }
+                        else
+                        {
+                            Site = string.Empty;
+                        }
+                        #endregion
+                    }
+                    #endregion
+
+                    #region username if
+                    if (lgIn.Name.Equals("UserName"))
+                    {
+                        #region username code
+                        if (Site.Equals(model.Site))
+                        {
+                            lgIn.InnerText = model.UserName;
+                        }
+                        #endregion
+                    }
+                    #endregion
+
+                    #region password if
+                    if (lgIn.Name.Equals("Password"))
+                    {
+                        #region password code 
+                        if (Site.Equals(model.Site))
+                        {
+                            lgIn.InnerText = model.Password;
+                        }
+                        #endregion
+                    }
+                    #endregion
+                }
+            }
+            return fileHasSite;
         }
 
         public void Save(Login model)
@@ -154,47 +238,6 @@ namespace password.model
             loginNode.AppendChild(passwordNode);
 
             root.AppendChild(loginNode);
-        }
-
-        private static bool AmendRecord(Login model, out XmlDocument doc)
-        {
-            doc = new XmlDocument();
-            doc.Load("Logins.xml");
-            var Site = string.Empty;
-            bool fileHasSite = false;
-            foreach (XmlNode node in doc.DocumentElement.ChildNodes)
-            {
-                foreach (XmlNode lgIn in node)
-                {
-                    if (lgIn.Name.Equals("Site"))
-                    {
-                        if (lgIn.InnerText.Equals(model.Site))
-                        {
-                            fileHasSite = true;
-                            Site = model.Site;
-                        }
-                        else
-                        {
-                            Site = string.Empty;
-                        }
-                    }
-                    if (lgIn.Name.Equals("UserName"))
-                    {
-                        if (Site.Equals(model.Site))
-                        {
-                            lgIn.InnerText = model.UserName;
-                        }
-                    }
-                    if (lgIn.Name.Equals("Password"))
-                    {
-                        if (Site.Equals(model.Site))
-                        {
-                            lgIn.InnerText = model.Password;
-                        }
-                    }
-                }
-            }
-            return fileHasSite;
         }
 
         private static void AddNewXmlFile(Login model)
