@@ -10,7 +10,7 @@ namespace password.model
     {
         public void Save(Login model)
         {
-            PersistXmlFile(model);
+            PersistToXml(model);
         }
 
         public Login GetLogin(string site)
@@ -67,7 +67,7 @@ namespace password.model
             return true;
         }
 
-        private void PersistXmlFile(Login model)
+        private void PersistToXml(Login model)
         {
             if (!IsValid(model)) throw new Exception("Fill out all fields.");
 
