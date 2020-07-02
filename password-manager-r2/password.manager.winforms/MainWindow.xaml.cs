@@ -337,7 +337,7 @@ namespace password.manager.winforms
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure you want to delete?", "Delete Confirmation", MessageBoxButton.YesNo);
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show($"Are you sure you want to delete {SiteTextBox.Text}?", "Delete Confirmation", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 bool deleted = DeleteLogin(SiteTextBox.Text);
