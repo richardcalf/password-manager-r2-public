@@ -83,8 +83,39 @@ namespace password.manager.winforms
             }
         }
 
+        private void ClearUpdateUIMessage()
+        {
+            UpdateLabel.Content = string.Empty;
+        }
+
+        private void UpdateSuccessUIMessage()
+        {
+            UpdateLabel.Foreground = Brushes.Green;
+            UpdateLabel.Content = "Update Succeeded";
+        }
+
+        private void DeleteSuccessUIMessage()
+        {
+            UpdateLabel.Foreground = Brushes.Green;
+            UpdateLabel.Content = "Delete Succeeded";
+        }
+
+        private void DeleteFailedUIMessage()
+        {
+            UpdateLabel.Foreground = Brushes.Red;
+            UpdateLabel.Content = "Delete Failed";
+        }
+
+
+        private void UpdateFailedUIMessage()
+        {
+            UpdateLabel.Foreground = Brushes.Red;
+            UpdateLabel.Content = "Update Failed";
+        }
+
         private void PrintException(string message)
         {
+            
             errorLabel.Foreground = Brushes.Red;
             errorLabel.Content = message;
         }
@@ -141,10 +172,25 @@ namespace password.manager.winforms
                 {
                     repo.Save(login);
                 });
+                UpdateSuccessUIMessage();
+            }
+            catch (Exception ex)
+            {
+                UpdateFailedUIMessage();
+                PrintException(ex.Message);
+            }
+        }
+
+        private bool DeleteLogin(string site)
+        {
+            try
+            {
+                return repo.Delete(site);
             }
             catch (Exception ex)
             {
                 PrintException(ex.Message);
+                return false;
             }
         }
 
@@ -164,6 +210,7 @@ namespace password.manager.winforms
             UserNameTextBox.Clear();
             PasswordTextBox.Clear();
             errorLabel.Content = string.Empty;
+            ClearUpdateUIMessage();
         }
 
         private void SetSearchText()
@@ -187,6 +234,7 @@ namespace password.manager.winforms
             {
                 GetAllRecords();
             });
+            ClearUpdateUIMessage();
             SearchingIsReady(true);
             PopulateListBox();
         }
@@ -198,17 +246,20 @@ namespace password.manager.winforms
         {
             InitializeData();
             InitializeButtonsState();
+            ClearUpdateUIMessage();
         }
         private async void decryptButton_Click(object sender, RoutedEventArgs e)
         {
             await Decrypt(encryptedTextBox.Text);
             InitializeButtonsState();
+            ClearUpdateUIMessage();
         }
 
         private async void encryptButton_Click(object sender, RoutedEventArgs e)
         {
             await Encrypt(plainTextBox.Text);
             InitializeButtonsState();
+            ClearUpdateUIMessage();
         }
 
         private void plainTextBox_KeyUp(object sender, KeyEventArgs e)
@@ -239,6 +290,7 @@ namespace password.manager.winforms
         private void ClearSearchButton_Click(object sender, RoutedEventArgs e)
         {
             FindSiteTextBox.Clear();
+            ClearUpdateUIMessage();
         }
 
         private void ClearDataButton_Click(object sender, RoutedEventArgs e)
@@ -264,6 +316,7 @@ namespace password.manager.winforms
         private void button_Click(object sender, RoutedEventArgs e)
         {
             SetSearchText();
+            ClearUpdateUIMessage();
         }
 
         private async void SiteListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -280,6 +333,50 @@ namespace password.manager.winforms
         private async void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
             await UpdateLogin();
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure you want to delete?", "Delete Confirmation", MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                bool deleted = DeleteLogin(SiteTextBox.Text);
+                if (deleted)
+                {
+                    RemoveItemFromListBox();
+                    ClearDataInputs();
+                    DeleteSuccessUIMessage();
+                }
+                else
+                {
+                    DeleteFailedUIMessage();
+                }
+            }
+        }
+
+        private void RemoveItemFromListBox()
+        {
+            bool listBoxHasDeletedSite = false;
+            foreach (var item in SiteListBox.Items)
+            {
+                listBoxHasDeletedSite = item.ToString().Equals(SiteTextBox.Text);
+                if (listBoxHasDeletedSite)
+                {
+                    break;
+                }
+            }
+            if (listBoxHasDeletedSite)
+            {
+
+                int index = SiteListBox.Items.IndexOf(SiteTextBox.Text);
+                SiteListBox.Items.RemoveAt(index);
+            }
+        }
+
+        private void ClearLitButton_Click(object sender, RoutedEventArgs e)
+        {
+            SiteListBox.Items.Clear();
+            ClearUpdateUIMessage();
         }
         #endregion
     }

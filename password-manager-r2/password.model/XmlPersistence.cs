@@ -13,6 +13,11 @@ namespace password.model
             PersistToXml(model);
         }
 
+        public bool Delete(string model)
+        {
+            return DeleteXmlElement(model);
+        }
+
         public Login GetLogin(string site)
         {
             return GetLoginList().FirstOrDefault(l => l.Site.StartsWith(site));
@@ -82,6 +87,24 @@ namespace password.model
                     AddNewRecord(model);
                 }
             }
+        }
+
+        private bool DeleteXmlElement(string site)
+        {
+            var doc = XDocument.Load("Logins.xml");
+
+            var login =
+                (from lgin in doc.Descendants("Login")
+                 where lgin.Element("Site").Value == site
+                 select lgin).SingleOrDefault();
+
+            if (login != null)
+            {
+                login.Remove();
+                doc.Save("Logins.xml");
+                return true;
+            }
+            return false;
         }
 
         private void AddNewRecord(Login model)
