@@ -20,6 +20,10 @@ namespace password.model
 
         public Login GetLogin(string site)
         {
+            if(string.IsNullOrWhiteSpace(site))
+            {
+                return null;
+            }
             return GetLoginList().FirstOrDefault(l => l.Site.StartsWith(site));
         }
 
