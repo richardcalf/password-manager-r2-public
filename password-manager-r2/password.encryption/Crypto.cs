@@ -26,6 +26,7 @@
         private byte[] mKey = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 };
         private byte[] mIV = { 65, 110, 68, 26, 69, 178, 200, 219 };
         private byte[] SaltByteArray = { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 };
+        private byte[] dynamicSalt = { 0x98, 0x55 };
         private CryptoTypes mCryptoType = CRYPT_DEFAULT_METHOD;
         private string mPassword = CRYPT_DEFAULT_PASSWORD;
         #endregion
@@ -34,11 +35,24 @@
 
         public Crypto()
         {
+            SetDynamicToSalt();
             calculateNewKeyAndIV();
+        }
+
+        private void SetDynamicToSalt()
+        {
+            dynamicSalt = SaltByteArray;
         }
 
         public Crypto(CryptoTypes CryptoType)
         {
+            SetDynamicToSalt();
+            this.CryptoType = CryptoType;
+        }
+
+        public Crypto(CryptoTypes CryptoType, string salt)
+        {
+            dynamicSalt = Encoding.ASCII.GetBytes(salt);
             this.CryptoType = CryptoType;
         }
         #endregion
@@ -294,7 +308,7 @@
         private void calculateNewKeyAndIV()
         {
             //use salt so that key cannot be found with dictionary attack
-            PasswordDeriveBytes pdb = new PasswordDeriveBytes(mPassword, SaltByteArray);
+            PasswordDeriveBytes pdb = new PasswordDeriveBytes(mPassword, dynamicSalt);
             SymmetricAlgorithm algo = selectAlgorithm();
             mKey = pdb.GetBytes(algo.KeySize / 8);
             mIV = pdb.GetBytes(algo.BlockSize / 8);

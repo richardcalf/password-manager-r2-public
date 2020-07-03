@@ -367,7 +367,6 @@ namespace password.manager.winforms
             }
             if (listBoxHasDeletedSite)
             {
-
                 int index = SiteListBox.Items.IndexOf(SiteTextBox.Text);
                 SiteListBox.Items.RemoveAt(index);
             }
