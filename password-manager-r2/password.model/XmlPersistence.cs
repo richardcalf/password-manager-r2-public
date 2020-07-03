@@ -24,7 +24,7 @@ namespace password.model
             {
                 return null;
             }
-            return GetLoginList().FirstOrDefault(l => l.Site.StartsWith(site));
+            return GetLoginSingle(site);
         }
 
         public IEnumerable<Login> GetLogins()
@@ -37,6 +37,23 @@ namespace password.model
             return !(string.IsNullOrWhiteSpace(model.Site) ||
                 string.IsNullOrWhiteSpace(model.UserName) ||
                 string.IsNullOrWhiteSpace(model.Password));
+        }
+
+        private Login GetLoginSingle(string site)
+        {
+            if(File.Exists("Logins.xml"))
+            {
+                XElement doc = XElement.Load("Logins.xml");
+                return doc.Elements("Login").Where(l => l.Element("Site").Value.StartsWith(site))
+                                            .OrderBy(l => l.Element("Site").Value)
+                                            .Select(l => new Login
+                                            {
+                                                Site = l.Element("Site").Value,
+                                                UserName = l.Element("UserName").Value,
+                                                Password = l.Element("Password").Value
+                                            }).FirstOrDefault();
+            }
+            return null;
         }
 
         private IEnumerable<Login> GetLoginList()
