@@ -17,6 +17,8 @@ using password.service;
 using password.model;
 using System.Timers;
 using System.Net.Http.Headers;
+using System.IO;
+using System.Xml.Linq;
 
 namespace password.manager.winforms
 {
@@ -28,12 +30,16 @@ namespace password.manager.winforms
         IEnumerable<Login> logins;
         IRepository repo = new XmlPersistence();
         IServiceAsync service = new EncryptionService();
+        private const string updateSucceeded = "Update Succeeded";
+        private const string updateFailed = "Update Failed";
         public MainWindow()
         {
             InitializeComponent();
             InitializeData();
             InitializeButtonsState();
             GetAllRecordsAsync();
+            FilePathTextBox.Text = Settings.GetValueFromSettingKey("push");
+            RevertPathButton.Content = @"<< Revert";
         }
 
         #region private non UI methods 
@@ -52,6 +58,35 @@ namespace password.manager.winforms
                 GetAllRecords();
             });
             SearchingIsReady(true);
+        }
+
+        private void PushLogins()
+        {
+            var pushfile = Settings.GetValueFromSettingKey("push");
+
+            if (pushfile == null)
+            {
+                FailedUIMessage("push configuration is not setup");
+                return;
+            }
+
+            if (File.Exists("Logins.xml"))
+            {
+                File.Delete(pushfile);
+                File.Copy("Logins.xml", pushfile);
+                SuccessUIMessage("File has been pushed");
+            }
+            else
+            {
+                FailedUIMessage("No file to push");
+            }
+        }
+
+        private void SavePushPath()
+        {
+            var value = FilePathTextBox.Text;
+            Settings.SaveAppSetting("push", value);
+            SuccessUIMessage("Path has been updated");
         }
 
         private void SearchingIsReady(bool ready)
@@ -88,10 +123,10 @@ namespace password.manager.winforms
             UpdateLabel.Content = string.Empty;
         }
 
-        private void UpdateSuccessUIMessage()
+        private void SuccessUIMessage(string message)
         {
             UpdateLabel.Foreground = Brushes.Green;
-            UpdateLabel.Content = "Update Succeeded";
+            UpdateLabel.Content = message;
         }
 
         private void DeleteSuccessUIMessage()
@@ -107,10 +142,10 @@ namespace password.manager.winforms
         }
 
 
-        private void UpdateFailedUIMessage()
+        private void FailedUIMessage(string message)
         {
             UpdateLabel.Foreground = Brushes.Red;
-            UpdateLabel.Content = "Update Failed";
+            UpdateLabel.Content = message;
         }
 
         private void PrintException(string message)
@@ -172,11 +207,11 @@ namespace password.manager.winforms
                 {
                     repo.Save(login);
                 });
-                UpdateSuccessUIMessage();
+                SuccessUIMessage(updateSucceeded);
             }
             catch (Exception ex)
             {
-                UpdateFailedUIMessage();
+                FailedUIMessage(updateFailed);
                 PrintException(ex.Message);
             }
         }
@@ -378,5 +413,28 @@ namespace password.manager.winforms
             ClearUpdateUIMessage();
         }
         #endregion
+
+        private void PushButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show($"Are you sure you want to push the Logins?", "Push Confirmation", MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                PushLogins();
+            }
+        }
+
+        private void SaveSettingButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show($"Are you sure you want Save this Push File Path [{FilePathTextBox.Text}] ?", "Push File Path Confirmation", MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                SavePushPath();
+            }
+        }
+
+        private void RevertPathButton_Click(object sender, RoutedEventArgs e)
+        {
+            FilePathTextBox.Text = Settings.GetValueFromSettingKey("push");
+        }
     }
 }

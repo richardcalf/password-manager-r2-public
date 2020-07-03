@@ -34,5 +34,9 @@
         <Button x:Name="ClearLitButton" Content="Clear List" HorizontalAlignment="Left" Margin="149,148,0,0" VerticalAlignment="Top" Width="75" Click="ClearLitButton_Click"/>
         <Button x:Name="DeleteButton" Content="Delete" HorizontalAlignment="Left" Margin="784,259,0,0" VerticalAlignment="Top" Width="75" Click="DeleteButton_Click"/>
         <Label x:Name="UpdateLabel" Content="" HorizontalAlignment="Left" Margin="551,289,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="PushButton" Content="Push Logins >>" HorizontalAlignment="Left" Margin="303,352,0,0" VerticalAlignment="Top" Width="101" Click="PushButton_Click"/>
+        <Button x:Name="SaveSettingButton" Content="SaveSetting" HorizontalAlignment="Left" Margin="303,386,0,0" VerticalAlignment="Top" Width="101" Click="SaveSettingButton_Click"/>
+        <TextBox x:Name="FilePathTextBox" HorizontalAlignment="Left" Height="23" Margin="421,384,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="236"/>
+        <Button x:Name="RevertPathButton" Content="Revert" HorizontalAlignment="Left" Margin="678,387,0,0" VerticalAlignment="Top" Width="75" Click="RevertPathButton_Click"/>
     </Grid>
 </Window>

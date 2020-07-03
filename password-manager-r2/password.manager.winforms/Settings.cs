@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
-using password.model;
+using System.Xml.Linq;
+using System.Configuration;
 
-namespace password.code.runner
+namespace password.manager.winforms
 {
-    class Program
+    public static class Settings
     {
-        static void Main(string[] args)
+        public static string GetValueFromSettingKey(string value)
         {
-            AddUpdateAppSettings("keyValue", "valueValue");
-            Console.ReadLine();
+            var doc = XElement.Load(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+            return
+                (from setting in doc.Elements("appSettings").Elements("add")
+                 select setting).Where(s => s.Attribute("key").Value == value)
+                                  .Select(p => p.Attribute("value").Value).FirstOrDefault();
         }
 
-        static void AddUpdateAppSettings(string key, string value)
+        public static void SaveAppSetting(string key, string value)
         {
             try
             {
