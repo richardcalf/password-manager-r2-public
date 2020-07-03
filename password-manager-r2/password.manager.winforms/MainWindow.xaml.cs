@@ -40,6 +40,7 @@ namespace password.manager.winforms
             GetAllRecordsAsync();
             FilePathTextBox.Text = Settings.GetValueFromSettingKey("push");
             RevertPathButton.Content = @"<< Revert";
+            PullButton.Content = @"<< Pull Logins";
         }
 
         #region private non UI methods 
@@ -79,6 +80,28 @@ namespace password.manager.winforms
             else
             {
                 FailedUIMessage("No file to push");
+            }
+        }
+
+        private void PullLogins()
+        {
+            var pullfile = Settings.GetValueFromSettingKey("push");
+
+            if (pullfile == null)
+            {
+                FailedUIMessage("push configuration is not setup");
+                return;
+            }
+
+            if (File.Exists(pullfile))
+            {
+                File.Delete("Logins.xml");
+                File.Copy(pullfile, "Logins.xml" );
+                SuccessUIMessage("File has been pulled");
+            }
+            else
+            {
+                FailedUIMessage("No file to pull");
             }
         }
 
@@ -416,7 +439,7 @@ namespace password.manager.winforms
 
         private void PushButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show($"Are you sure you want to push the Logins?", "Push Confirmation", MessageBoxButton.YesNo);
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show($"Are you sure you want to push the Logins to [{Settings.GetValueFromSettingKey("push")}] ?", "Push Confirmation", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 PushLogins();
@@ -435,6 +458,15 @@ namespace password.manager.winforms
         private void RevertPathButton_Click(object sender, RoutedEventArgs e)
         {
             FilePathTextBox.Text = Settings.GetValueFromSettingKey("push");
+        }
+
+        private void PullButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show($"Are you sure you want to pull the Logins from [{Settings.GetValueFromSettingKey("push")}] ?", "Pull File Path Confirmation", MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                PullLogins();
+            }
         }
     }
 }
