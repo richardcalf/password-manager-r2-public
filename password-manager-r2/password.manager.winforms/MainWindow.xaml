@@ -35,9 +35,15 @@
         <Button x:Name="DeleteButton" Content="Delete" HorizontalAlignment="Left" Margin="784,259,0,0" VerticalAlignment="Top" Width="75" Click="DeleteButton_Click"/>
         <Label x:Name="UpdateLabel" Content="" HorizontalAlignment="Left" Margin="551,289,0,0" VerticalAlignment="Top"/>
         <Button x:Name="PushButton" Content="Push Logins >>" HorizontalAlignment="Left" Margin="303,352,0,0" VerticalAlignment="Top" Width="101" Click="PushButton_Click"/>
-        <Button x:Name="SaveSettingButton" Content="SaveSetting" HorizontalAlignment="Left" Margin="303,377,0,0" VerticalAlignment="Top" Width="101" Click="SaveSettingButton_Click"/>
+        <Button x:Name="SaveSettingButton" Content="Save Setting" HorizontalAlignment="Left" Margin="303,377,0,0" VerticalAlignment="Top" Width="101" Click="SaveSettingButton_Click"/>
         <TextBox x:Name="FilePathTextBox" HorizontalAlignment="Left" Height="23" Margin="421,374,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="358"/>
-        <Button x:Name="RevertPathButton" Content="Revert" HorizontalAlignment="Left" Margin="784,375,0,0" VerticalAlignment="Top" Width="75" Click="RevertPathButton_Click"/>
-        <Button x:Name="PullButton" Content="Pull Logins" HorizontalAlignment="Left" Margin="784,400,0,0" VerticalAlignment="Top" Width="75" Click="PullButton_Click"/>
+        <Button x:Name="RevertPathButton" Content="Revert" HorizontalAlignment="Left" Margin="784,377,0,0" VerticalAlignment="Top" Width="75" Click="RevertPathButton_Click"/>
+        <Button x:Name="PullButton" Content="Pull Logins" HorizontalAlignment="Left" Margin="784,351,0,0" VerticalAlignment="Top" Width="75" Click="PullButton_Click"/>
+        <TextBox x:Name="CurrentSaltTextBox" HorizontalAlignment="Left" Height="23" Margin="551,403,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="228"/>
+        <Label x:Name="CurrentSaltLabel" Content="Current Salt" HorizontalAlignment="Left" Margin="453,403,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="SaveSaltButton" Content="Save Salt" HorizontalAlignment="Left" Margin="784,405,0,0" VerticalAlignment="Top" Width="75" Click="SaveSaltButton_Click"/>
+        <TextBox x:Name="ReSaltTextBox" HorizontalAlignment="Left" Height="23" Margin="551,432,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="228" KeyUp="ReSaltTextBox_KeyUp"/>
+        <Label x:Name="ReSaltLabel" Content="Re-Salt" HorizontalAlignment="Left" Margin="454,434,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="ReSaltButton" Content="Re-Salt" HorizontalAlignment="Left" Margin="784,431,0,0" VerticalAlignment="Top" Width="75" Click="ReSaltButton_Click"/>
     </Grid>
 </Window>

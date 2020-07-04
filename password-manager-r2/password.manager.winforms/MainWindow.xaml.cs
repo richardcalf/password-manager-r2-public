@@ -19,6 +19,7 @@ using System.Timers;
 using System.Net.Http.Headers;
 using System.IO;
 using System.Xml.Linq;
+using password.resalter;
 
 namespace password.manager.winforms
 {
@@ -29,18 +30,37 @@ namespace password.manager.winforms
     {
         IEnumerable<Login> logins;
         IRepository repo = new XmlPersistence();
-        IServiceAsync service = new EncryptionService();
+        IServiceAsync service;
+        IResalterAsync resalter;
         private const string updateSucceeded = "Update Succeeded";
         private const string updateFailed = "Update Failed";
+        private string globalSalt;
         public MainWindow()
         {
             InitializeComponent();
             InitializeData();
             InitializeButtonsState();
             GetAllRecordsAsync();
+            globalSalt = Settings.GetValueFromSettingKey("salt");
+            CurrentSaltTextBox.Text = globalSalt;
+            service = GetEncryptionService();
             FilePathTextBox.Text = Settings.GetValueFromSettingKey("push");
             RevertPathButton.Content = @"<< Revert";
             PullButton.Content = @"<< Pull Logins";
+            CurrentSaltTextBox.IsEnabled = false;
+            SaveSaltButton.IsEnabled = false;
+        }
+
+        private EncryptionService GetEncryptionService()
+        {
+            if (globalSalt == null)
+            {
+                return new EncryptionService();
+            }
+            else
+            {
+                return new EncryptionService(globalSalt);
+            }
         }
 
         #region private non UI methods 
@@ -105,11 +125,10 @@ namespace password.manager.winforms
             }
         }
 
-        private void SavePushPath()
+        private void SaveSetting(string key, string value)
         {
-            var value = FilePathTextBox.Text;
-            Settings.SaveAppSetting("push", value);
-            SuccessUIMessage("Path has been updated");
+            Settings.SaveAppSetting(key, value);
+            SuccessUIMessage($"Setting [{key}] has been updated");
         }
 
         private void SearchingIsReady(bool ready)
@@ -151,19 +170,6 @@ namespace password.manager.winforms
             UpdateLabel.Foreground = Brushes.Green;
             UpdateLabel.Content = message;
         }
-
-        private void DeleteSuccessUIMessage()
-        {
-            UpdateLabel.Foreground = Brushes.Green;
-            UpdateLabel.Content = "Delete Succeeded";
-        }
-
-        private void DeleteFailedUIMessage()
-        {
-            UpdateLabel.Foreground = Brushes.Red;
-            UpdateLabel.Content = "Delete Failed";
-        }
-
 
         private void FailedUIMessage(string message)
         {
@@ -395,7 +401,7 @@ namespace password.manager.winforms
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show($"Are you sure you want to delete {SiteTextBox.Text}?", "Delete Confirmation", MessageBoxButton.YesNo);
+            MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to delete {SiteTextBox.Text}?", "Delete Confirmation", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 bool deleted = DeleteLogin(SiteTextBox.Text);
@@ -403,30 +409,25 @@ namespace password.manager.winforms
                 {
                     RemoveItemFromListBox();
                     ClearDataInputs();
-                    DeleteSuccessUIMessage();
+                    SuccessUIMessage("Delete Succeeded");
                 }
                 else
                 {
-                    DeleteFailedUIMessage();
+                    FailedUIMessage("Delete Failed");
                 }
             }
         }
 
         private void RemoveItemFromListBox()
         {
-            bool listBoxHasDeletedSite = false;
             foreach (var item in SiteListBox.Items)
             {
-                listBoxHasDeletedSite = item.ToString().Equals(SiteTextBox.Text);
-                if (listBoxHasDeletedSite)
+                if (item.ToString().Equals(SiteTextBox.Text))
                 {
+                    int index = SiteListBox.Items.IndexOf(SiteTextBox.Text);
+                    SiteListBox.Items.RemoveAt(index);
                     break;
                 }
-            }
-            if (listBoxHasDeletedSite)
-            {
-                int index = SiteListBox.Items.IndexOf(SiteTextBox.Text);
-                SiteListBox.Items.RemoveAt(index);
             }
         }
 
@@ -448,10 +449,10 @@ namespace password.manager.winforms
 
         private void SaveSettingButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show($"Are you sure you want Save this Push File Path [{FilePathTextBox.Text}] ?", "Push File Path Confirmation", MessageBoxButton.YesNo);
+            MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want Save this Push File Path [{FilePathTextBox.Text}] ?", "Push File Path Confirmation", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                SavePushPath();
+                SaveSetting("push", FilePathTextBox.Text);
             }
         }
 
@@ -467,6 +468,66 @@ namespace password.manager.winforms
             {
                 PullLogins();
             }
+        }
+
+        private void SaveSaltButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveSetting("salt", CurrentSaltTextBox.Text);
+            ReSaltTextBox.Text = string.Empty;
+            ReSaltEasterEgg();
+            service = new EncryptionService(CurrentSaltTextBox.Text);
+        }
+
+        private async void ReSaltButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you would like to Re-Salt?", "Re-Salt Confirmation", MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                if (string.IsNullOrWhiteSpace(ReSaltTextBox.Text))
+                {
+                    FailedUIMessage("Unable to Re-Salt to empty string");
+                    return;
+                }
+                if (ReSaltTextBox.Text == CurrentSaltTextBox.Text)
+                {
+                    FailedUIMessage("Salt has not changed");
+                    return;
+                }
+                await ResaltAllLogins(CurrentSaltTextBox.Text, ReSaltTextBox.Text);
+                CurrentSaltTextBox.Text = ReSaltTextBox.Text;
+            }
+        }
+
+        private async Task ResaltAllLogins(string previousSalt, string newSalt)
+        {
+            resalter = new Resalter();
+            logins = repo.GetLogins();
+
+            var newSaltedLogins = await resalter.ResaltAsync(previousSalt, newSalt, logins);
+
+            await Task.Run(() =>
+            {
+                repo.Save(newSaltedLogins);
+            });
+
+            logins = newSaltedLogins;
+            SaveSetting("salt", newSalt);
+            SuccessUIMessage("Re-Salting Succeeded");
+            
+            service = new EncryptionService(newSalt);
+        }
+
+        private void ReSaltTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            ReSaltEasterEgg();
+        }
+
+        private void ReSaltEasterEgg()
+        {
+            var enabled = ReSaltTextBox.Text.Equals("reverb");
+            CurrentSaltTextBox.IsEnabled = enabled;
+            SaveSaltButton.IsEnabled = enabled;
+            ReSaltButton.IsEnabled = !enabled;
         }
     }
 }

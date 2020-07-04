@@ -12,9 +12,19 @@ namespace password.service
 
     public class EncryptionService : IService, IServiceAsync
     {
+        private Crypto crypt;
+        public EncryptionService(string salt)
+        {
+            crypt = new Crypto(Crypto.CryptoTypes.encTypeTripleDES, salt);//salt from caller
+        }
+
+        public EncryptionService()
+        {
+            crypt = new Crypto(Crypto.CryptoTypes.encTypeTripleDES);//default salt
+        }
+
         public string Decrypt(string value)
         {
-            Crypto crypt = new Crypto(Crypto.CryptoTypes.encTypeTripleDES);
             return crypt.Decrypt(value);
         }
 
@@ -28,7 +38,6 @@ namespace password.service
 
         public string Encrypt(string value)
         {
-            Crypto crypt = new Crypto(Crypto.CryptoTypes.encTypeTripleDES);
             return crypt.Encrypt(value);
         }
 

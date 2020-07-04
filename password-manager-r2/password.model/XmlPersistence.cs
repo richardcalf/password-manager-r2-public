@@ -13,6 +13,14 @@ namespace password.model
             PersistToXml(model);
         }
 
+        public void Save(IEnumerable<Login> models)
+        {
+            foreach(var model in models)
+            {
+                Save(model);
+            }
+        }
+
         public bool Delete(string model)
         {
             return DeleteXmlElement(model);

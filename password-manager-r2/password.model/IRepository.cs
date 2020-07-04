@@ -9,6 +9,7 @@ namespace password.model
     public interface IRepository
     {
         void Save(Login model);
+        void Save(IEnumerable<Login> models);
         bool Delete(string site);
         Login GetLogin(string site);
         IEnumerable<Login> GetLogins();
