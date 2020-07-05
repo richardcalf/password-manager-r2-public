@@ -49,6 +49,7 @@ namespace password.manager.winforms
             PullButton.Content = @"<< Pull Logins";
             CurrentSaltTextBox.IsEnabled = false;
             SaveSaltButton.IsEnabled = false;
+            AdvancedCanvas.Visibility = Visibility.Hidden;
         }
 
         private EncryptionService GetEncryptionService()
@@ -436,7 +437,7 @@ namespace password.manager.winforms
             SiteListBox.Items.Clear();
             ClearUpdateUIMessage();
         }
-        #endregion
+        
 
         private void PushButton_Click(object sender, RoutedEventArgs e)
         {
@@ -485,7 +486,7 @@ namespace password.manager.winforms
             {
                 if (string.IsNullOrWhiteSpace(ReSaltTextBox.Text))
                 {
-                    FailedUIMessage("Unable to Re-Salt to empty string");
+                    FailedUIMessage("Unable to Re-Salt with an empty string");
                     return;
                 }
                 if (ReSaltTextBox.Text == CurrentSaltTextBox.Text)
@@ -529,5 +530,25 @@ namespace password.manager.winforms
             SaveSaltButton.IsEnabled = enabled;
             ReSaltButton.IsEnabled = !enabled;
         }
+
+        private void AdvancedButton_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleAdvancedPanel();
+        }
+
+        private void ToggleAdvancedPanel()
+        {
+            if (AdvancedCanvas.Visibility == Visibility.Hidden)
+            {
+                AdvancedCanvas.Visibility = Visibility.Visible;
+                AdvancedButton.Content = "Advanced <<";
+            }
+            else
+            {
+                AdvancedCanvas.Visibility = Visibility.Hidden;
+                AdvancedButton.Content = "Advanced >>";
+            }
+        }
+        #endregion
     }
 }
