@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Configuration;
 
-namespace password.manager.winforms
+namespace password.settings
 {
     public static class Settings
     {

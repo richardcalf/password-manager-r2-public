@@ -20,6 +20,7 @@ using System.Net.Http.Headers;
 using System.IO;
 using System.Xml.Linq;
 using password.resalter;
+using password.settings;
 
 namespace password.manager.winforms
 {
@@ -79,7 +80,7 @@ namespace password.manager.winforms
             {
                 GetAllRecords();
             });
-            SearchingIsReady(true);
+            DataInputIsReady(true);
         }
 
         private void PushLogins()
@@ -132,9 +133,17 @@ namespace password.manager.winforms
             SuccessUIMessage($"Setting [{key}] has been updated");
         }
 
-        private void SearchingIsReady(bool ready)
+        private void DataInputIsReady(bool ready)
         {
             FindSiteButton.IsEnabled = ready;
+            GetRecordsButton.IsEnabled = ready;
+            UpdateButton.IsEnabled = ready;
+            DeleteButton.IsEnabled = ready;
+            PushButton.IsEnabled = ready;
+            PullButton.IsEnabled = ready;
+            ReSaltButton.IsEnabled = ready;
+            SiteListBox.IsEnabled = ready;
+            SelectSiteButton.IsEnabled = ready;
         }
 
         private async Task Decrypt(string encryptedValue)
@@ -180,7 +189,6 @@ namespace password.manager.winforms
 
         private void PrintException(string message)
         {
-            
             errorLabel.Foreground = Brushes.Red;
             errorLabel.Content = message;
         }
@@ -283,25 +291,30 @@ namespace password.manager.winforms
             FindSiteTextBox.Text = (string)SiteListBox.SelectedItem;
         }
 
-        private void PopulateListBox()
+        private async Task PopulateListBox()
         {
-            foreach (var l in logins)
+            await Task.Run(() =>
             {
-                SiteListBox.Items.Add(l.Site);
-            }
+                Dispatcher.Invoke(() =>
+                {
+                    foreach (var l in logins)
+                    {
+                        SiteListBox.Items.Add(l.Site);
+                    }
+                });
+            });
+            CountRecordslabel.Content = $"record count: {logins.Count()}";
         }
 
         private async Task RefreshList()
         {
-            SearchingIsReady(false);
+            DataInputIsReady(false);
             SiteListBox.Items.Clear();
-            await Task.Run(() =>
-            {
-                GetAllRecords();
-            });
+            await GetAllRecordsAsync();
             ClearUpdateUIMessage();
-            SearchingIsReady(true);
+            DataInputIsReady(true);
             PopulateListBox();
+            
         }
 
         private void RemoveItemFromListBox()
@@ -533,8 +546,12 @@ namespace password.manager.winforms
                     FailedUIMessage("Salt has not changed");
                     return;
                 }
+                DataInputIsReady(false);
+                ClearUpdateUIMessage();
                 await ResaltAllLogins(CurrentSaltTextBox.Text, ReSaltTextBox.Text);
                 CurrentSaltTextBox.Text = ReSaltTextBox.Text;
+                ReSaltTextBox.Text = string.Empty;
+                DataInputIsReady(true);
             }
         }
 
