@@ -52,6 +52,12 @@ namespace password.manager.winforms
             AdvancedCanvas.Visibility = Visibility.Hidden;
         }
 
+        #region private non UI methods 
+        private void GetAllRecords()
+        {
+            logins = repo.GetLogins();
+        }
+
         private EncryptionService GetEncryptionService()
         {
             if (globalSalt == null)
@@ -64,15 +70,9 @@ namespace password.manager.winforms
             }
         }
 
-        #region private non UI methods 
-        private void GetAllRecords()
-        {
-            logins = repo.GetLogins();
-        }
         #endregion
 
         #region private UI coupled methods
-
         private async Task GetAllRecordsAsync()
         {
             await Task.Run(() =>
@@ -304,6 +304,59 @@ namespace password.manager.winforms
             PopulateListBox();
         }
 
+        private void RemoveItemFromListBox()
+        {
+            foreach (var item in SiteListBox.Items)
+            {
+                if (item.ToString().Equals(SiteTextBox.Text))
+                {
+                    int index = SiteListBox.Items.IndexOf(SiteTextBox.Text);
+                    SiteListBox.Items.RemoveAt(index);
+                    break;
+                }
+            }
+        }
+
+        private async Task ResaltAllLogins(string previousSalt, string newSalt)
+        {
+            resalter = new Resalter();
+            logins = repo.GetLogins();
+
+            var newSaltedLogins = await resalter.ResaltAsync(previousSalt, newSalt, logins);
+
+            await Task.Run(() =>
+            {
+                repo.Save(newSaltedLogins);
+            });
+
+            logins = newSaltedLogins;
+            SaveSetting("salt", newSalt);
+            SuccessUIMessage("Re-Salting Succeeded");
+
+            service = new EncryptionService(newSalt);
+        }
+
+        private void ReSaltEasterEgg()
+        {
+            var enabled = ReSaltTextBox.Text.Equals("reverb");
+            CurrentSaltTextBox.IsEnabled = enabled;
+            SaveSaltButton.IsEnabled = enabled;
+            ReSaltButton.IsEnabled = !enabled;
+        }
+
+        private void ToggleAdvancedPanel()
+        {
+            if (AdvancedCanvas.Visibility == Visibility.Hidden)
+            {
+                AdvancedCanvas.Visibility = Visibility.Visible;
+                AdvancedButton.Content = "Advanced <<";
+            }
+            else
+            {
+                AdvancedCanvas.Visibility = Visibility.Hidden;
+                AdvancedButton.Content = "Advanced >>";
+            }
+        }
         #endregion
 
         #region UI events, Click events
@@ -419,25 +472,11 @@ namespace password.manager.winforms
             }
         }
 
-        private void RemoveItemFromListBox()
-        {
-            foreach (var item in SiteListBox.Items)
-            {
-                if (item.ToString().Equals(SiteTextBox.Text))
-                {
-                    int index = SiteListBox.Items.IndexOf(SiteTextBox.Text);
-                    SiteListBox.Items.RemoveAt(index);
-                    break;
-                }
-            }
-        }
-
         private void ClearLitButton_Click(object sender, RoutedEventArgs e)
         {
             SiteListBox.Items.Clear();
             ClearUpdateUIMessage();
         }
-        
 
         private void PushButton_Click(object sender, RoutedEventArgs e)
         {
@@ -499,36 +538,9 @@ namespace password.manager.winforms
             }
         }
 
-        private async Task ResaltAllLogins(string previousSalt, string newSalt)
-        {
-            resalter = new Resalter();
-            logins = repo.GetLogins();
-
-            var newSaltedLogins = await resalter.ResaltAsync(previousSalt, newSalt, logins);
-
-            await Task.Run(() =>
-            {
-                repo.Save(newSaltedLogins);
-            });
-
-            logins = newSaltedLogins;
-            SaveSetting("salt", newSalt);
-            SuccessUIMessage("Re-Salting Succeeded");
-            
-            service = new EncryptionService(newSalt);
-        }
-
         private void ReSaltTextBox_KeyUp(object sender, KeyEventArgs e)
         {
             ReSaltEasterEgg();
-        }
-
-        private void ReSaltEasterEgg()
-        {
-            var enabled = ReSaltTextBox.Text.Equals("reverb");
-            CurrentSaltTextBox.IsEnabled = enabled;
-            SaveSaltButton.IsEnabled = enabled;
-            ReSaltButton.IsEnabled = !enabled;
         }
 
         private void AdvancedButton_Click(object sender, RoutedEventArgs e)
@@ -536,19 +548,7 @@ namespace password.manager.winforms
             ToggleAdvancedPanel();
         }
 
-        private void ToggleAdvancedPanel()
-        {
-            if (AdvancedCanvas.Visibility == Visibility.Hidden)
-            {
-                AdvancedCanvas.Visibility = Visibility.Visible;
-                AdvancedButton.Content = "Advanced <<";
-            }
-            else
-            {
-                AdvancedCanvas.Visibility = Visibility.Hidden;
-                AdvancedButton.Content = "Advanced >>";
-            }
-        }
+        
         #endregion
     }
 }
