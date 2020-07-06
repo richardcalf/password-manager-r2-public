@@ -303,7 +303,11 @@ namespace password.manager.winforms
                     }
                 });
             });
-            CountRecordslabel.Content = $"record count: {logins.Count()}";
+        }
+
+        private void UpdateRecordCountLabel(int count)
+        {
+            CountRecordslabel.Content = $"record count: {count}";
         }
 
         private async Task RefreshList()
@@ -313,8 +317,8 @@ namespace password.manager.winforms
             await GetAllRecordsAsync();
             ClearUpdateUIMessage();
             DataInputIsReady(true);
-            PopulateListBox();
-            
+            await PopulateListBox();
+            UpdateRecordCountLabel(logins.Count());
         }
 
         private void RemoveItemFromListBox()
@@ -328,6 +332,7 @@ namespace password.manager.winforms
                     break;
                 }
             }
+            UpdateRecordCountLabel(SiteListBox.Items.Count);
         }
 
         private async Task ResaltAllLogins(string previousSalt, string newSalt)
@@ -351,7 +356,7 @@ namespace password.manager.winforms
 
         private void ReSaltEasterEgg()
         {
-            var enabled = ReSaltTextBox.Text.Equals("reverb");
+            var enabled = ReSaltTextBox.Text.Equals("resync");
             CurrentSaltTextBox.IsEnabled = enabled;
             SaveSaltButton.IsEnabled = enabled;
             ReSaltButton.IsEnabled = !enabled;
@@ -488,6 +493,7 @@ namespace password.manager.winforms
         private void ClearLitButton_Click(object sender, RoutedEventArgs e)
         {
             SiteListBox.Items.Clear();
+            CountRecordslabel.Content = string.Empty;
             ClearUpdateUIMessage();
         }
 
@@ -564,8 +570,6 @@ namespace password.manager.winforms
         {
             ToggleAdvancedPanel();
         }
-
-        
         #endregion
     }
 }

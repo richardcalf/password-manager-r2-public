@@ -10,15 +10,12 @@ namespace password.model
     {
         public void Save(Login model)
         {
-            PersistToXml(model);
+            AmendRecord(model);
         }
 
         public void Save(IEnumerable<Login> models)
         {
-            foreach(var model in models)
-            {
-                Save(model);
-            }
+            AmendRecords(models);
         }
 
         public bool Delete(string model)
@@ -83,38 +80,60 @@ namespace password.model
             return new List<Login>();
         }
 
-        private bool AmendRecord(Login model)
+        private void AmendRecords(IEnumerable<Login> logins)
         {
+            if (!File.Exists("Logins.xml"))
+            {
+                if (!IsValid(logins.FirstOrDefault())) throw new Exception("login data is not valid");
+                AddNewXmlFile(logins.FirstOrDefault());
+            }
+
             var doc = XDocument.Load("Logins.xml");
+            UpdateLogins(logins, doc);
+            doc.Save("Logins.xml");
+        }
+
+        private void UpdateLogins(IEnumerable<Login> logins, XDocument doc)
+        {
+            foreach (var model in logins)
+            {
+                UpdateLogin(doc, model);
+            }
+        }
+
+        private void UpdateLogin(XDocument doc, Login model)
+        {
+            if (!IsValid(model)) throw new Exception("input data is not valid");
 
             XElement login =
                   (from lgin in doc.Descendants("Login")
                    where lgin.Element("Site").Value == model.Site
                    select lgin).SingleOrDefault();
 
-            if (login == null) return false;
-
-            login.Element("UserName").Value = model.UserName;
-            login.Element("Password").Value = model.Password;
-            doc.Save("Logins.xml");
-
-            return true;
+            if (login == null)
+            {
+                login = GetLoginElement(model);
+                doc.Root.Add(login);
+            }
+            else
+            {
+                login.Element("UserName").Value = model.UserName;
+                login.Element("Password").Value = model.Password;
+            }
         }
 
-        private void PersistToXml(Login model)
+        private void AmendRecord(Login model)
         {
-            if (!IsValid(model)) throw new Exception("Fill out all fields.");
-
             if (!File.Exists("Logins.xml"))
             {
+                if (!IsValid(model)) throw new Exception("input data is not valid");
                 AddNewXmlFile(model);
             }
             else
             {
-                if (!AmendRecord(model))
-                {
-                    AddNewRecord(model);
-                }
+                var doc = XDocument.Load("Logins.xml");
+                UpdateLogin(doc, model);
+                doc.Save("Logins.xml");
             }
         }
 
@@ -134,16 +153,6 @@ namespace password.model
                 return true;
             }
             return false;
-        }
-
-        private void AddNewRecord(Login model)
-        {
-            var doc = XDocument.Load("Logins.xml");
-
-            var login = GetLoginElement(model);
-
-            doc.Root.Add(login);
-            doc.Save("Logins.xml");
         }
 
         private void AddNewXmlFile(Login model)

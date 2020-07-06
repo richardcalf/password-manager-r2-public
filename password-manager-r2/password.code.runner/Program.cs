@@ -26,7 +26,7 @@ namespace password.code.runner
 
             List<Login> logins = new List<Login>();
 
-            for (int i = 0; i < 2000; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var login = GetRandomLogin();
                 logins.Add(login);
@@ -41,9 +41,9 @@ namespace password.code.runner
         {
             Login login = new Login();
 
-            login.Site = RandomString(5);
-            login.UserName = RandomString(5);
-            string plainPassword = RandomString(5);
+            login.Site = RandomString(10);
+            login.UserName = RandomString(10);
+            string plainPassword = RandomString(20);
             string encryptedPassword = service.Encrypt(plainPassword);
             login.Password = encryptedPassword;
 
