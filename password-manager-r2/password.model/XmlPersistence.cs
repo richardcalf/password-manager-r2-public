@@ -84,7 +84,7 @@ namespace password.model
         {
             if (!File.Exists("Logins.xml"))
             {
-                if (!IsValid(logins.FirstOrDefault())) throw new Exception("login data is not valid");
+                if (!IsValid(logins.FirstOrDefault())) throw new Exception("input data is not valid");
                 AddNewXmlFile(logins.FirstOrDefault());
             }
 
