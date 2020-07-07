@@ -26,13 +26,18 @@ namespace password.manager.winforms
         private readonly IPasswordManagerLoginService applicationLoginService;
         private string salt;
         private IServiceAsync service;
+
+        //to set username for convenience
+        private IRepository repo;
         public LoginWindow()
         {
             salt = Settings.GetValueFromSettingKey("salt");
             service = EncryptionServiceFactory.GetEncryptionService(salt);
             isAuthenticated = false;
             applicationLoginService = new PasswordManagerLoginService();
-            InitializeComponent();
+            repo = new XmlPersistence();
+            InitializeComponent(); 
+            _ = SetUIUsername();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -53,7 +58,6 @@ namespace password.manager.winforms
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            isAuthenticated = false;
             var login = GetLoginFromUI();
             login.Password = await service.EncryptAsync(login.Password);
             isAuthenticated = applicationLoginService.Login(login);
@@ -79,8 +83,35 @@ namespace password.manager.winforms
             var login = new Login();
 
             login.UserName = UserNameTextBox.Text;
-            login.Password = PasswordTextBox.Text;
+            login.Password = PasswordTextBox.Password;
             return login;
+        }
+
+        private async Task SetUIUsername()
+        {
+            var login = repo.GetLogin("admin.admin");
+            if(login != null)
+            {
+                UserNameTextBox.Text = login.UserName;
+
+                PasswordTextBox.Password = await service.DecryptAsync(login.Password);
+
+                PasswordTextBox.Focus();
+            }
+            else
+            {
+                //bring up registration window
+            }
+        }
+
+        private void UserNameTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            InvalidLoginLabel.Content = string.Empty;
+        }
+
+        private void PasswordTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            InvalidLoginLabel.Content = string.Empty;
         }
     }
 }

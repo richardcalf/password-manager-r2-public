@@ -548,13 +548,6 @@ namespace password.manager.winforms
         {
             ToggleAdvancedPanel();
         }
-        #endregion
-
-        
-
-        private void ApplicationStart(object sender, StartupEventArgs e)
-        {
-            
-        }
+        #endregion        
     }
 }

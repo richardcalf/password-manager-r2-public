@@ -5,15 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:password.manager.winforms"
         mc:Ignorable="d"
-        Title="Registration" Height="224.762" Width="440" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+        Title="Login" Height="224.762" Width="440" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Grid Margin="0,0,4,3">
-        <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="23" Margin="175,56,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="155"/>
+        <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="23" Margin="175,56,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="155" KeyUp="UserNameTextBox_KeyUp"/>
         <Label x:Name="UserNameLabel" Content="Username" HorizontalAlignment="Left" Margin="83,56,0,0" VerticalAlignment="Top"/>
         <Label x:Name="PasswordLabel" Content="Password" HorizontalAlignment="Left" Margin="83,84,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.86,0.218"/>
-        <TextBox x:Name="PasswordTextBox" HorizontalAlignment="Left" Height="23" Margin="175,84,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="155"/>
+        <PasswordBox x:Name="PasswordTextBox" HorizontalAlignment="Left" Height="23" Margin="175,84,0,0"  VerticalAlignment="Top" Width="155" KeyUp="PasswordTextBox_KeyUp"/>
         <Button x:Name="LoginButton" Content="Login >>" HorizontalAlignment="Left" Margin="255,119,0,0" VerticalAlignment="Top" Width="75" Click="LoginButton_Click"/>
         <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="175,119,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click"/>
         <Label x:Name="InvalidLoginLabel" Content="" HorizontalAlignment="Left" Margin="175,151,0,0" VerticalAlignment="Top"/>
+        
+
 
     </Grid>
 </Window>
