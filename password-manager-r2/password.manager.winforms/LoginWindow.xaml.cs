@@ -1,0 +1,86 @@
+﻿using password.model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using password.settings;
+using password.service;
+
+namespace password.manager.winforms
+{
+    /// <summary>
+    /// Interaction logic for LoginWindow.xaml
+    /// </summary>
+    public partial class LoginWindow : Window
+    {
+        private bool isAuthenticated;
+        private readonly IPasswordManagerLoginService applicationLoginService;
+        private string salt;
+        private IServiceAsync service;
+        public LoginWindow()
+        {
+            salt = Settings.GetValueFromSettingKey("salt");
+            service = EncryptionServiceFactory.GetEncryptionService(salt);
+            isAuthenticated = false;
+            applicationLoginService = new PasswordManagerLoginService();
+            InitializeComponent();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Console.WriteLine("Login Form is closing");
+            if(isAuthenticated)
+            {
+                MainWindow mainWindow = new MainWindow();
+                mainWindow.Show();
+            }
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            isAuthenticated = false;
+            Close();
+        }
+
+        private async void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            isAuthenticated = false;
+            var login = GetLoginFromUI();
+            login.Password = await service.EncryptAsync(login.Password);
+            isAuthenticated = applicationLoginService.Login(login);
+
+            if(!isAuthenticated)
+            {
+                InvalidLoginUIMessage();
+            }
+            else
+            {
+                Close();
+            }
+        }
+
+        private void InvalidLoginUIMessage()
+        {
+            InvalidLoginLabel.Foreground = Brushes.Red;
+            InvalidLoginLabel.Content = "Invalid Login Details";
+        }
+
+        private Login GetLoginFromUI()
+        {
+            var login = new Login();
+
+            login.UserName = UserNameTextBox.Text;
+            login.Password = PasswordTextBox.Text;
+            return login;
+        }
+    }
+}

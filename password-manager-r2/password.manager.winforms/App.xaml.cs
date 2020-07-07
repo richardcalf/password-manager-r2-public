@@ -13,5 +13,10 @@ namespace password.manager.winforms
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            LoginWindow reg = new LoginWindow();
+            reg.ShowDialog();
+        }
     }
 }

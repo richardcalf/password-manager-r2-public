@@ -8,6 +8,7 @@ namespace password.model
 {
     public class XmlPersistence : IRepository
     {
+        #region IRepository
         public void Save(Login model)
         {
             AmendRecord(model);
@@ -43,6 +44,9 @@ namespace password.model
                 string.IsNullOrWhiteSpace(model.UserName) ||
                 string.IsNullOrWhiteSpace(model.Password));
         }
+        #endregion
+
+        #region private methods
 
         private Login GetLoginSingle(string site)
         {
@@ -175,5 +179,6 @@ namespace password.model
                                  new XElement("UserName", model.UserName),
                                  new XElement("Password", model.Password));
         }
+        #endregion
     }
 }

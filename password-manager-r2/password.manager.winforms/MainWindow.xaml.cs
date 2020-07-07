@@ -31,13 +31,13 @@ namespace password.manager.winforms
     {
         private const string updateSucceeded = "Update Succeeded";
         private const string updateFailed = "Update Failed";
-        private readonly Broker broker;
+        private readonly UIBroker broker;
         public MainWindow()
         {
             InitializeComponent();
             InitializeData();
             InitializeButtonsState();
-            broker = new Broker();
+            broker = new UIBroker();
             broker.SettingSaved += SettingSaved;
             broker.Resalted += ResaltingDone;
             broker.DataReady += DataInputIsReady;
@@ -168,7 +168,7 @@ namespace password.manager.winforms
         /// </summary>
         /// <param name="login"></param>
         /// <returns></returns>
-        private async Task ShowLoginOnUI(Login login)
+        private async Task ShowLoginOnUI(model.Login login)
         {
             ClearDataInputs();
             if (login == null) { SiteTextBox.Text = "Not found"; return; }
@@ -205,7 +205,7 @@ namespace password.manager.winforms
             }
         }
 
-        private void ValidateLogin(Login model)
+        private void ValidateLogin(model.Login model)
         {
             if(!broker.Repo.IsValid(model))
             {
@@ -226,9 +226,9 @@ namespace password.manager.winforms
             }
         }
 
-        private Login GetLoginFromTextBoxes()
+        private model.Login GetLoginFromTextBoxes()
         {
-            return new Login
+            return new model.Login
             {
                 Site = SiteTextBox.Text,
                 UserName = UserNameTextBox.Text,
@@ -549,5 +549,12 @@ namespace password.manager.winforms
             ToggleAdvancedPanel();
         }
         #endregion
+
+        
+
+        private void ApplicationStart(object sender, StartupEventArgs e)
+        {
+            
+        }
     }
 }

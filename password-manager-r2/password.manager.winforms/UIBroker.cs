@@ -10,7 +10,7 @@ using password.model;
 
 namespace password.manager.winforms
 {
-    public class Broker
+    public class UIBroker
     {
         private IServiceAsync service;
         private readonly IResalterAsync resalter;
@@ -20,7 +20,7 @@ namespace password.manager.winforms
 
         public IRepository Repo { get; }
 
-        public IEnumerable<Login> Logins { get; private set; }
+        public IEnumerable<model.Login> Logins { get; private set; }
 
         public string Salt { get; private set; }
 
@@ -32,10 +32,10 @@ namespace password.manager.winforms
             }
         }
 
-        public Broker()
+        public UIBroker()
         {
             Salt = Settings.GetValueFromSettingKey("salt");
-            service = GetEncryptionService();
+            service = EncryptionServiceFactory.GetEncryptionService(Salt);
             resalter = new Resalter();
             Repo = new XmlPersistence();
             _ = GetAllRecordsAsync();
@@ -92,16 +92,6 @@ namespace password.manager.winforms
             service = new EncryptionService(Salt);
         }
 
-        private IServiceAsync GetEncryptionService()
-        {
-            if (Salt == null)
-            {
-                return new EncryptionService();
-            }
-            else
-            {
-                return new EncryptionService(Salt);
-            }
-        }
+        
     }
 }
