@@ -184,7 +184,7 @@ namespace password.manager.winforms
             }
         }
 
-        private async Task UpdateLogin()
+        private async Task UpdateLoginFromUI()
         {
             var login = GetLoginFromTextBoxes();
             try
@@ -420,7 +420,7 @@ namespace password.manager.winforms
 
         private async void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-            await UpdateLogin();
+            await UpdateLoginFromUI();
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
