@@ -28,7 +28,7 @@ namespace password.login.service
 
         public bool Register(Login login)
         {
-            if(!LoginExists(login))
+            if (!File.Exists("Logins.xml") || !LoginExists(login))
             {
                 repo.Save(login);
                 return true;
@@ -40,10 +40,6 @@ namespace password.login.service
         #region private methods
         private bool LoginExists(Login model)
         {
-            if (!File.Exists("Logins.xml"))
-            {
-                return false;
-            }
             var doc = XDocument.Load("Logins.xml");
             XElement login =
                 (from lgin in doc.Descendants("Login")

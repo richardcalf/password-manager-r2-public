@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using password.model;
 
 namespace password.manager.winforms
 {
@@ -13,10 +14,30 @@ namespace password.manager.winforms
     /// </summary>
     public partial class App : Application
     {
+
+        private IRepository repo;
+        private bool userExists;
+
+        public App()
+        {
+            //do we have admin.admin? if not, we need to get the user to register.
+            repo = new XmlPersistence();
+            var login = repo.GetLogin("admin.admin");
+            userExists = login != null;
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
-            LoginWindow reg = new LoginWindow();
-            reg.ShowDialog();
+            if (!userExists)
+            {
+                RegistrationWindow regWindow = new RegistrationWindow();
+                regWindow.ShowDialog();
+            }
+            else
+            {
+                LoginWindow loginWindow = new LoginWindow();
+                loginWindow.ShowDialog();
+            }
         }
     }
 }

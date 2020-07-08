@@ -17,13 +17,13 @@ namespace password.manager.winforms
             loginService = new XmlLoginService();
         }
 
-        public bool Login(model.Login login)
+        public bool Login(Login login)
         {
             login.Site = "admin.admin";
             return loginService.Login(login);
         }
 
-        public bool Register(model.Login login)
+        public bool Register(Login login)
         {
             login.Site = "admin.admin";
             return loginService.Register(login);

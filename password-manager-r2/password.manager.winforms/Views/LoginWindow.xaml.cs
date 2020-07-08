@@ -58,11 +58,16 @@ namespace password.manager.winforms
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
+            await Login();
+        }
+
+        private async Task Login()
+        {
             var login = GetLoginFromUI();
             login.Password = await service.EncryptAsync(login.Password);
             isAuthenticated = applicationLoginService.Login(login);
 
-            if(!isAuthenticated)
+            if (!isAuthenticated)
             {
                 InvalidLoginUIMessage();
             }
@@ -90,17 +95,12 @@ namespace password.manager.winforms
         private async Task SetUIUsername()
         {
             var login = repo.GetLogin("admin.admin");
-            if(login != null)
+            if (login != null)
             {
                 UserNameTextBox.Text = login.UserName;
-
                 PasswordTextBox.Password = await service.DecryptAsync(login.Password);
-
+                PasswordTextBox.Password = string.Empty;
                 PasswordTextBox.Focus();
-            }
-            else
-            {
-                //bring up registration window
             }
         }
 
