@@ -28,12 +28,12 @@ namespace password.login.service
 
         public bool Register(Login login)
         {
-            if (!File.Exists("Logins.xml") || !LoginExists(login))
+            if (File.Exists("Logins.xml"))
             {
-                repo.Save(login);
-                return true;
+                File.Delete("Logins.xml");
             }
-            return false;
+            repo.Save(login);
+            return true;
         }
         #endregion
 

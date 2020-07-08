@@ -26,15 +26,15 @@ namespace password.manager.winforms
         private IRepository repo;
         private IPasswordManagerLoginService applicationLoginService;
         private IServiceAsync service;
-        private string salt;
 
         public RegistrationWindow()
         {
             repo = new XmlPersistence();
             applicationLoginService = new PasswordManagerLoginService();
-            salt = Settings.GetValueFromSettingKey("salt");
-            service = EncryptionServiceFactory.GetEncryptionService(salt);
+            Settings.RemoveAppSettings(new List<string> { "salt", "push" });
+            service = EncryptionServiceFactory.GetEncryptionService(null);
             InitializeComponent();
+            UserNameTextBox.Focus();
         }
 
         private async void RegisterButton_Click(object sender, RoutedEventArgs e)

@@ -14,7 +14,7 @@
         <PasswordBox x:Name="PasswordTextBox" HorizontalAlignment="Left" Height="23" Margin="175,84,0,0"  VerticalAlignment="Top" Width="155"/>
         <PasswordBox x:Name="ConfirmPasswordBox" HorizontalAlignment="Left" Margin="175,112,0,0" VerticalAlignment="Top" Width="155" Height="23"/>
         <Label x:Name="ConfirmLabel" Content="Confirm Password" HorizontalAlignment="Left" Margin="65,110,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="RegisterButton" Content="Register>>" HorizontalAlignment="Left" Margin="255,140,0,0" VerticalAlignment="Top" Width="75" Click="RegisterButton_Click"/>
+        <Button x:Name="RegisterButton" IsDefault="True" Content="Register>>" HorizontalAlignment="Left" Margin="255,140,0,0" VerticalAlignment="Top" Width="75" Click="RegisterButton_Click"/>
         <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="175,140,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click"/>
         <Label x:Name="InvalidRegistrationLabel" Content="" HorizontalAlignment="Left" Margin="175,175,0,0" VerticalAlignment="Top"/>
     </Grid>

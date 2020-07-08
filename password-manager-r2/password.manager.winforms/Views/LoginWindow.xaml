@@ -11,7 +11,7 @@
         <Label x:Name="UserNameLabel" Content="Username" HorizontalAlignment="Left" Margin="83,56,0,0" VerticalAlignment="Top"/>
         <Label x:Name="PasswordLabel" Content="Password" HorizontalAlignment="Left" Margin="83,84,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.86,0.218"/>
         <PasswordBox x:Name="PasswordTextBox" HorizontalAlignment="Left" Height="23" Margin="175,84,0,0"  VerticalAlignment="Top" Width="155" KeyUp="PasswordTextBox_KeyUp"/>
-        <Button x:Name="LoginButton" Content="Login >>" HorizontalAlignment="Left" Margin="255,119,0,0" VerticalAlignment="Top" Width="75" Click="LoginButton_Click"/>
+        <Button x:Name="LoginButton" IsDefault="True" Content="Login >>" HorizontalAlignment="Left" Margin="255,119,0,0" VerticalAlignment="Top" Width="75" Click="LoginButton_Click"/>
         <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="175,119,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click"/>
         <Label x:Name="InvalidLoginLabel" Content="" HorizontalAlignment="Left" Margin="175,151,0,0" VerticalAlignment="Top"/>
         

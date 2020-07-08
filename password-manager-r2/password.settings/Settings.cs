@@ -41,5 +41,28 @@ namespace password.settings
                 Console.WriteLine("Error writing app settings");
             }
         }
+
+        public static void RemoveAppSettings(List<string> keys)
+        {
+            try
+            {
+                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var settings = configFile.AppSettings.Settings;
+                foreach(var key in keys)
+                {
+                    if (settings[key] != null)
+                    {
+                        settings.Remove(key);
+                    }
+                }
+                configFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            }
+            catch (ConfigurationErrorsException)
+            {
+                Console.WriteLine("Error writing app settings");
+            }
+        }
+
     }
 }

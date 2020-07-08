@@ -37,7 +37,7 @@ namespace password.manager.winforms
             applicationLoginService = new PasswordManagerLoginService();
             repo = new XmlPersistence();
             InitializeComponent(); 
-            _ = SetUIUsername();
+            SetUIUsername();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -92,14 +92,12 @@ namespace password.manager.winforms
             return login;
         }
 
-        private async Task SetUIUsername()
+        private void SetUIUsername()
         {
             var login = repo.GetLogin("admin.admin");
             if (login != null)
             {
                 UserNameTextBox.Text = login.UserName;
-                PasswordTextBox.Password = await service.DecryptAsync(login.Password);
-                PasswordTextBox.Password = string.Empty;
                 PasswordTextBox.Focus();
             }
         }
