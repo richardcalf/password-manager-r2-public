@@ -32,7 +32,7 @@ namespace password.manager.winforms
             repo = new XmlPersistence();
             applicationLoginService = new PasswordManagerLoginService();
             Settings.RemoveAppSettings(new List<string> { "salt", "push" });
-            service = EncryptionServiceFactory.GetEncryptionService(null);
+            service = EncryptionServiceFactory.GetEncryptionServiceAsync(null);
             InitializeComponent();
             UserNameTextBox.Focus();
         }

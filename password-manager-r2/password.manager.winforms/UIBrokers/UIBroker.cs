@@ -35,7 +35,7 @@ namespace password.manager.winforms
         public UIBroker()
         {
             Salt = Settings.GetValueFromSettingKey("salt");
-            service = EncryptionServiceFactory.GetEncryptionService(Salt);
+            service = EncryptionServiceFactory.GetEncryptionServiceAsync(Salt);
             resalter = new Resalter();
             Repo = new XmlPersistence();
             _ = GetAllRecordsAsync();

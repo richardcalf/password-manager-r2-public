@@ -14,7 +14,7 @@ namespace password.resalter
         public IEnumerable<Login> Resalt(string previousSalt, string newSalt, IEnumerable<Login> logins)
         {
             
-            IService originalSaltService = GetPrevious(previousSalt);
+            IService originalSaltService = EncryptionServiceFactory.GetEncryptionService(previousSalt);
             IService resaltService = new EncryptionService(newSalt);
             List<Login> newSaltLoginList = new List<Login>();
 
@@ -34,18 +34,6 @@ namespace password.resalter
             {
                 return Resalt(previousSalt, newSalt, logins);
             });
-        }
-
-        private EncryptionService GetPrevious(string previousSalt)
-        {
-            if (string.IsNullOrWhiteSpace(previousSalt))
-            {
-                return new EncryptionService();
-            }
-            else
-            {
-                return new EncryptionService(previousSalt);
-            }
         }
     }
 }

@@ -32,7 +32,7 @@ namespace password.manager.winforms
         public LoginWindow()
         {
             salt = Settings.GetValueFromSettingKey("salt");
-            service = EncryptionServiceFactory.GetEncryptionService(salt);
+            service = EncryptionServiceFactory.GetEncryptionServiceAsync(salt);
             isAuthenticated = false;
             applicationLoginService = new PasswordManagerLoginService();
             repo = new XmlPersistence();
