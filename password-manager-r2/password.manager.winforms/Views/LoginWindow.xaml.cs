@@ -80,7 +80,7 @@ namespace password.manager.winforms
         private void InvalidLoginUIMessage()
         {
             InvalidLoginLabel.Foreground = Brushes.Red;
-            InvalidLoginLabel.Content = "Invalid Login Details";
+            InvalidLoginLabel.Content = "Invalid login details";
         }
 
         private Login GetLoginFromUI()
