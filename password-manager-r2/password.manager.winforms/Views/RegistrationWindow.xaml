@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:password.manager.winforms"
         mc:Ignorable="d"
         Title="Register" Height="250" Width="440
-        " ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+        " ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Grid>
         <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="23" Margin="175,56,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="155" />
         <Label x:Name="UserNameLabel" Content="Username" HorizontalAlignment="Left" Margin="65,56,0,0" VerticalAlignment="Top"/>
