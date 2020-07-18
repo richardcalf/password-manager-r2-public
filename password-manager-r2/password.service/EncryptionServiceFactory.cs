@@ -10,7 +10,7 @@ namespace password.service
     {
         public static IServiceAsync GetEncryptionServiceAsync(string salt)
         {
-            if (salt == null)
+            if (string.IsNullOrWhiteSpace(salt))
             {
                 return new EncryptionService();
             }
@@ -22,7 +22,7 @@ namespace password.service
 
         public static IService GetEncryptionService(string salt)
         {
-            if (salt == null)
+            if (string.IsNullOrWhiteSpace(salt))
             {
                 return new EncryptionService();
             }
