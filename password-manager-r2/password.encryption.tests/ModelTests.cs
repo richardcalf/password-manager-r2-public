@@ -104,7 +104,33 @@ namespace password.encryption.tests
             }
 
             Assert.IsTrue(saves > 0);
+        }
 
+        [TestMethod]
+        public void test_save_many_database_records()
+        {
+            int saves = 0;
+            var logins = new List<Login> { new Login { Site = "madmax.com",
+                                                       UserName = "richard.calf",
+                                                       Password = "hPWhuY1zkNTM/RQQ8cnKJg==" },
+                                           new Login { Site = "def.com",
+                                                       UserName = "jane.calf", Password = "DXYd/YWeNMfPYHIg6zKg9w==" },
+                                           new Login { Site = "adt.com", UserName = "jane.calf@gmail.com", Password = "DXYd/YWeNMcYHWXEYIsG3Q==" }};
+            using (var context = new LoginContext())
+            {
+                //change to projection
+                foreach (var login in logins)
+                {
+                    context.Logins.Add(new LoginModel
+                    {
+                        Site = login.Site,
+                        UserName = login.UserName,
+                        Password = login.Password
+                    });
+                }
+                saves = context.SaveChanges();
+                Assert.IsTrue(saves > 0);
+            }
         }
     }
 }
