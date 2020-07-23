@@ -118,16 +118,12 @@ namespace password.encryption.tests
                                            new Login { Site = "adt.com", UserName = "jane.calf@gmail.com", Password = "DXYd/YWeNMcYHWXEYIsG3Q==" }};
             using (var context = new LoginContext())
             {
-                //change to projection
-                foreach (var login in logins)
+                context.Logins.AddRange(logins.Select(l => new LoginModel
                 {
-                    context.Logins.Add(new LoginModel
-                    {
-                        Site = login.Site,
-                        UserName = login.UserName,
-                        Password = login.Password
-                    });
-                }
+                    Site = l.Site,
+                    UserName = l.UserName,
+                    Password = l.Password
+                }));
                 saves = context.SaveChanges();
                 Assert.IsTrue(saves > 0);
             }
