@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using password.model.Database;
 
 namespace password.model
 {
@@ -10,32 +11,85 @@ namespace password.model
     {
         public bool Delete(string site)
         {
-            throw new NotImplementedException();
+            using (var context = new LoginContext())
+            {
+                var login = context.Logins.FirstOrDefault(l => l.Site.Equals(site));
+                if (login != null)
+                {
+                    context.Logins.Remove(login);
+                    return context.SaveChanges() > 0;
+                }
+                return false;
+            }
         }
 
         public Login GetLogin(string site)
         {
-            throw new NotImplementedException();
+            using (var context = new LoginContext())
+            {
+                return context.Logins.Where(l => l.Site.StartsWith(site)) 
+                                     .OrderBy(l => l.Site)
+                                     .Select(l => new Login
+                                     {
+                                         Site = l.Site,
+                                         UserName = l.UserName,
+                                         Password = l.Password
+                                     }).FirstOrDefault();
+            }
         }
 
         public IEnumerable<Login> GetLogins()
         {
-            throw new NotImplementedException();
+            using (var context = new LoginContext())
+            {
+                return context.Logins.OrderBy(l => l.Site)
+                           .Select(l => new Login
+                           {
+                               Site = l.Site,
+                               UserName = l.UserName,
+                               Password = l.Password
+                           }).ToList();
+            }
         }
 
         public bool IsValid(Login model)
         {
-            throw new NotImplementedException();
+            //this is a little bit of a cheat, but it's ok for beta software
+            var pert = new XmlPersistence();
+            return pert.IsValid(model);
         }
 
         public void Save(Login model)
         {
-            throw new NotImplementedException();
+            using (var context = new LoginContext())
+            {
+                //we never update a site. only the other details.
+                var login = context.Logins.FirstOrDefault(l => l.Site.Equals(model.Site));
+                if(login != null)
+                {
+                    login.UserName = model.UserName;
+                    login.Password = model.Password;
+                }
+                else
+                {
+                    var newLogin = new LoginModel
+                    {
+                        Site = model.Site,
+                        Password = model.Password,
+                        UserName = model.UserName
+                    };
+                    context.Logins.Add(newLogin);
+                }
+                context.SaveChanges();
+            }
         }
 
         public void Save(IEnumerable<Login> models)
         {
-            throw new NotImplementedException();
+            foreach(var model in models)
+            {
+                Save(model);
+            }
         }
     }
 }

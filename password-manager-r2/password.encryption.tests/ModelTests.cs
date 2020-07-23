@@ -112,10 +112,10 @@ namespace password.encryption.tests
             int saves = 0;
             var logins = new List<Login> { new Login { Site = "madmax.com",
                                                        UserName = "richard.calf",
-                                                       Password = "hPWhuY1zkNTM/RQQ8cnKJg==" },
+                                                       Password = "aOJPaq8Ih5wGWlS7axT1aw==" },
                                            new Login { Site = "def.com",
-                                                       UserName = "jane.calf", Password = "DXYd/YWeNMfPYHIg6zKg9w==" },
-                                           new Login { Site = "adt.com", UserName = "jane.calf@gmail.com", Password = "DXYd/YWeNMcYHWXEYIsG3Q==" }};
+                                                       UserName = "jane.calf", Password = "aOJPaq8Ih5wGWlS7axT1aw==" },
+                                           new Login { Site = "adt.com", UserName = "jane.calf@gmail.com", Password = "aOJPaq8Ih5wGWlS7axT1aw==" }};
             using (var context = new LoginContext())
             {
                 context.Logins.AddRange(logins.Select(l => new LoginModel
@@ -127,6 +127,21 @@ namespace password.encryption.tests
                 saves = context.SaveChanges();
                 Assert.IsTrue(saves > 0);
             }
+        }
+        [TestMethod]
+        public void test_get_a_login()
+        {
+            var site = "madmax.com";
+            Login login = null;
+            using (var context = new LoginContext())
+            {
+                var lgin = context.Logins.FirstOrDefault(l => l.Site.Equals(site));
+                if(lgin != null)
+                {
+                    login = new Login { Site = lgin.Site, UserName = lgin.Site, Password = lgin.Password };
+                }
+            }
+            Assert.IsNotNull(login);
         }
     }
 }
