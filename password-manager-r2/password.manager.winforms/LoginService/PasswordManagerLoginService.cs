@@ -14,7 +14,7 @@ namespace password.manager.winforms
 
         public PasswordManagerLoginService()
         {
-            loginService = new DatabaseLoginService();
+            loginService = new XmlLoginService();
         }
 
         public bool Login(Login login)
