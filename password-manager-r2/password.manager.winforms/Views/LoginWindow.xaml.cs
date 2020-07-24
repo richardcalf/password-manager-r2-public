@@ -35,7 +35,7 @@ namespace password.manager.winforms
             service = EncryptionServiceFactory.GetEncryptionServiceAsync(salt);
             isAuthenticated = false;
             applicationLoginService = new PasswordManagerLoginService();
-            repo = new XmlPersistence();
+            repo = new DatabasePersistence();
             InitializeComponent(); 
             SetUIUsername();
         }
