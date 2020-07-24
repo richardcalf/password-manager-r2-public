@@ -15,14 +15,14 @@ namespace password.manager.winforms
     public partial class App : Application
     {
 
-        private IRepository repo;
+        private UIBroker broker;
         private bool userExists;
 
         public App()
         {
+            broker = new UIBroker();
             //do we have admin.admin? if not, we need to get the user to register.
-            repo = new DatabasePersistence();
-            var login = repo.GetLogin("admin.admin");
+            var login = broker.Repo.GetLogin("admin.admin");
             userExists = login != null;
         }
 
