@@ -10,13 +10,6 @@ namespace password.login.service
 {
     public class DatabaseLoginService : ILoginService
     {
-        private IRepository repo;
-
-        public DatabaseLoginService()
-        {
-            repo = new DatabasePersistence();
-        }
-
         public bool Login(Login login)
         {
             return LoginExists(login);
