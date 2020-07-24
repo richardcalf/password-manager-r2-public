@@ -6,7 +6,7 @@ using System.IO;
 
 namespace password.model
 {
-    public class XmlPersistence : IRepository
+    public class XmlPersistence : PersistenceValidator, IRepository
     {
         #region IRepository
         public void Save(Login model)
@@ -36,13 +36,6 @@ namespace password.model
         public IEnumerable<Login> GetLogins()
         {
             return GetLoginList();
-        }
-
-        public bool IsValid(Login model)
-        {
-            return !(string.IsNullOrWhiteSpace(model.Site) ||
-                string.IsNullOrWhiteSpace(model.UserName) ||
-                string.IsNullOrWhiteSpace(model.Password));
         }
         #endregion
 

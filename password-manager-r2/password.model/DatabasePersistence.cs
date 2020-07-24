@@ -7,7 +7,7 @@ using password.model.Database;
 
 namespace password.model
 {
-    public class DatabasePersistence : IRepository
+    public class DatabasePersistence : PersistenceValidator, IRepository
     {
         public bool Delete(string site)
         {
@@ -50,13 +50,6 @@ namespace password.model
                                Password = l.Password
                            }).ToList();
             }
-        }
-
-        public bool IsValid(Login model)
-        {
-            //this is a little bit of a cheat, but it's ok for beta software
-            var pert = new XmlPersistence();
-            return pert.IsValid(model);
         }
 
         public void Save(Login model)
