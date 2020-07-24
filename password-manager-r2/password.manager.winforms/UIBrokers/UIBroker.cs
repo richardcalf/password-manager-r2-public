@@ -12,7 +12,7 @@ namespace password.manager.winforms
 {
     public class UIBroker
     {
-        private IServiceAsync service;
+        public IServiceAsync service;
         private readonly IResalterAsync resalter;
         public event Action<string> SettingSaved;
         public event Action<string> Resalted;

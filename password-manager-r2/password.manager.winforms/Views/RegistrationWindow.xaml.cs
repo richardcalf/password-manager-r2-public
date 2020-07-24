@@ -22,17 +22,15 @@ namespace password.manager.winforms
     /// </summary>
     public partial class RegistrationWindow : Window
     {
+        private UIBroker broker;
         private bool isAuthenticated;
-        private IRepository repo;
         private IPasswordManagerLoginService applicationLoginService;
-        private IServiceAsync service;
 
         public RegistrationWindow()
         {
-            repo = new XmlPersistence();
+            broker = new UIBroker();
             applicationLoginService = new PasswordManagerLoginService();
             Settings.RemoveAppSettings(new List<string> { "salt", "push" });
-            service = EncryptionServiceFactory.GetEncryptionServiceAsync(null);
             InitializeComponent();
             UserNameTextBox.Focus();
         }
@@ -42,7 +40,7 @@ namespace password.manager.winforms
             if (ValidateRegistration())
             {
                 var login = GetLoginFromUI();
-                login.Password = await service.EncryptAsync(login.Password);
+                login.Password = await broker.service.EncryptAsync(login.Password);
                 var registered = applicationLoginService.Register(login);
                 isAuthenticated = registered;
                 Close();
@@ -99,7 +97,7 @@ namespace password.manager.winforms
 
         private bool UserExists()
         {
-            var login = repo.GetLogin("admin.admin");
+            var login = broker.Repo.GetLogin("admin.admin");
             return login != null;
         }
         #endregion

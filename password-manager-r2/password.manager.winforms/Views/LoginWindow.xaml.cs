@@ -22,20 +22,16 @@ namespace password.manager.winforms
     /// </summary>
     public partial class LoginWindow : Window
     {
+        private UIBroker broker;
         private bool isAuthenticated;
         private readonly IPasswordManagerLoginService applicationLoginService;
-        private string salt;
-        private IServiceAsync service;
-
-        //to set username for convenience
-        private IRepository repo;
+        
         public LoginWindow()
         {
-            salt = Settings.GetValueFromSettingKey("salt");
-            service = EncryptionServiceFactory.GetEncryptionServiceAsync(salt);
+            broker = new UIBroker();
+
             isAuthenticated = false;
             applicationLoginService = new PasswordManagerLoginService();
-            repo = new XmlPersistence();
             InitializeComponent(); 
             SetUIUsername();
         }
@@ -64,7 +60,7 @@ namespace password.manager.winforms
         private async Task Login()
         {
             var login = GetLoginFromUI();
-            login.Password = await service.EncryptAsync(login.Password);
+            login.Password = await broker.service.EncryptAsync(login.Password);
             isAuthenticated = applicationLoginService.Login(login);
 
             if (!isAuthenticated)
@@ -94,7 +90,7 @@ namespace password.manager.winforms
 
         private void SetUIUsername()
         {
-            var login = repo.GetLogin("admin.admin");
+            var login = broker.Repo.GetLogin("admin.admin");
             if (login != null)
             {
                 UserNameTextBox.Text = login.UserName;
