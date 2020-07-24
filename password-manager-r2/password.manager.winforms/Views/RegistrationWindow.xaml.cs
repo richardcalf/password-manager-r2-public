@@ -28,9 +28,9 @@ namespace password.manager.winforms
 
         public RegistrationWindow()
         {
+            Settings.RemoveAppSettings(new List<string> { "salt", "push" });
             broker = new UIBroker();
             applicationLoginService = new PasswordManagerLoginService();
-            Settings.RemoveAppSettings(new List<string> { "salt", "push" });
             InitializeComponent();
             UserNameTextBox.Focus();
         }
