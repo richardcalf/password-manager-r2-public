@@ -21,7 +21,7 @@ namespace password.manager.winforms
         public App()
         {
             //do we have admin.admin? if not, we need to get the user to register.
-            repo = new XmlPersistence();
+            repo = new DatabasePersistence();
             var login = repo.GetLogin("admin.admin");
             userExists = login != null;
         }

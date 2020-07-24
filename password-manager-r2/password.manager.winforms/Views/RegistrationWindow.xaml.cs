@@ -29,7 +29,7 @@ namespace password.manager.winforms
 
         public RegistrationWindow()
         {
-            repo = new XmlPersistence();
+            repo = new DatabasePersistence();
             applicationLoginService = new PasswordManagerLoginService();
             Settings.RemoveAppSettings(new List<string> { "salt", "push" });
             service = EncryptionServiceFactory.GetEncryptionServiceAsync(null);
