@@ -17,7 +17,7 @@ namespace password.encryption.tests
         {
             List<Login> logins = new List<Login>();
 
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var login = CodeRunner.GetRandomLogin();
                 logins.Add(login);

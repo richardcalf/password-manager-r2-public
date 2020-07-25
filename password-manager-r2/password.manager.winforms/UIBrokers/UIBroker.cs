@@ -39,8 +39,8 @@ namespace password.manager.winforms
             Salt = Settings.GetValueFromSettingKey("salt");
             EncryptionService = EncryptionServiceFactory.GetEncryptionServiceAsync(Salt);
             resalter = new Resalter();
-            Repo = new DatabasePersistence();
-            LoginService = new DatabasePersistence();
+            Repo = new XmlPersistence();
+            LoginService = new XmlPersistence();
             _ = GetAllRecordsAsync();
         }
 
