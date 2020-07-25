@@ -6,7 +6,7 @@ using System.IO;
 
 namespace password.model
 {
-    public class XmlPersistence : PersistenceValidator, IRepository
+    public class XmlPersistence : PersistenceValidator, IRepository, ILoginService
     {
         #region IRepository
         public void Save(Login model)
@@ -36,6 +36,23 @@ namespace password.model
         public IEnumerable<Login> GetLogins()
         {
             return GetLoginList();
+        }
+        #endregion
+
+        #region ILoginService
+        public bool Login(Login login)
+        {
+            return LoginExists(login);
+        }
+
+        public bool Register(Login login)
+        {
+            if (File.Exists("Logins.xml"))
+            {
+                File.Delete("Logins.xml");
+            }
+            Save(login);
+            return true;
         }
         #endregion
 
@@ -171,6 +188,18 @@ namespace password.model
                                  new XElement("Site", model.Site),
                                  new XElement("UserName", model.UserName),
                                  new XElement("Password", model.Password));
+        }
+
+        private bool LoginExists(Login model)
+        {
+            var doc = XDocument.Load("Logins.xml");
+            XElement login =
+                (from lgin in doc.Descendants("Login")
+                 where lgin.Element("Site").Value == model.Site &
+                 lgin.Element("UserName").Value == model.UserName &
+                 lgin.Element("Password").Value == model.Password
+                 select lgin).SingleOrDefault();
+            return login != null;
         }
         #endregion
     }

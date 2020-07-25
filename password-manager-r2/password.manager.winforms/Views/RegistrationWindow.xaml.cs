@@ -40,7 +40,7 @@ namespace password.manager.winforms
             if (ValidateRegistration())
             {
                 var login = GetLoginFromUI();
-                login.Password = await broker.service.EncryptAsync(login.Password);
+                login.Password = await broker.EncryptionService.EncryptAsync(login.Password);
                 var registered = applicationLoginService.Register(login);
                 isAuthenticated = registered;
                 Close();

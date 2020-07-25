@@ -12,15 +12,17 @@ namespace password.manager.winforms
 {
     public class UIBroker
     {
-        public IServiceAsync service;
+
         private readonly IResalterAsync resalter;
         public event Action<string> SettingSaved;
         public event Action<string> Resalted;
         public event Action<bool> DataReady;
 
         public IRepository Repo { get; }
+        public ILoginService LoginService { get; }
+        public IEncryptionServiceAsync EncryptionService { get; set; }
 
-        public IEnumerable<model.Login> Logins { get; private set; }
+        public IEnumerable<Login> Logins { get; private set; }
 
         public string Salt { get; private set; }
 
@@ -35,20 +37,21 @@ namespace password.manager.winforms
         public UIBroker()
         {
             Salt = Settings.GetValueFromSettingKey("salt");
-            service = EncryptionServiceFactory.GetEncryptionServiceAsync(Salt);
+            EncryptionService = EncryptionServiceFactory.GetEncryptionServiceAsync(Salt);
             resalter = new Resalter();
-            Repo = new XmlPersistence();
+            Repo = new DatabasePersistence();
+            LoginService = new DatabasePersistence();
             _ = GetAllRecordsAsync();
         }
 
         public async Task<string> DecryptAsync(string encryptedValue)
         {
-            return await service.DecryptAsync(encryptedValue);
+            return await EncryptionService.DecryptAsync(encryptedValue);
         }
 
         public async Task<string> EncryptAsync(string value)
         {
-            return await service.EncryptAsync(value);
+            return await EncryptionService.EncryptAsync(value);
         }
 
         private void GetAllRecords()
@@ -76,7 +79,7 @@ namespace password.manager.winforms
             });
             Logins = newSaltedLogins;
             Settings.SaveAppSetting("salt", newSalt);
-            service = new EncryptionService(newSalt);
+            EncryptionService = new EncryptionService(newSalt);
             Resalted?.Invoke(newSalt);
         }
 
@@ -89,9 +92,7 @@ namespace password.manager.winforms
         public void RefreshEncryptionSalt()
         {
             Salt = Settings.GetValueFromSettingKey("salt");
-            service = new EncryptionService(Salt);
+            EncryptionService = new EncryptionService(Salt);
         }
-
-        
     }
 }

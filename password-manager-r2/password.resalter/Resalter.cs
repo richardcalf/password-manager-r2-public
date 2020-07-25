@@ -14,8 +14,8 @@ namespace password.resalter
         public IEnumerable<Login> Resalt(string previousSalt, string newSalt, IEnumerable<Login> logins)
         {
             
-            IService originalSaltService = EncryptionServiceFactory.GetEncryptionService(previousSalt);
-            IService resaltService = new EncryptionService(newSalt);
+            IEncryptionService originalSaltService = EncryptionServiceFactory.GetEncryptionService(previousSalt);
+            IEncryptionService resaltService = new EncryptionService(newSalt);
             List<Login> newSaltLoginList = new List<Login>();
 
             foreach (var login in logins)

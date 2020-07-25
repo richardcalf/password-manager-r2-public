@@ -12,7 +12,7 @@ namespace password.encryption.tests
         public void test_encryption_and_decryption_service()
         {
             var input = "password1";
-            IService c = new EncryptionService();
+            IEncryptionService c = new EncryptionService();
             var encrypted = c.Encrypt(input);
             var decrypted = c.Decrypt(encrypted);
             Assert.IsTrue(decrypted == input);
@@ -22,7 +22,7 @@ namespace password.encryption.tests
         public async Task test_encryption_and_decryption_service_async()
         {
             var input = "PassWrd";
-            IServiceAsync service = new EncryptionService();
+            IEncryptionServiceAsync service = new EncryptionService();
             var encrypted = await service.EncryptAsync(input);
             var decrypted = await service.DecryptAsync(encrypted);
             Assert.IsTrue(decrypted == input);

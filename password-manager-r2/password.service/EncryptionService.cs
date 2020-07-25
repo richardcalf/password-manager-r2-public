@@ -10,12 +10,12 @@ using password.encryption;
 namespace password.service
 {
 
-    public class EncryptionService : IService, IServiceAsync
+    public class EncryptionService : IEncryptionService, IEncryptionServiceAsync
     {
         private Crypto crypt;
         public EncryptionService(string salt)
         {
-            crypt = new Crypto(Crypto.CryptoTypes.encTypeTripleDES, salt);//salt from caller
+            crypt = new Crypto(Crypto.CryptoTypes.encTypeTripleDES, salt);//salt from consumer
         }
 
         public EncryptionService()

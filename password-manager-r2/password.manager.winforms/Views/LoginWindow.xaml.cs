@@ -60,7 +60,7 @@ namespace password.manager.winforms
         private async Task Login()
         {
             var login = GetLoginFromUI();
-            login.Password = await broker.service.EncryptAsync(login.Password);
+            login.Password = await broker.EncryptionService.EncryptAsync(login.Password);
             isAuthenticated = applicationLoginService.Login(login);
 
             if (!isAuthenticated)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace password.service
 {
-    public interface IService
+    public interface IEncryptionService
     {
         string Decrypt(string value);
         string Encrypt(string value);

@@ -15,7 +15,7 @@ namespace password.code.runner
     class Program
     {
         static IRepository repo = new XmlPersistence();
-        static IService service;
+        static IEncryptionService service;
         static string globalSalt = Settings.GetValueFromSettingKey("salt");
 
         private static Random random = new Random();

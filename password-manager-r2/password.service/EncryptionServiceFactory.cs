@@ -8,7 +8,7 @@ namespace password.service
 {
     public static class EncryptionServiceFactory
     {
-        public static IServiceAsync GetEncryptionServiceAsync(string salt)
+        public static IEncryptionServiceAsync GetEncryptionServiceAsync(string salt)
         {
             if (string.IsNullOrWhiteSpace(salt))
             {
@@ -20,7 +20,7 @@ namespace password.service
             }
         }
 
-        public static IService GetEncryptionService(string salt)
+        public static IEncryptionService GetEncryptionService(string salt)
         {
             if (string.IsNullOrWhiteSpace(salt))
             {

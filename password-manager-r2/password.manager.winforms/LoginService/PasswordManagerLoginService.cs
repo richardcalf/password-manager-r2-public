@@ -4,29 +4,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using password.login.service;
 
 namespace password.manager.winforms
 {
     public class PasswordManagerLoginService : IPasswordManagerLoginService
     {
-        ILoginService loginService;
+        UIBroker broker;
 
         public PasswordManagerLoginService()
         {
-            loginService = new XmlLoginService();
+            broker = new UIBroker();
         }
 
         public bool Login(Login login)
         {
             login.Site = "admin.admin";
-            return loginService.Login(login);
+            return broker.LoginService.Login(login);
         }
 
         public bool Register(Login login)
         {
             login.Site = "admin.admin";
-            return loginService.Register(login);
+            return broker.LoginService.Register(login);
         }
     }
 }

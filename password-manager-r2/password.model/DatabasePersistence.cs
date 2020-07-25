@@ -7,8 +7,42 @@ using password.model.Database;
 
 namespace password.model
 {
-    public class DatabasePersistence : PersistenceValidator, IRepository
+    public class DatabasePersistence : PersistenceValidator, IRepository, ILoginService
     {
+        #region IRepository
+        public void Save(Login model)
+        {
+            using (var context = new LoginContext())
+            {
+                //we never update a site. only the other details.
+                var login = context.Logins.FirstOrDefault(l => l.Site.Equals(model.Site));
+                if (login != null)
+                {
+                    login.UserName = model.UserName;
+                    login.Password = model.Password;
+                }
+                else
+                {
+                    var newLogin = new LoginModel
+                    {
+                        Site = model.Site,
+                        Password = model.Password,
+                        UserName = model.UserName
+                    };
+                    context.Logins.Add(newLogin);
+                }
+                context.SaveChanges();
+            }
+        }
+
+        public void Save(IEnumerable<Login> models)
+        {
+            foreach (var model in models)
+            {
+                Save(model);
+            }
+        }
+
         public bool Delete(string site)
         {
             using (var context = new LoginContext())
@@ -51,38 +85,42 @@ namespace password.model
                            }).ToList();
             }
         }
+        #endregion
 
-        public void Save(Login model)
+        #region ILoginService
+        public bool Login(Login login)
+        {
+            return LoginExists(login);
+        }
+
+        public bool Register(Login login)
         {
             using (var context = new LoginContext())
             {
-                //we never update a site. only the other details.
-                var login = context.Logins.FirstOrDefault(l => l.Site.Equals(model.Site));
-                if(login != null)
+                context.Database.ExecuteSqlCommand("TRUNCATE TABLE [LoginModels]");
+                var lgin = new LoginModel
                 {
-                    login.UserName = model.UserName;
-                    login.Password = model.Password;
-                }
-                else
-                {
-                    var newLogin = new LoginModel
-                    {
-                        Site = model.Site,
-                        Password = model.Password,
-                        UserName = model.UserName
-                    };
-                    context.Logins.Add(newLogin);
-                }
-                context.SaveChanges();
+                    Site = login.Site,
+                    UserName = login.UserName,
+                    Password = login.Password
+                };
+                context.Logins.Add(lgin);
+                return context.SaveChanges() > 0;
             }
         }
+        #endregion
 
-        public void Save(IEnumerable<Login> models)
+        #region private methods
+        private bool LoginExists(Login model)
         {
-            foreach(var model in models)
+            using (var context = new LoginContext())
             {
-                Save(model);
-            }
+                return context.Logins
+                    .FirstOrDefault(l => l.Site.Equals(model.Site) &&
+                                               l.UserName.Equals(model.UserName) &&
+                                               l.Password.Equals(model.Password)) != null;
+            };
         }
+        #endregion
     }
 }

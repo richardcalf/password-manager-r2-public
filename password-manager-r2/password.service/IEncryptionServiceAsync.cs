@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace password.service
 {
-    public interface IServiceAsync
+    public interface IEncryptionServiceAsync
     {
         Task<string> DecryptAsync(string value);
         Task<string> EncryptAsync(string value);
