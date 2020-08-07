@@ -22,15 +22,15 @@ namespace password.manager.winforms
     /// </summary>
     public partial class RegistrationWindow : Window
     {
-        private UIBroker broker;
+        private IUIBroker broker;
         private bool isAuthenticated;
         private IPasswordManagerLoginService applicationLoginService;
 
-        public RegistrationWindow()
+        public RegistrationWindow(IUIBroker broker, IPasswordManagerLoginService pwService)
         {
             Settings.RemoveAppSettings(new List<string> { "salt", "push" });
-            broker = new UIBroker();
-            applicationLoginService = new PasswordManagerLoginService();
+            this.broker = broker;
+            applicationLoginService = pwService;
             InitializeComponent();
             UserNameTextBox.Focus();
         }
@@ -107,7 +107,7 @@ namespace password.manager.winforms
             Console.WriteLine("Login Form is closing");
             if (isAuthenticated)
             {
-                MainWindow mainWindow = new MainWindow();
+                MainWindow mainWindow = new MainWindow(this.broker);
                 mainWindow.Show();
             }
         }

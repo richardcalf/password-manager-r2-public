@@ -9,11 +9,11 @@ namespace password.manager.winforms
 {
     public class PasswordManagerLoginService : IPasswordManagerLoginService
     {
-        UIBroker broker;
+        IUIBroker broker;
 
-        public PasswordManagerLoginService()
+        public PasswordManagerLoginService(IUIBroker broker)
         {
-            broker = new UIBroker();
+            this.broker = broker;
         }
 
         public bool Login(Login login)

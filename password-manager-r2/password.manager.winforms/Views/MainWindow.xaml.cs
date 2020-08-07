@@ -31,16 +31,17 @@ namespace password.manager.winforms
     {
         private const string updateSucceeded = "Update Succeeded";
         private const string updateFailed = "Update Failed";
-        private readonly UIBroker broker;
-        public MainWindow()
+        private IUIBroker broker;
+        public MainWindow(IUIBroker broker)
         {
             InitializeComponent();
             InitializeData();
             InitializeButtonsState();
-            broker = new UIBroker();
+            this.broker = broker;
             broker.SettingSaved += SettingSaved;
             broker.Resalted += ResaltingDone;
             broker.DataReady += DataInputIsReady;
+            
 
             CurrentSaltTextBox.Text = broker.Salt;
             FilePathTextBox.Text = broker.PushPath;
@@ -49,6 +50,7 @@ namespace password.manager.winforms
             CurrentSaltTextBox.IsEnabled = false;
             SaveSaltButton.IsEnabled = false;
             AdvancedCanvas.Visibility = Visibility.Hidden;
+            _ = this.broker.GetAllRecordsAsync();
         }
 
         #region private UI coupled methods

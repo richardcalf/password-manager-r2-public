@@ -10,10 +10,10 @@ using password.model;
 
 namespace password.manager.winforms
 {
-    public class UIBroker
+    public class UIBroker : IUIBroker
     {
 
-        private readonly IResalterAsync resalter;
+        private IResalterAsync resalter;
         public event Action<string> SettingSaved;
         public event Action<string> Resalted;
         public event Action<bool> DataReady;
@@ -22,9 +22,9 @@ namespace password.manager.winforms
         public ILoginService LoginService { get; }
         public IEncryptionServiceAsync EncryptionService { get; set; }
 
-        public IEnumerable<Login> Logins { get; private set; }
+        public IEnumerable<Login> Logins { get; set; }
 
-        public string Salt { get; private set; }
+        public string Salt { get; set; }
 
         public string PushPath
         {
@@ -34,14 +34,13 @@ namespace password.manager.winforms
             }
         }
 
-        public UIBroker()
+        public UIBroker(IRepository repo, ILoginService loginService, IResalterAsync resalter)
         {
             Salt = Settings.GetValueFromSettingKey("salt");
             EncryptionService = EncryptionServiceFactory.GetEncryptionServiceAsync(Salt);
-            resalter = new Resalter();
-            Repo = new XmlPersistence();
-            LoginService = new XmlPersistence();
-            _ = GetAllRecordsAsync();
+            this.resalter = resalter;
+            Repo = repo;
+            LoginService = loginService;
         }
 
         public async Task<string> DecryptAsync(string encryptedValue)

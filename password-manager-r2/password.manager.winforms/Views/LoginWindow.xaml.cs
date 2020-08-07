@@ -22,16 +22,16 @@ namespace password.manager.winforms
     /// </summary>
     public partial class LoginWindow : Window
     {
-        private UIBroker broker;
+        private IUIBroker broker;
         private bool isAuthenticated;
         private readonly IPasswordManagerLoginService applicationLoginService;
         
-        public LoginWindow()
+        public LoginWindow(IUIBroker broker, IPasswordManagerLoginService pwManager)
         {
-            broker = new UIBroker();
+            this.broker = broker;
 
             isAuthenticated = false;
-            applicationLoginService = new PasswordManagerLoginService();
+            applicationLoginService = pwManager;
             InitializeComponent(); 
             SetUIUsername();
         }
@@ -41,7 +41,7 @@ namespace password.manager.winforms
             Console.WriteLine("Login Form is closing");
             if(isAuthenticated)
             {
-                MainWindow mainWindow = new MainWindow();
+                MainWindow mainWindow = new MainWindow(this.broker);
                 mainWindow.Show();
             }
         }
