@@ -1,25 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using password.settings;
+using password.uibroker;
+using System;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using password.service;
-using password.model;
-using System.Timers;
-using System.Net.Http.Headers;
-using System.IO;
-using System.Xml.Linq;
-using password.resalter;
 
 
 namespace password.manager.winforms
@@ -29,6 +17,7 @@ namespace password.manager.winforms
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string loginFilePath;
         private const string updateSucceeded = "Update Succeeded";
         private const string updateFailed = "Update Failed";
         private IUIBroker broker;
@@ -50,6 +39,7 @@ namespace password.manager.winforms
             CurrentSaltTextBox.IsEnabled = false;
             SaveSaltButton.IsEnabled = false;
             AdvancedCanvas.Visibility = Visibility.Hidden;
+            loginFilePath = Settings.GetValueFromSettingKey("loginFilePath");
             _ = this.broker.GetAllRecordsAsync();
         }
 
@@ -66,10 +56,10 @@ namespace password.manager.winforms
                 return;
             }
 
-            if (File.Exists("Logins.xml"))
+            if (File.Exists(loginFilePath))
             {
                 File.Delete(pushfile);
-                File.Copy("Logins.xml", pushfile);
+                File.Copy(loginFilePath, pushfile);
                 SuccessUIMessage("File has been pushed");
             }
             else
@@ -90,8 +80,8 @@ namespace password.manager.winforms
 
             if (File.Exists(pullfile))
             {
-                File.Delete("Logins.xml");
-                File.Copy(pullfile, "Logins.xml" );
+                File.Delete(loginFilePath);
+                File.Copy(pullfile, loginFilePath);
                 SuccessUIMessage("File has been pulled");
             }
             else
@@ -551,11 +541,11 @@ namespace password.manager.winforms
         {
             ToggleAdvancedPanel();
         }
-        #endregion
-
+        
         private void RandomPwGenButton_Click(object sender, RoutedEventArgs e)
         {
             PasswordTextBox.Text = broker.GenerateRndPasswrd();
         }
+        #endregion
     }
 }

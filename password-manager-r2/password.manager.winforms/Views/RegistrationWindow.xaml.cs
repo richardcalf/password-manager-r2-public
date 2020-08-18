@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using password.model;
 using password.service;
 using password.settings;
+using password.uibroker;
 
 namespace password.manager.winforms
 {

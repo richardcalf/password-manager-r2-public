@@ -3,11 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using System.IO;
+using password.settings;
 
 namespace password.model
 {
     public class XmlPersistence : PersistenceValidator, IRepository, ILoginService
     {
+
+        private string loginFilePath;
+
+        public XmlPersistence()
+        {
+            loginFilePath = Settings.GetValueFromSettingKey("loginFilePath");
+        }
+
         #region IRepository
         public void Save(Login model)
         {
@@ -47,9 +56,9 @@ namespace password.model
 
         public bool Register(Login login)
         {
-            if (File.Exists("Logins.xml"))
+            if (File.Exists(loginFilePath))
             {
-                File.Delete("Logins.xml");
+                File.Delete(loginFilePath);
             }
             Save(login);
             return true;
@@ -60,9 +69,9 @@ namespace password.model
 
         private Login GetLoginSingle(string site)
         {
-            if(File.Exists("Logins.xml"))
+            if(File.Exists(loginFilePath))
             {
-                XElement doc = XElement.Load("Logins.xml");
+                XElement doc = XElement.Load(loginFilePath);
                 return doc.Elements("Login").Where(l => l.Element("Site").Value.StartsWith(site))
                                             .OrderBy(l => l.Element("Site").Value)
                                             .Select(l => new Login
@@ -77,9 +86,9 @@ namespace password.model
 
         private IEnumerable<Login> GetLoginList()
         {
-            if (File.Exists("Logins.xml"))
+            if (File.Exists(loginFilePath))
             {
-                XElement doc = XElement.Load("Logins.xml");
+                XElement doc = XElement.Load(loginFilePath);
 
                 return
                     from login in doc.Elements("Login")
@@ -96,15 +105,15 @@ namespace password.model
 
         private void AmendRecords(IEnumerable<Login> logins)
         {
-            if (!File.Exists("Logins.xml"))
+            if (!File.Exists(loginFilePath))
             {
                 if (!IsValid(logins.FirstOrDefault())) throw new Exception("input data is not valid");
                 AddNewXmlFile(logins.FirstOrDefault());
             }
 
-            var doc = XDocument.Load("Logins.xml");
+            var doc = XDocument.Load(loginFilePath);
             UpdateLogins(logins, doc);
-            doc.Save("Logins.xml");
+            doc.Save(loginFilePath);
         }
 
         private void UpdateLogins(IEnumerable<Login> logins, XDocument doc)
@@ -138,22 +147,22 @@ namespace password.model
 
         private void AmendRecord(Login model)
         {
-            if (!File.Exists("Logins.xml"))
+            if (!File.Exists(loginFilePath))
             {
                 if (!IsValid(model)) throw new Exception("input data is not valid");
                 AddNewXmlFile(model);
             }
             else
             {
-                var doc = XDocument.Load("Logins.xml");
+                var doc = XDocument.Load(loginFilePath);
                 UpdateLogin(doc, model);
-                doc.Save("Logins.xml");
+                doc.Save(loginFilePath);
             }
         }
 
         private bool DeleteXmlElement(string site)
         {
-            var doc = XDocument.Load("Logins.xml");
+            var doc = XDocument.Load(loginFilePath);
 
             var login =
                 (from lgin in doc.Descendants("Login")
@@ -163,7 +172,7 @@ namespace password.model
             if (login != null)
             {
                 login.Remove();
-                doc.Save("Logins.xml");
+                doc.Save(loginFilePath);
                 return true;
             }
             return false;
@@ -179,7 +188,7 @@ namespace password.model
             root.Add(login);
 
             doc.Add(root);
-            doc.Save("Logins.xml");
+            doc.Save(loginFilePath);
         }
 
         private XElement GetLoginElement(Login model)
@@ -192,7 +201,7 @@ namespace password.model
 
         private bool LoginExists(Login model)
         {
-            var doc = XDocument.Load("Logins.xml");
+            var doc = XDocument.Load(loginFilePath);
             XElement login =
                 (from lgin in doc.Descendants("Login")
                  where lgin.Element("Site").Value == model.Site &
