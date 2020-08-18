@@ -8,7 +8,7 @@ using password.settings;
 using password.resalter;
 using password.model;
 
-namespace password.manager.winforms
+namespace password.uibroker
 {
     public class UIBroker : IUIBroker
     {

@@ -1,14 +1,9 @@
 ﻿using Ninject;
 using password.manager.winforms;
 using password.model;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
 using password.resalter;
+using System.Windows;
+using password.uibroker;
 
 namespace password.xml.bootstrapper
 {
@@ -29,12 +24,10 @@ namespace password.xml.bootstrapper
 
         private void ConfigureContainer()
         {
-            Container.Bind<IRepository>().To<XmlPersistence>();
-            Container.Bind<ILoginService>().To<XmlPersistence>();
+            Container.Bind<IRepository, ILoginService>().To<XmlPersistence>();
             Container.Bind<IResalterAsync>().To<Resalter>();
             Container.Bind<IUIBroker>().To<UIBroker>();
             Container.Bind<IPasswordManagerLoginService>().To<PasswordManagerLoginService>();
-            
         }
 
         private void ComposeObjects()
@@ -51,7 +44,5 @@ namespace password.xml.bootstrapper
                 Current.MainWindow = Container.Get<LoginWindow>();
             }
         }
-
-        
     }
 }

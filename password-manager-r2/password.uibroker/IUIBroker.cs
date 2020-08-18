@@ -1,12 +1,12 @@
-﻿using password.model;
-using password.service;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using password.model;
+using password.service;
 
-namespace password.manager.winforms
+namespace password.uibroker
 {
     public interface IUIBroker
     {
