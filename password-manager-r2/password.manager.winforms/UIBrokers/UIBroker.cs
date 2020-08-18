@@ -93,5 +93,10 @@ namespace password.manager.winforms
             Salt = Settings.GetValueFromSettingKey("salt");
             EncryptionService = new EncryptionService(Salt);
         }
+
+        public string GenerateRndPasswrd()
+        {
+            return Guid.NewGuid().ToString().Substring(0, 13);
+        }
     }
 }

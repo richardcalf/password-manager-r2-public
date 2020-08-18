@@ -113,6 +113,7 @@ namespace password.manager.winforms
             SelectSiteButton.IsEnabled = ready;
             ReSaltButton.IsEnabled = ready;
             ReSaltTextBox.IsEnabled = ready;
+            RandomPwGenButton.IsEnabled = ready;
         }
 
         private void ClearUpdateUIMessage()
@@ -550,6 +551,11 @@ namespace password.manager.winforms
         {
             ToggleAdvancedPanel();
         }
-        #endregion        
+        #endregion
+
+        private void RandomPwGenButton_Click(object sender, RoutedEventArgs e)
+        {
+            PasswordTextBox.Text = broker.GenerateRndPasswrd();
+        }
     }
 }

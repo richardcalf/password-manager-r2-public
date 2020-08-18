@@ -44,6 +44,8 @@ namespace password.manager.winforms
         void SaveSetting(string key, string value);
 
         void RefreshEncryptionSalt();
+
+        string GenerateRndPasswrd();
         #endregion
     }
 }
