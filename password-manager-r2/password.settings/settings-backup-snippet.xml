@@ -1,0 +1,4 @@
+<appSettings>
+    <add key="loginFilePath" value="D:\Logins.xml" />
+    <add key="push" value="C:\push\logins\Logins.RealWorld.xml" />
+</appSettings>
