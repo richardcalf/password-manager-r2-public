@@ -19,8 +19,8 @@ namespace password.mvc
         {
             var builder = new ContainerBuilder();
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
-            builder.RegisterType<DatabasePersistence>().As<IRepository>().InstancePerRequest();
-            builder.RegisterType<DatabasePersistence>().As<ILoginService>().InstancePerRequest();
+            builder.RegisterType<XmlPersistence>().As<IRepository>().InstancePerRequest();
+            builder.RegisterType<XmlPersistence>().As<ILoginService>().InstancePerRequest();
             builder.RegisterType<Resalter>().As<IResalterAsync>().InstancePerRequest();
             builder.RegisterType<UIBroker>().As<IUIBroker>().InstancePerRequest();
 
