@@ -1,0 +1,54 @@
+﻿@model password.mvc.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "ViewLogin";
+}
+
+
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            <h3>
+                @Html.DisplayNameFor(model => model.Site)
+            </h3>
+        </dt>
+
+        <dd>
+            <h3>
+                @Html.DisplayFor(model => model.Site)
+            </h3>
+        </dd>
+
+        <dt>
+            <h3>
+                @Html.DisplayNameFor(model => model.UserName)
+            </h3>
+        </dt> 
+
+        <dd>
+            <h3>
+                @Html.DisplayFor(model => model.UserName)
+            </h3>
+        </dd>
+
+        <dt>
+            <h3>
+                @Html.DisplayNameFor(model => model.Password)
+            </h3>
+        </dt>
+
+        <dd>
+            <h3>
+                @Html.DisplayFor(model => model.Password)
+            </h3>
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Delete", "Delete", new { site = Model.Site }) |
+    @Html.ActionLink("Edit", "Edit", new { site = Model.Site }) |
+    @Html.ActionLink("Back to List", "ListPasswords")
+</p>

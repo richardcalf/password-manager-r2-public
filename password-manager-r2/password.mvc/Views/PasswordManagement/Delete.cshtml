@@ -1,0 +1,23 @@
+﻿@model password.mvc.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h1>Delete!</h1>
+
+<h2>Are you sure you want to delete  </h2>
+<div>
+    <h2> @Model.Site? </h2>
+    <hr />
+    
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "ListPasswords")
+        </div>
+    }
+</div>
