@@ -15,6 +15,11 @@ namespace password.model
         public XmlPersistence()
         {
             loginFilePath = Settings.GetValueFromSettingKey("loginFilePath");
+            if(loginFilePath == null)
+            {
+                loginFilePath = "Logins.xml";
+                Settings.SaveAppSetting("loginFilePath", loginFilePath);
+            }
         }
 
         #region IRepository
