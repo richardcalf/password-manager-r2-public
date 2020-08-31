@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using System.Configuration;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace password.settings
 {
@@ -23,7 +21,8 @@ namespace password.settings
         {
             try
             {
-                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var configFile = GetConfigurationFile();
+
                 var settings = configFile.AppSettings.Settings;
                 if (settings[key] == null)
                 {
@@ -42,11 +41,26 @@ namespace password.settings
             }
         }
 
+        private static Configuration GetConfigurationFile()
+        {
+            Configuration configFile;
+            if (System.Web.HttpContext.Current != null)
+            {
+                configFile =
+                    System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
+            }
+            else
+            {
+                configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            }
+            return configFile;
+        }
+
         public static void RemoveAppSettings(List<string> keys)
         {
             try
             {
-                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var configFile = GetConfigurationFile();
                 var settings = configFile.AppSettings.Settings;
                 foreach(var key in keys)
                 {
