@@ -11,7 +11,8 @@ namespace password.encryption.tests.Code.Runner.Classes
 {
     public static class CodeRunner
     {
-        public static IRepository repo = new XmlPersistence();
+        public static IRepository xmlrepo = new XmlPersistence();
+        public static IRepository dbrepo = new DatabasePersistence();
         private static Random random = new Random();
         static string globalSalt = Settings.GetValueFromSettingKey("salt");
         static IEncryptionService encryptionService = EncryptionServiceFactory.GetEncryptionService(globalSalt);
@@ -26,6 +27,11 @@ namespace password.encryption.tests.Code.Runner.Classes
             login.Password = encryptedPassword;
 
             return login;
+        }
+
+        public static string GetRandomString()
+        {
+            return RandomString(10);
         }
         private static string RandomString(int length)
         {
