@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:password.manager.winforms"
         mc:Ignorable="d"
         Title="Version 0.1.3" Height="541" Width="1200" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
-    <Grid Margin="0,0,0,6">
+    <Grid Margin="1,0,-1,6">
         <Label x:Name="label" Content="Plain Text Password" HorizontalAlignment="Left" Margin="9,10,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="plainTextBox" HorizontalAlignment="Left" Height="23" Margin="149,14,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="255" KeyUp="plainTextBox_KeyUp"/>
         <Label x:Name="label1" Content="Encrypted Password" HorizontalAlignment="Left" Margin="9,41,0,0" VerticalAlignment="Top" Width="124"/>
@@ -22,9 +22,9 @@
         <Label x:Name="label2" Content="Site" HorizontalAlignment="Left" Margin="468,200,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.474,0.462" Width="56"/>
         <TextBox x:Name="SiteTextBox" HorizontalAlignment="Left" Height="23" Margin="555,203,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
         <Label x:Name="UserNamelabel" Content="User Name" HorizontalAlignment="Left" Margin="468,231,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="23" Margin="555,231,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
+        <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="23" Margin="555,231,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195"/>
         <Label x:Name="PasswordLabel" Content="Password" HorizontalAlignment="Left" Margin="468,260,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.263,0.462"/>
-        <TextBox x:Name="PasswordTextBox" HorizontalAlignment="Left" Height="23" Margin="555,260,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
+        <TextBox x:Name="PasswordTextBox" HorizontalAlignment="Left" Height="23" Margin="555,260,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195"/>
         <Button x:Name="UpdateButton" Content="Update" HorizontalAlignment="Left" Margin="784,234,0,0" VerticalAlignment="Top" Width="75" Click="UpdateButton_Click" IsEnabled="False" />
         <Button x:Name="ClearSearchButton" Content="Clear Search" HorizontalAlignment="Left" Margin="784,148,0,0" VerticalAlignment="Top" Width="75" Click="ClearSearchButton_Click"/>
         <Button x:Name="ClearDataButton" Content="Clear Data" HorizontalAlignment="Left" Margin="784,208,0,0" VerticalAlignment="Top" Width="75" Click="ClearDataButton_Click"/>
@@ -50,5 +50,15 @@
         <Button x:Name="AdvancedButton" Content="Advanced >>" HorizontalAlignment="Left" Margin="223,352,0,0" VerticalAlignment="Top" Width="75" Click="AdvancedButton_Click"/>
         <Label x:Name="CountRecordslabel" Content="" HorizontalAlignment="Left" Margin="104,325,0,0" VerticalAlignment="Top"/>
         <Button x:Name="RandomPwGenButton" Content="rd Password" HorizontalAlignment="Left" Margin="784,284,0,0" VerticalAlignment="Top" Width="75" AutomationProperties.HelpText="Generate a random password" IsEnabled="False" Click="RandomPwGenButton_Click" />
+        <Button x:Name="cpyUsrNameBtn" Content="" HorizontalAlignment="Left" Margin="755,234,0,0" VerticalAlignment="Top" Width="24" Click="cpyUsrNameBtn_Click">
+            <Button.Background>
+                <ImageBrush ImageSource="copy.png"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="cpyPsswrdBtn" Content="" HorizontalAlignment="Left" Margin="755,260,0,0" VerticalAlignment="Top" Width="24" Click="cpyPsswrdBtn_Click">
+            <Button.Background>
+                <ImageBrush ImageSource="copy.png"/>
+            </Button.Background>
+        </Button>
     </Grid>
 </Window>

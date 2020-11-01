@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 
+
 namespace password.manager.winforms
 {
     /// <summary>
@@ -547,5 +548,15 @@ namespace password.manager.winforms
             PasswordTextBox.Text = broker.GenerateRndPasswrd();
         }
         #endregion
+
+        private void cpyUsrNameBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(UserNameTextBox.Text);
+        }
+
+        private void cpyPsswrdBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(PasswordTextBox.Text);
+        }
     }
 }
