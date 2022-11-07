@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:password.manager.winforms"
         mc:Ignorable="d"
         Title="Login" Height="224.762" Width="440" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
-    <Grid x:Name="loginGrid" Margin="0,0,4,3">
+    <Grid x:Name="loginGrid">
         <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="23" Margin="175,56,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="155" KeyUp="UserNameTextBox_KeyUp"/>
         <Label x:Name="UserNameLabel" Content="Username" HorizontalAlignment="Left" Margin="83,56,0,0" VerticalAlignment="Top"/>
         <Label x:Name="PasswordLabel" Content="Password" HorizontalAlignment="Left" Margin="83,84,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.86,0.218"/>
