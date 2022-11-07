@@ -1,6 +1,8 @@
-﻿using password.settings;
+﻿using password.manager.winforms.Views.Themes;
+using password.settings;
 using password.uibroker;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,11 +29,11 @@ namespace password.manager.winforms
             InitializeComponent();
             InitializeData();
             InitializeButtonsState();
+            InitializeThemeComboBox();
             this.broker = broker;
             broker.SettingSaved += SettingSaved;
             broker.Resalted += ResaltingDone;
             broker.DataReady += DataInputIsReady;
-            
 
             CurrentSaltTextBox.Text = broker.Salt;
             FilePathTextBox.Text = broker.PushPath;
@@ -41,11 +43,33 @@ namespace password.manager.winforms
             SaveSaltButton.IsEnabled = false;
             AdvancedCanvas.Visibility = Visibility.Hidden;
             loginFilePath = Settings.GetValueFromSettingKey("loginFilePath");
+
+            ApplyTheme();
             _ = this.broker.GetAllRecordsAsync();
         }
 
         #region private UI coupled methods
-        
+        private void InitializeThemeComboBox()
+        {
+            foreach (var theme in ThemeHelper.GetThemeList())
+            {
+                visualModeComboBox.Items.Add(theme);
+            }
+
+            int tIndex = 0;
+            int.TryParse(ThemeHelper.GetThemeSetting(), out tIndex);
+            visualModeComboBox.SelectedIndex = tIndex;
+        }
+
+        private void ApplyTheme()
+        {
+            ThemeHelper.ApplyTheme(theGrid, visualModeComboBox.SelectedIndex);
+        }
+
+        private void SaveTheme()
+        {
+            ThemeHelper.SaveThemeSetting(visualModeComboBox.SelectedIndex);
+        }
 
         private void PushLogins()
         {
@@ -131,6 +155,12 @@ namespace password.manager.winforms
             UpdateLabel.Content = message;
         }
 
+        private void DebugUIMessage(string message)
+        {
+            UpdateLabel.Foreground = Brushes.Blue;
+            UpdateLabel.Content = message;
+        }
+
         private void PrintException(string message)
         {
             errorLabel.Foreground = Brushes.Red;
@@ -201,7 +231,7 @@ namespace password.manager.winforms
 
         private void ValidateLogin(model.Login model)
         {
-            if(!broker.Repo.IsValid(model))
+            if (!broker.Repo.IsValid(model))
             {
                 throw new Exception("input data is not valid");
             }
@@ -542,12 +572,17 @@ namespace password.manager.winforms
         {
             ToggleAdvancedPanel();
         }
-        
+
         private void RandomPwGenButton_Click(object sender, RoutedEventArgs e)
         {
             PasswordTextBox.Text = broker.GenerateRndPasswrd();
         }
-        #endregion
+
+        private void visualModeComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            ApplyTheme();
+            SaveTheme();
+        }
 
         private void cpyUsrNameBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -558,5 +593,6 @@ namespace password.manager.winforms
         {
             Clipboard.SetText(PasswordTextBox.Text);
         }
+        #endregion
     }
 }

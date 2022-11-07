@@ -1,4 +1,7 @@
-﻿using password.model;
+﻿
+using password.manager.winforms.Views.Themes;
+using password.model;
+using password.settings;
 using password.uibroker;
 using System;
 using System.Threading.Tasks;
@@ -25,6 +28,14 @@ namespace password.manager.winforms
             applicationLoginService = pwManager;
             InitializeComponent(); 
             SetUIUsername();
+            ApplyTheme();
+        }
+
+        private void ApplyTheme()
+        {
+            int tIndex = 0;
+            int.TryParse(ThemeHelper.GetThemeSetting(), out tIndex);
+            ThemeHelper.ApplyTheme(loginGrid, tIndex);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
