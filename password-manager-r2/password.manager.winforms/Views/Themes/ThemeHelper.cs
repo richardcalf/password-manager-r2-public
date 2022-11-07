@@ -15,6 +15,7 @@ namespace password.manager.winforms.Views.Themes
         Light = 0,
         Dark = 1,
         Flamingo = 2,
+        Orange = 3,
     }
     public class ThemeHelper
     {
@@ -34,6 +35,9 @@ namespace password.manager.winforms.Views.Themes
                 case Themes.Flamingo:
                     ThemeProvider.SetTheme(visual, new FlamingoTheme().ProvideTheme());
                     break;
+                case Themes.Orange:
+                    ThemeProvider.SetTheme(visual, new OrangeTheme().ProvideTheme());
+                    break;
                 default:
                     ThemeProvider.SetTheme(visual, new LightTheme().ProvideTheme());
                     break;
@@ -47,6 +51,7 @@ namespace password.manager.winforms.Views.Themes
                 Themes.Light.ToString(),
                 Themes.Dark.ToString(),
                 Themes.Flamingo.ToString(),
+                Themes.Orange.ToString()
             };
         }
 
