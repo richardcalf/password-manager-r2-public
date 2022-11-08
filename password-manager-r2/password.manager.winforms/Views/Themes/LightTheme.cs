@@ -9,7 +9,7 @@ namespace password.manager.winforms
             return new Theme
             {
                 BackColor = Color.FromArgb(255, 255, 255, 255),
-                BorderBrush = Brushes.DarkSlateGray,
+                BorderBrush = Brushes.LightGray,
                 BackGroundBrush = Brushes.White,
                 ForeGroundBrush = Brushes.Black,
                 LabelForeGroundBrush = Brushes.Black
