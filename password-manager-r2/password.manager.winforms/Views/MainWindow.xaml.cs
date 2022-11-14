@@ -28,7 +28,6 @@ namespace password.manager.winforms
         {
             InitializeComponent();
             InitializeData();
-            InitializeButtonsState();
             InitializeThemeComboBox();
             this.broker = broker;
             broker.SettingSaved += SettingSaved;
@@ -169,16 +168,7 @@ namespace password.manager.winforms
 
         private void InitializeData()
         {
-            plainTextBox.Clear();
-            encryptedTextBox.Clear();
-            decryptedTextBox.Clear();
             errorLabel.Content = string.Empty;
-        }
-
-        private void InitializeButtonsState()
-        {
-            decryptButton.IsEnabled = !string.IsNullOrWhiteSpace(encryptedTextBox.Text);
-            encryptButton.IsEnabled = !string.IsNullOrWhiteSpace(plainTextBox.Text);
         }
 
         private async Task FindSite(string site)
@@ -343,55 +333,34 @@ namespace password.manager.winforms
         private void clearAllButton_Click(object sender, RoutedEventArgs e)
         {
             InitializeData();
-            InitializeButtonsState();
             ClearUpdateUIMessage();
         }
         private async void decryptButton_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                decryptedTextBox.Text = await broker.DecryptAsync(encryptedTextBox.Text);
-                InitializeButtonsState();
-                ClearUpdateUIMessage();
-            }
-            catch (Exception ex)
-            {
-                PrintException(ex.Message);
-            }
         }
 
         private async void encryptButton_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                encryptedTextBox.Text = await broker.EncryptAsync(plainTextBox.Text);
-                InitializeButtonsState();
-                ClearUpdateUIMessage();
-            }
-            catch (Exception ex)
-            {
-                PrintException(ex.Message);
-            }
         }
 
         private void plainTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            InitializeButtonsState();
+            
         }
 
         private void encryptedTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            InitializeButtonsState();
+            
         }
 
         private void decryptedTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            InitializeButtonsState();
+            
         }
 
         private void decryptedTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            InitializeButtonsState();
+           
         }
 
         private async void FindSiteButton_Click(object sender, RoutedEventArgs e)

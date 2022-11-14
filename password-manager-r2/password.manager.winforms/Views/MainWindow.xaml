@@ -7,14 +7,6 @@
         mc:Ignorable="d"
         Title="Version 0.1.5" Height="574" Width="1200" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
     <Grid x:Name="theGrid" Margin="0,0,-1,-6">
-        <Label x:Name="label" Content="Plain Text Password" HorizontalAlignment="Left" Margin="9,10,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="plainTextBox" HorizontalAlignment="Left" Height="23" Margin="149,14,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="255" KeyUp="plainTextBox_KeyUp"/>
-        <Label x:Name="label1" Content="Encrypted Password" HorizontalAlignment="Left" Margin="9,41,0,0" VerticalAlignment="Top" Width="124"/>
-        <TextBox x:Name="encryptedTextBox" HorizontalAlignment="Left" Height="23" Margin="149,42,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="255" KeyUp="encryptedTextBox_KeyUp"/>
-        <TextBox x:Name="decryptedTextBox"  HorizontalAlignment="Left" Height="23" Margin="149,95,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="255" RenderTransformOrigin="-0.033,0.565" TextChanged="decryptedTextBox_TextChanged" LostFocus="decryptedTextBox_LostFocus"/>
-        <Button x:Name="decryptButton" Content="Decrypt" HorizontalAlignment="Left" Margin="149,70,0,0" VerticalAlignment="Top" Width="82" Click="decryptButton_Click"/>
-        <Button x:Name="encryptButton" Content="Encrypt" HorizontalAlignment="Left" Margin="235,70,0,0" VerticalAlignment="Top" Width="82" Click="encryptButton_Click"/>
-        <Button x:Name="clearAllButton" Content="Clear Input" HorizontalAlignment="Left" Margin="322,70,0,0" VerticalAlignment="Top" Width="82" Click="clearAllButton_Click"/>
         <Label x:Name="errorLabel"  Content="Error content here" HorizontalAlignment="Left" Margin="555,318,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.9,0.423" Width="484"/>
         <Label x:Name="findSiteLabel" Content="Find Site" HorizontalAlignment="Left" Margin="468,120,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.289,-0.038"/>
         <TextBox x:Name="FindSiteTextBox" HorizontalAlignment="Left" Height="26" Margin="555,123,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>

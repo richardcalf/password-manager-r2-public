@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using password.manager.winforms.Views.Themes;
+using System.IO;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -7,13 +8,7 @@ namespace password.manager.winforms
 {
 
     public class ThemeProvider
-    {
-        private static void SetTextBox<T>(T textbox, Theme theme) where T : Control
-        {
-            textbox.BorderBrush = new SolidColorBrush(theme.TextBoxBorder);
-            textbox.Background = new SolidColorBrush(theme.TextBoxBackGround);
-            textbox.Foreground = new SolidColorBrush(theme.TextBoxForeGround);
-        }
+    {         
         public static void SetTheme(Visual visual, Theme theme)
         {
             if (visual is System.Windows.Controls.Grid)
@@ -24,35 +19,48 @@ namespace password.manager.winforms
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(visual); i++)
             {
                 Visual childVisual = (Visual)VisualTreeHelper.GetChild(visual, i);
+                if (childVisual is System.Windows.Controls.Canvas)
+                {
+                    for (int x = 0; x < VisualTreeHelper.GetChildrenCount(childVisual); x++)
+                    {
+                        Visual childChildVisual = (Visual)VisualTreeHelper.GetChild(childVisual, x);
+                        if (childChildVisual is System.Windows.Controls.TextBox)
+                        {
+                            ThemeHelper.SetTextBox(childChildVisual as TextBox, theme);
+                        }
+                        if (childChildVisual is System.Windows.Controls.Button)
+                        {
+                            ThemeHelper.SetButton(childChildVisual as Button, theme);
+                        }
+                        if (childChildVisual is System.Windows.Controls.ListBox)
+                        {
+                            ThemeHelper.SetListBox(childChildVisual as ListBox, theme);
+                        }
+                        if (childChildVisual is System.Windows.Controls.Label)
+                        {
+                            ThemeHelper.SetLabel(childChildVisual as Label, theme);
+                        }
+                    }
+                }
                 if (childVisual is System.Windows.Controls.TextBox)
                 {
-                    var textbox = childVisual as TextBox;
-                    SetTextBox(textbox, theme);
+                    ThemeHelper.SetTextBox(childVisual as TextBox, theme);
                 }
                 if (childVisual is System.Windows.Controls.PasswordBox)
                 {
-                    var textbox = childVisual as PasswordBox;
-                    SetTextBox(textbox, theme);
+                    ThemeHelper.SetTextBox(childVisual as PasswordBox, theme);
                 }
                 if (childVisual is System.Windows.Controls.Button)
                 {
-                    var button = childVisual as Button;
-                    button.BorderBrush = new SolidColorBrush(theme.ButtonBorder);
-                    button.Background = new SolidColorBrush(theme.ButtonBackground);
-                    button.Foreground = new SolidColorBrush(theme.ButtonForeground);
+                    ThemeHelper.SetButton(childVisual as Button, theme);
                 }
                 if (childVisual is System.Windows.Controls.ListBox)
                 {
-                    var listbox = childVisual as ListBox;
-                    listbox.BorderBrush = new SolidColorBrush(theme.ListBoxBorder);
-                    listbox.Background = new SolidColorBrush(theme.ListBoxBackground);
-                    listbox.Foreground = new SolidColorBrush(theme.ListBoxForeground);
+                    ThemeHelper.SetListBox(childVisual as ListBox, theme);
                 }
                 if (childVisual is System.Windows.Controls.Label)
                 {
-                    var label = childVisual as Label;
-                    label.Background = new SolidColorBrush(theme.LabelBackground);
-                    label.Foreground = new SolidColorBrush(theme.LabelForeground);
+                    ThemeHelper.SetLabel(childVisual as Label, theme);
                 }
             }
         }
