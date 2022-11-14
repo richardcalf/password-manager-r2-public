@@ -13,11 +13,7 @@ namespace password.manager.winforms.Views.Themes
         {
             return new Theme
             {
-                BackColor = Color.FromArgb(255, 255, 165, 0),
-                BorderBrush = Brushes.DarkOrange,
-                BackGroundBrush = Brushes.Orange,
-                ForeGroundBrush = Brushes.Black,
-                LabelForeGroundBrush = Brushes.Red
+                BackColor = Color.FromArgb(255, 255, 165, 0)
             };
         }
     }

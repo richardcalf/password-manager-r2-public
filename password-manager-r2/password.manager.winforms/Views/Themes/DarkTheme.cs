@@ -8,11 +8,7 @@ namespace password.manager.winforms
         {
             return new Theme
             {
-                BackColor = Color.FromArgb(255, 22, 24, 26),
-                BorderBrush = Brushes.DarkSlateGray,
-                BackGroundBrush = Brushes.DarkGray,
-                ForeGroundBrush = Brushes.Black,
-                LabelForeGroundBrush = Brushes.Gray
+                BackColor = Color.FromArgb(255, 22, 24, 26)
             };
         }
     }

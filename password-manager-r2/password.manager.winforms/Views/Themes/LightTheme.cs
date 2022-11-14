@@ -9,10 +9,12 @@ namespace password.manager.winforms
             return new Theme
             {
                 BackColor = Color.FromArgb(255, 255, 255, 255),
-                BorderBrush = Brushes.LightGray,
-                BackGroundBrush = Brushes.White,
-                ForeGroundBrush = Brushes.Black,
-                LabelForeGroundBrush = Brushes.Black
+                ButtonBorder = Color.FromArgb(255, 255, 0, 0),
+                TextBoxBorder = Color.FromArgb(255, 0, 255, 0),
+                ButtonBackground = Color.FromArgb(120, 0, 0, 155),
+                TextBoxBackGround = Color.FromArgb(255, 255, 255, 0),
+                ControlForground = Color.FromArgb(255, 0, 0, 0),
+                LabelForeGround = Color.FromArgb(255, 255, 0, 155),
             };
         }
     }
