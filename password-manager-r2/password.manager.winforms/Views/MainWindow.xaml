@@ -52,6 +52,6 @@
                 <ImageBrush ImageSource="copy.png"/>
             </Button.Background>
         </Button>
-        <ComboBox x:Name="visualModeComboBox" HorizontalAlignment="Left" Margin="739,5,0,0" VerticalAlignment="Top" Width="120" DropDownClosed="visualModeComboBox_DropDownClosed"/>
+        <ComboBox x:Name="visualModeComboBox" HorizontalAlignment="Left" Margin="739,10,0,0" VerticalAlignment="Top" Width="120" DropDownClosed="visualModeComboBox_DropDownClosed"/>
     </Grid>
 </Window>
