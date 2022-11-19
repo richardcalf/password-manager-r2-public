@@ -563,5 +563,13 @@ namespace password.manager.winforms
             Clipboard.SetText(PasswordTextBox.Text);
         }
         #endregion
+
+        private async void FindSiteTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                await FindSite(FindSiteTextBox.Text);
+            }
+        }
     }
 }

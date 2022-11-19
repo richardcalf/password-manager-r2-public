@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:password.manager.winforms"
         mc:Ignorable="d"
-        Title="Version 0.1.5" Height="574" Width="1200" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
+        Title="Version 0.1.6" Height="574" Width="1200" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
     <Grid x:Name="theGrid" Margin="0,0,-1,-6">
         <Label x:Name="errorLabel"  Content="Error content here" HorizontalAlignment="Left" Margin="555,318,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.9,0.423" Width="484"/>
         <Label x:Name="findSiteLabel" Content="Find Site" HorizontalAlignment="Left" Margin="468,120,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.289,-0.038"/>
-        <TextBox x:Name="FindSiteTextBox" HorizontalAlignment="Left" Height="26" Margin="555,123,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
+        <TextBox x:Name="FindSiteTextBox" HorizontalAlignment="Left" Height="26" Margin="555,123,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224" KeyDown="FindSiteTextBox_KeyDown"/>
         <Button x:Name="FindSiteButton" Content="Find" HorizontalAlignment="Left" Margin="784,123,0,0" VerticalAlignment="Top" Width="75" Click="FindSiteButton_Click" IsEnabled="False"/>
         <Label x:Name="label2" Content="Site" HorizontalAlignment="Left" Margin="468,200,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.474,0.462" Width="56"/>
         <TextBox x:Name="SiteTextBox" HorizontalAlignment="Left" Height="23" Margin="555,203,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
