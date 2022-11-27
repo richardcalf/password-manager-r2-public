@@ -261,7 +261,15 @@ namespace password.manager.winforms
 
         private void SetSearchText()
         {
-            FindSiteTextBox.Text = (string)SiteListBox.SelectedItem;
+            if (SiteListBox.SelectedItems.Count == 0)
+            {
+                if (SiteListBox.Items.Count > 0)
+                    FindSiteTextBox.Text = (string)SiteListBox.Items[0];
+            }
+            else
+            {
+                FindSiteTextBox.Text = (string)SiteListBox.SelectedItem;
+            }
         }
 
         private async Task PopulateListBox()
@@ -278,6 +286,22 @@ namespace password.manager.winforms
             });
         }
 
+        private async Task PopulateListBoxFiltered(string input)
+        {
+            await Task.Run(() =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    foreach (var l in broker.Logins
+                                            .Where(l => l.Site.ToLower()
+                                            .Contains(input.ToLower())))
+                    {
+                        SiteListBox.Items.Add(l.Site);
+                    }
+                });
+            });
+        }
+
         private void UpdateRecordCountLabel(int count)
         {
             CountRecordslabel.Content = $"record count: {count}";
@@ -286,10 +310,22 @@ namespace password.manager.winforms
         private async Task RefreshList()
         {
             SiteListBox.Items.Clear();
+            siteListFilterTextBox.Clear();
             await broker.GetAllRecordsAsync();
             ClearUpdateUIMessage();
             await PopulateListBox();
             UpdateRecordCountLabel(broker.Logins.Count());
+            UpdateRecordCountLabel(SiteListBox.Items.Count);
+        }
+
+        private async Task FilterList()
+        {
+            SiteListBox.Items.Clear();
+            await broker.GetAllRecordsAsync();
+            ClearUpdateUIMessage();
+            await PopulateListBoxFiltered(siteListFilterTextBox.Text);
+            ClearUpdateUIMessage();
+            UpdateRecordCountLabel(SiteListBox.Items.Count);
         }
 
         private void RemoveItemFromListBox()
@@ -394,7 +430,7 @@ namespace password.manager.winforms
 
         }
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        private void button_Click(object sender, EventArgs e)
         {
             SetSearchText();
             ClearUpdateUIMessage();
@@ -409,6 +445,11 @@ namespace password.manager.winforms
         private async void GetRecordsButton_Click(object sender, RoutedEventArgs e)
         {
             await RefreshList();
+        }
+
+        private async void sitListFilterTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            await FilterList();
         }
 
         private async void UpdateButton_Click(object sender, RoutedEventArgs e)
@@ -570,6 +611,25 @@ namespace password.manager.winforms
             {
                 await FindSite(FindSiteTextBox.Text);
             }
+        }
+
+        private async void sitListFilterTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            EnterKeySetSearchFindSite(e);
+        }
+
+        private async void EnterKeySetSearchFindSite(KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                SetSearchText();
+                await FindSite(FindSiteTextBox.Text);
+            }
+        }
+
+        private void SiteListBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            EnterKeySetSearchFindSite(e);
         }
     }
 }
