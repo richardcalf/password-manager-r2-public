@@ -18,8 +18,8 @@
         <Label x:Name="PasswordLabel" Content="Password" HorizontalAlignment="Left" Margin="468,260,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.263,0.462"/>
         
         
-        <TextBox x:Name="siteListFilterTextBox" HorizontalAlignment="Left" Margin="223,92,0,0" Height="26" TextWrapping="Wrap" VerticalAlignment="Top" Width="181" KeyUp="sitListFilterTextBox_KeyUp" KeyDown="sitListFilterTextBox_KeyDown"/>
-        <ListBox x:Name="SiteListBox" HorizontalAlignment="Left" Height="224" Margin="223,123,0,0" VerticalAlignment="Top" Width="181" MouseDown="SiteListBox_MouseDown" MouseDoubleClick="SiteListBox_MouseDoubleClick" IsEnabled="False" KeyUp="SiteListBox_KeyUp" />
+        <TextBox x:Name="siteListFilterTextBox" HorizontalAlignment="Left" Margin="223,92,0,0" Height="26" TextWrapping="Wrap" VerticalAlignment="Top" Width="181" KeyUp="sitListFilterTextBox_KeyUp"/>
+        <ListBox x:Name="SiteListBox" HorizontalAlignment="Left" Height="224" Margin="223,123,0,0" VerticalAlignment="Top" Width="181" MouseDoubleClick="SiteListBox_MouseDoubleClick" IsEnabled="False" KeyUp="SiteListBox_KeyUp" />
         <TextBox x:Name="FindSiteTextBox" HorizontalAlignment="Left" Height="26" Margin="555,123,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224" KeyDown="FindSiteTextBox_KeyDown"/>
         <TextBox x:Name="SiteTextBox" HorizontalAlignment="Left" Height="23" Margin="555,203,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
         <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="23" Margin="555,231,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195"/>

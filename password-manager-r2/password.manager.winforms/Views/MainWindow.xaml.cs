@@ -264,9 +264,10 @@ namespace password.manager.winforms
         {
             if (SiteListBox.SelectedItems.Count == 0)
             {
-                //if (SiteListBox.Items.Count > 0)
-                //    FindSiteTextBox.Text = (string)SiteListBox.Items[0];
-                FindSiteTextBox.Text = "";
+                if (SiteListBox.HasItems)
+                {
+                    FindSiteTextBox.Text = (string)SiteListBox.Items[0];
+                }
             }
             else
             {
@@ -373,33 +374,6 @@ namespace password.manager.winforms
             InitializeData();
             ClearUpdateUIMessage();
         }
-        private async void decryptButton_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private async void encryptButton_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void plainTextBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            
-        }
-
-        private void encryptedTextBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            
-        }
-
-        private void decryptedTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            
-        }
-
-        private void decryptedTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-           
-        }
 
         private async void FindSiteButton_Click(object sender, RoutedEventArgs e)
         {
@@ -415,21 +389,6 @@ namespace password.manager.winforms
         private void ClearDataButton_Click(object sender, RoutedEventArgs e)
         {
             ClearDataInputs();
-        }
-
-        private void SaveAlreadyEncryptedCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void SaveAlreadyEncryptedCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void SiteListBox_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-
         }
 
         private void button_Click(object sender, EventArgs e)
@@ -488,6 +447,7 @@ namespace password.manager.winforms
 
         private void ClearLitButton_Click(object sender, RoutedEventArgs e)
         {
+            siteListFilterTextBox.Clear();
             SiteListBox.Items.Clear();
             CountRecordslabel.Content = string.Empty;
             FindSiteTextBox.Clear();
@@ -625,11 +585,6 @@ namespace password.manager.winforms
             }
         }
 
-        private async void sitListFilterTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            EnterKeySetSearchFindSite(e);
-        }
-
         private async void EnterKeySetSearchFindSite(KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -643,7 +598,18 @@ namespace password.manager.winforms
         {
             if (e.Key == Key.Delete)
             {
-                Delete(SiteListBox.SelectedItem.ToString());
+                if (SiteListBox.SelectedItem != null)
+                {
+                    Delete(SiteListBox.SelectedItem.ToString());
+                    return;
+                }
+                if (SiteListBox.HasItems)
+                {
+                    //if the execution reaches here it means that
+                    //there is only one record on the grid and using keyboard only
+                    //the damn top record never becomes selected. feels like a ui control bug.
+                    Delete(SiteListBox.Items[0].ToString());
+                }   
             }
             else
             {
