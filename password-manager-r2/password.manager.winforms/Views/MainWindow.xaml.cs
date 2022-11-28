@@ -42,6 +42,7 @@ namespace password.manager.winforms
             SaveSaltButton.IsEnabled = false;
             AdvancedCanvas.Visibility = Visibility.Hidden;
             loginFilePath = Settings.GetValueFromSettingKey("loginFilePath");
+            siteListFilterTextBox.Focus();
 
             ApplyTheme();
             _ = this.broker.GetAllRecordsAsync();
@@ -185,7 +186,7 @@ namespace password.manager.winforms
         private async Task ShowLoginOnUI(model.Login login)
         {
             ClearDataInputs();
-            if (login == null) { SiteTextBox.Text = "Not found"; return; }
+            if (login == null) { SiteTextBox.Text = ""; return; }
             SiteTextBox.Text = login.Site;
             UserNameTextBox.Text = login.UserName;
             try
@@ -263,8 +264,9 @@ namespace password.manager.winforms
         {
             if (SiteListBox.SelectedItems.Count == 0)
             {
-                if (SiteListBox.Items.Count > 0)
-                    FindSiteTextBox.Text = (string)SiteListBox.Items[0];
+                //if (SiteListBox.Items.Count > 0)
+                //    FindSiteTextBox.Text = (string)SiteListBox.Items[0];
+                FindSiteTextBox.Text = "";
             }
             else
             {
@@ -328,13 +330,13 @@ namespace password.manager.winforms
             UpdateRecordCountLabel(SiteListBox.Items.Count);
         }
 
-        private void RemoveItemFromListBox()
+        private void RemoveItemFromListBox(string site)
         {
             foreach (var item in SiteListBox.Items)
             {
-                if (item.ToString().Equals(SiteTextBox.Text))
+                if (item.ToString().Equals(site))
                 {
-                    int index = SiteListBox.Items.IndexOf(SiteTextBox.Text);
+                    int index = SiteListBox.Items.IndexOf(site);
                     SiteListBox.Items.RemoveAt(index);
                     break;
                 }
@@ -449,7 +451,10 @@ namespace password.manager.winforms
 
         private async void sitListFilterTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            await FilterList();
+            if ((e.Key != Key.Tab) && (e.Key != Key.Enter) && (e.Key != Key.LeftShift))
+            {
+                await FilterList();
+            }
         }
 
         private async void UpdateButton_Click(object sender, RoutedEventArgs e)
@@ -459,13 +464,18 @@ namespace password.manager.winforms
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to delete {SiteTextBox.Text}?", "Delete Confirmation", MessageBoxButton.YesNo);
+            Delete(SiteTextBox.Text);
+        }
+
+        private void Delete(string site)
+        {
+            MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to delete {site}?", "Delete Confirmation", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                bool deleted = DeleteLogin(SiteTextBox.Text);
+                bool deleted = DeleteLogin(site);
                 if (deleted)
                 {
-                    RemoveItemFromListBox();
+                    RemoveItemFromListBox(site);
                     ClearDataInputs();
                     SuccessUIMessage("Delete Succeeded");
                 }
@@ -480,6 +490,8 @@ namespace password.manager.winforms
         {
             SiteListBox.Items.Clear();
             CountRecordslabel.Content = string.Empty;
+            FindSiteTextBox.Clear();
+            ClearDataInputs();
             ClearUpdateUIMessage();
         }
 
@@ -629,7 +641,14 @@ namespace password.manager.winforms
 
         private void SiteListBox_KeyUp(object sender, KeyEventArgs e)
         {
-            EnterKeySetSearchFindSite(e);
+            if (e.Key == Key.Delete)
+            {
+                Delete(SiteListBox.SelectedItem.ToString());
+            }
+            else
+            {
+                EnterKeySetSearchFindSite(e);
+            }
         }
     }
 }

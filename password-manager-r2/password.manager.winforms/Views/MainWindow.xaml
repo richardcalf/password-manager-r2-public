@@ -9,23 +9,35 @@
     <Grid x:Name="theGrid" Margin="0,0,0,0" Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
         <Label x:Name="errorLabel"  Content="Error content here" HorizontalAlignment="Left" Margin="555,318,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.9,0.423" Width="405"/>
         <Label x:Name="findSiteLabel" Content="Find Site" HorizontalAlignment="Left" Margin="468,120,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.289,-0.038"/>
-        <TextBox x:Name="FindSiteTextBox" HorizontalAlignment="Left" Height="26" Margin="555,123,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224" KeyDown="FindSiteTextBox_KeyDown"/>
-        <Button x:Name="FindSiteButton" Content="Find" HorizontalAlignment="Left" Margin="784,123,0,0" VerticalAlignment="Top" Width="75" Click="FindSiteButton_Click" IsEnabled="False"/>
+        
+        
         <Label x:Name="label2" Content="Site" HorizontalAlignment="Left" Margin="468,200,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.474,0.462" Width="56"/>
-        <TextBox x:Name="SiteTextBox" HorizontalAlignment="Left" Height="23" Margin="555,203,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
+        
         <Label x:Name="UserNamelabel" Content="User Name" HorizontalAlignment="Left" Margin="468,231,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="23" Margin="555,231,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195"/>
+        
         <Label x:Name="PasswordLabel" Content="Password" HorizontalAlignment="Left" Margin="468,260,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.263,0.462"/>
+        
+        
+        <TextBox x:Name="siteListFilterTextBox" HorizontalAlignment="Left" Margin="223,92,0,0" Height="26" TextWrapping="Wrap" VerticalAlignment="Top" Width="181" KeyUp="sitListFilterTextBox_KeyUp" KeyDown="sitListFilterTextBox_KeyDown"/>
+        <ListBox x:Name="SiteListBox" HorizontalAlignment="Left" Height="224" Margin="223,123,0,0" VerticalAlignment="Top" Width="181" MouseDown="SiteListBox_MouseDown" MouseDoubleClick="SiteListBox_MouseDoubleClick" IsEnabled="False" KeyUp="SiteListBox_KeyUp" />
+        <TextBox x:Name="FindSiteTextBox" HorizontalAlignment="Left" Height="26" Margin="555,123,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224" KeyDown="FindSiteTextBox_KeyDown"/>
+        <TextBox x:Name="SiteTextBox" HorizontalAlignment="Left" Height="23" Margin="555,203,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224"/>
+        <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="23" Margin="555,231,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195"/>
         <TextBox x:Name="PasswordTextBox" HorizontalAlignment="Left" Height="23" Margin="555,260,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195"/>
-        <Button x:Name="UpdateButton" Content="Update" HorizontalAlignment="Left" Margin="784,234,0,0" VerticalAlignment="Top" Width="75" Click="UpdateButton_Click" IsEnabled="False" />
+        
+        <Button x:Name="cpyUsrNameBtn" Content="" HorizontalAlignment="Left" Margin="755,234,0,0" VerticalAlignment="Top" Width="24" Click="cpyUsrNameBtn_Click" />
+        
+        <Button x:Name="cpyPsswrdBtn" Content="" HorizontalAlignment="Left" Margin="755,260,0,0" VerticalAlignment="Top" Width="24" Click="cpyPsswrdBtn_Click" />
+        <Button x:Name="FindSiteButton" Content="Find" HorizontalAlignment="Left" Margin="784,123,0,0" VerticalAlignment="Top" Width="75" Click="FindSiteButton_Click" IsEnabled="False"/>
         <Button x:Name="ClearSearchButton" Content="Clear Search" HorizontalAlignment="Left" Margin="784,148,0,0" VerticalAlignment="Top" Width="75" Click="ClearSearchButton_Click"/>
         <Button x:Name="ClearDataButton" Content="Clear Data" HorizontalAlignment="Left" Margin="784,208,0,0" VerticalAlignment="Top" Width="75" Click="ClearDataButton_Click"/>
-        <TextBox x:Name="siteListFilterTextBox" HorizontalAlignment="Left" Margin="223,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="181" KeyUp="sitListFilterTextBox_KeyUp" KeyDown="sitListFilterTextBox_KeyDown"/>
-        <ListBox x:Name="SiteListBox" HorizontalAlignment="Left" Height="224" Margin="223,123,0,0" VerticalAlignment="Top" Width="181" MouseDown="SiteListBox_MouseDown" MouseDoubleClick="SiteListBox_MouseDoubleClick" IsEnabled="False" KeyUp="SiteListBox_KeyUp" />
-        <Button x:Name="SelectSiteButton" Content=">>" HorizontalAlignment="Left" Margin="411,123,0,0" VerticalAlignment="Top" Width="32" Click="button_Click" RenderTransformOrigin="0.5,0.5"  IsEnabled="False" TabIndex="-1" />
-        <Button x:Name="GetRecordsButton" Content="Get All" HorizontalAlignment="Left" Margin="149,123,0,0" VerticalAlignment="Top" Width="63" Click="GetRecordsButton_Click" IsEnabled="False" TabIndex="-1" />
-        <Button x:Name="ClearLitButton" Content="Clear List" HorizontalAlignment="Left" Margin="149,148,0,0" VerticalAlignment="Top" Width="63" Click="ClearLitButton_Click"/>
+        <Button x:Name="UpdateButton" Content="Update" HorizontalAlignment="Left" Margin="784,234,0,0" VerticalAlignment="Top" Width="75" Click="UpdateButton_Click" IsEnabled="False" />        
         <Button x:Name="DeleteButton" Content="Delete" HorizontalAlignment="Left" Margin="784,259,0,0" VerticalAlignment="Top" Width="75" Click="DeleteButton_Click" IsEnabled="False" />
+        <Button x:Name="RandomPwGenButton" Content="rd Password" HorizontalAlignment="Left" Margin="784,284,0,0" VerticalAlignment="Top" Width="75" AutomationProperties.HelpText="Generate a random password" IsEnabled="False" Click="RandomPwGenButton_Click" />
+        <Button x:Name="SelectSiteButton" Content=">>" HorizontalAlignment="Left" Margin="411,123,0,0" VerticalAlignment="Top" Width="32" Click="button_Click" RenderTransformOrigin="0.5,0.5"  IsEnabled="False" Focusable="False" />
+        <Button x:Name="GetRecordsButton" Content="Get All" HorizontalAlignment="Left" Margin="149,123,0,0" VerticalAlignment="Top" Width="63" Click="GetRecordsButton_Click" IsEnabled="False" Focusable="False" />
+        <Button x:Name="ClearLitButton" Content="Clear All" HorizontalAlignment="Left" Margin="149,148,0,0" VerticalAlignment="Top" Width="63" Click="ClearLitButton_Click" Focusable="False" />
+        
         <Label x:Name="UpdateLabel" Content="" HorizontalAlignment="Left" Margin="551,289,0,0" VerticalAlignment="Top"/>
         <Canvas x:Name="AdvancedCanvas" HorizontalAlignment="Left" Height="122" Margin="303,352,0,0" VerticalAlignment="Top" Width="556">
             <Button x:Name="PushButton" Content="Push Logins >>" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="101" Click="PushButton_Click" IsEnabled="False" />
@@ -40,21 +52,11 @@
             <Button x:Name="SaveSaltButton" Content="Save Salt" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="SaveSaltButton_Click" Canvas.Left="481" Canvas.Top="54"/>
             <Button x:Name="ReSaltButton" Content="Re-Salt" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="ReSaltButton_Click" Canvas.Left="481" Canvas.Top="80" IsEnabled="False" />
         </Canvas>
-        <Button x:Name="AdvancedButton" Content="Advanced >>" HorizontalAlignment="Left" Margin="223,352,0,0" VerticalAlignment="Top" Width="75" Click="AdvancedButton_Click"/>
+        <Button x:Name="AdvancedButton" Content="Advanced >>" HorizontalAlignment="Left" Margin="223,352,0,0" VerticalAlignment="Top" Width="75" Click="AdvancedButton_Click" Focusable="False" />
         <Label x:Name="CountRecordslabel" Content="" HorizontalAlignment="Left" Margin="104,325,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="RandomPwGenButton" Content="rd Password" HorizontalAlignment="Left" Margin="784,284,0,0" VerticalAlignment="Top" Width="75" AutomationProperties.HelpText="Generate a random password" IsEnabled="False" Click="RandomPwGenButton_Click" />
-        <Button x:Name="cpyUsrNameBtn" Content="" HorizontalAlignment="Left" Margin="755,234,0,0" VerticalAlignment="Top" Width="24" Click="cpyUsrNameBtn_Click">
-            <Button.Background>
-                <ImageBrush ImageSource="copy.png"/>
-            </Button.Background>
-        </Button>
-        <Button x:Name="cpyPsswrdBtn" Content="" HorizontalAlignment="Left" Margin="755,260,0,0" VerticalAlignment="Top" Width="24" Click="cpyPsswrdBtn_Click">
-            <Button.Background>
-                <ImageBrush ImageSource="copy.png"/>
-            </Button.Background>
-        </Button>
-        <ComboBox x:Name="visualModeComboBox" HorizontalAlignment="Left" Margin="739,10,0,0" VerticalAlignment="Top" Width="120" DropDownClosed="visualModeComboBox_DropDownClosed"/>
+        
+        <ComboBox x:Name="visualModeComboBox" HorizontalAlignment="Left" Margin="739,10,0,0" VerticalAlignment="Top" Width="120" DropDownClosed="visualModeComboBox_DropDownClosed" Focusable="False" />
 
-        <Label x:Name="siteListFilterLabel" Content="Filter" HorizontalAlignment="Left" Margin="146,89,0,0" VerticalAlignment="Top" Width="69" Height="27" TabIndex="-1" />
+        <Label x:Name="siteListFilterLabel" Content="Filter" HorizontalAlignment="Left" Margin="146,89,0,0" VerticalAlignment="Top" Width="69" Height="27" Focusable="False" />
     </Grid>
 </Window>
