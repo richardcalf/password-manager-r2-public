@@ -568,6 +568,10 @@ namespace password.manager.winforms
 
         private void cpyUsrNameBtn_Click(object sender, RoutedEventArgs e)
         {
+            if(sender is TextBox)
+            {
+
+            }
             Clipboard.SetText(UserNameTextBox.Text);
         }
 
@@ -615,6 +619,11 @@ namespace password.manager.winforms
             {
                 EnterKeySetSearchFindSite(e);
             }
+        }
+
+        private void FindSiteTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            DebugUIMessage("got focus");
         }
     }
 }
