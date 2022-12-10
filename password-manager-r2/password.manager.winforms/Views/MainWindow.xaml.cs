@@ -568,10 +568,6 @@ namespace password.manager.winforms
 
         private void cpyUsrNameBtn_Click(object sender, RoutedEventArgs e)
         {
-            if(sender is TextBox)
-            {
-
-            }
             Clipboard.SetText(UserNameTextBox.Text);
         }
 
@@ -579,7 +575,6 @@ namespace password.manager.winforms
         {
             Clipboard.SetText(PasswordTextBox.Text);
         }
-        #endregion
 
         private async void FindSiteTextBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -613,7 +608,7 @@ namespace password.manager.winforms
                     //there is only one record on the grid and using keyboard only
                     //the damn top record never becomes selected. feels like a ui control bug.
                     Delete(SiteListBox.Items[0].ToString());
-                }   
+                }
             }
             else
             {
@@ -621,9 +616,34 @@ namespace password.manager.winforms
             }
         }
 
+        private void CopyOnFocus(object sender)
+        {
+            if (sender is TextBox)
+            {
+                var textBox = sender as TextBox;
+                Clipboard.SetText(textBox.Text);
+            }
+        }
+
         private void FindSiteTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            DebugUIMessage("got focus");
+            CopyOnFocus(sender);
         }
+
+        private void SiteTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            CopyOnFocus(sender);
+        }
+
+        private void UserNameTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            CopyOnFocus(sender);
+        }
+
+        private void PasswordTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            CopyOnFocus(sender);
+        }
+        #endregion
     }
 }
