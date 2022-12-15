@@ -1,1 +1,1 @@
-LoginContext.cs filter=replaceDbPsswrd
+*.cs filter=replaceDbPsswrd
