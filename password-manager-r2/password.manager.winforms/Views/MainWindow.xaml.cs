@@ -292,7 +292,7 @@ namespace password.manager.winforms
 
         private async Task PopulateListBoxFiltered(string input)
         {
-            if(input != null)
+            if(!string.IsNullOrWhiteSpace(input))
             await Task.Run(() =>
             {
                 Dispatcher.Invoke(() =>
