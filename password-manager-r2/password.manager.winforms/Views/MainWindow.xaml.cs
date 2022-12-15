@@ -210,6 +210,7 @@ namespace password.manager.winforms
                 await Task.Run(() =>
                 {
                     broker.Repo.Save(login);
+                    broker.GetAllRecordsAsync();
                 });
                 SuccessUIMessage(updateSucceeded);
             }
@@ -291,6 +292,7 @@ namespace password.manager.winforms
 
         private async Task PopulateListBoxFiltered(string input)
         {
+            if(input != null)
             await Task.Run(() =>
             {
                 Dispatcher.Invoke(() =>
@@ -324,7 +326,6 @@ namespace password.manager.winforms
         private async Task FilterList()
         {
             SiteListBox.Items.Clear();
-            await broker.GetAllRecordsAsync();
             ClearUpdateUIMessage();
             await PopulateListBoxFiltered(siteListFilterTextBox.Text);
             ClearUpdateUIMessage();
@@ -426,7 +427,7 @@ namespace password.manager.winforms
             Delete(SiteTextBox.Text);
         }
 
-        private void Delete(string site)
+        private async void Delete(string site)
         {
             MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to delete {site}?", "Delete Confirmation", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
@@ -437,6 +438,7 @@ namespace password.manager.winforms
                     RemoveItemFromListBox(site);
                     ClearDataInputs();
                     SuccessUIMessage("Delete Succeeded");
+                    await broker.GetAllRecordsAsync();
                 }
                 else
                 {
