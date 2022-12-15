@@ -10,3 +10,13 @@ just above <startup>
 read this article to have a better understanding
 
 https://learn.microsoft.com/en-us/ef/ef6/fundamentals/configuring/connection-strings
+
+~
+Sometimes when switching branches while developing, I lose the custom local private app settings here are the tags for easy reference to copy:
+
+* also just above <startup>
+
+<appSettings>
+        <add key="salt" value="{private salt here}" />
+        <add key="Theme" value="1" />
+    </appSettings>
