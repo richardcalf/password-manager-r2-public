@@ -210,9 +210,9 @@ namespace password.manager.winforms
                 await Task.Run(() =>
                 {
                     broker.Repo.Save(login);
-                    broker.GetAllRecordsAsync();
                 });
                 SuccessUIMessage(updateSucceeded);
+                await broker.GetAllRecordsAsync();
             }
             catch (Exception ex)
             {
