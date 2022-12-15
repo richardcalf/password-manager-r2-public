@@ -1,0 +1,13 @@
+see your .gitattributes file?
+
+use that filter to replace passwords in code and config files.
+
+from the git command line do this:
+
+$ git config --local -e
+
+now make sure this is in your local config 
+
+[filter "replaceDbPsswrd"]
+	smudge = sed \"s/{DATABASE_PASSWORD}/{Your actual literal password goes here}/\"
+	clean = sed \"s/{Your actual literal password goes here}/{DATABASE_PASSWORD}/\"
