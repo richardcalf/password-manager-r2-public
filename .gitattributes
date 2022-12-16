@@ -1,2 +1,1 @@
-*.config filter=replaceDbPsswrd
-*.config filter=replaceSalt
+*.config  filter=replaceDbPsswrd
