@@ -22,6 +22,15 @@ namespace password.encryption.tests
 
             Assert.IsTrue(true);
         }
+        [TestMethod]
+        public void copy_db_data_to_xml()
+        {
+            var dbLogins = CodeRunner.dbrepo.GetLogins().ToList();
+
+            CodeRunner.xmlrepo.Save(dbLogins);
+
+            Assert.IsTrue(true);
+        }
 
         [TestMethod]
         public async Task random_db_passwords()
