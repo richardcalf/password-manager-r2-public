@@ -22,18 +22,13 @@
         <ListBox x:Name="SiteListBox" HorizontalAlignment="Left" Height="224" Margin="223,123,0,0" VerticalAlignment="Top" Width="181" MouseDoubleClick="SiteListBox_MouseDoubleClick" IsEnabled="False" KeyUp="SiteListBox_KeyUp" />
         <TextBox x:Name="FindSiteTextBox" HorizontalAlignment="Left" Height="26" Margin="555,123,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224" KeyDown="FindSiteTextBox_KeyDown" GotFocus="FindSiteTextBox_GotFocus"/>
         <TextBox x:Name="SiteTextBox" HorizontalAlignment="Left" Height="23" Margin="555,203,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224" GotFocus="SiteTextBox_GotFocus"/>
-        <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="23" Margin="555,231,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195" GotFocus="UserNameTextBox_GotFocus"/>
-        <TextBox x:Name="PasswordTextBox" HorizontalAlignment="Left" Height="23" Margin="555,260,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195" GotFocus="PasswordTextBox_GotFocus"/>
-        
-        <Button x:Name="cpyUsrNameBtn" Content="" HorizontalAlignment="Left" Margin="755,234,0,0" VerticalAlignment="Top" Width="24" Click="cpyUsrNameBtn_Click" />
-        
-        <Button x:Name="cpyPsswrdBtn" Content="" HorizontalAlignment="Left" Margin="755,260,0,0" VerticalAlignment="Top" Width="24" Click="cpyPsswrdBtn_Click" />
+        <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="23" Margin="555,231,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224" GotFocus="UserNameTextBox_GotFocus"/>
+        <TextBox x:Name="PasswordTextBox" HorizontalAlignment="Left" Height="23" Margin="555,260,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="224" GotFocus="PasswordTextBox_GotFocus" MouseDoubleClick="PasswordTextBox_MouseDoubleClick"/>
         <Button x:Name="FindSiteButton" Content="Find" HorizontalAlignment="Left" Margin="784,123,0,0" VerticalAlignment="Top" Width="75" Click="FindSiteButton_Click" IsEnabled="False"/>
         <Button x:Name="ClearSearchButton" Content="Clear Search" HorizontalAlignment="Left" Margin="784,148,0,0" VerticalAlignment="Top" Width="75" Click="ClearSearchButton_Click"/>
         <Button x:Name="ClearDataButton" Content="Clear Data" HorizontalAlignment="Left" Margin="784,208,0,0" VerticalAlignment="Top" Width="75" Click="ClearDataButton_Click"/>
         <Button x:Name="UpdateButton" Content="Update" HorizontalAlignment="Left" Margin="784,234,0,0" VerticalAlignment="Top" Width="75" Click="UpdateButton_Click" IsEnabled="False" />        
         <Button x:Name="DeleteButton" Content="Delete" HorizontalAlignment="Left" Margin="784,259,0,0" VerticalAlignment="Top" Width="75" Click="DeleteButton_Click" IsEnabled="False" />
-        <Button x:Name="RandomPwGenButton" Content="rd Password" HorizontalAlignment="Left" Margin="784,284,0,0" VerticalAlignment="Top" Width="75" AutomationProperties.HelpText="Generate a random password" IsEnabled="False" Click="RandomPwGenButton_Click" />
         <Button x:Name="SelectSiteButton" Content=">>" HorizontalAlignment="Left" Margin="411,123,0,0" VerticalAlignment="Top" Width="32" Click="button_Click" RenderTransformOrigin="0.5,0.5"  IsEnabled="False" Focusable="False" />
         <Button x:Name="GetRecordsButton" Content="Get All" HorizontalAlignment="Left" Margin="149,123,0,0" VerticalAlignment="Top" Width="63" Click="GetRecordsButton_Click" IsEnabled="False" Focusable="False" />
         <Button x:Name="ClearLitButton" Content="Clear All" HorizontalAlignment="Left" Margin="149,148,0,0" VerticalAlignment="Top" Width="63" Click="ClearLitButton_Click" Focusable="False" />

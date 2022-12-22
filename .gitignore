@@ -351,3 +351,5 @@ MigrationBackup/
 
 
 smudge-scripts/
+*.sarif
+*.clef

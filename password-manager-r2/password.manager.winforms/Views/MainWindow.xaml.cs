@@ -128,7 +128,6 @@ namespace password.manager.winforms
             SelectSiteButton.IsEnabled = ready;
             ReSaltButton.IsEnabled = ready;
             ReSaltTextBox.IsEnabled = ready;
-            RandomPwGenButton.IsEnabled = ready;
         }
 
         private void ClearUpdateUIMessage()
@@ -557,25 +556,10 @@ namespace password.manager.winforms
             ToggleAdvancedPanel();
         }
 
-        private void RandomPwGenButton_Click(object sender, RoutedEventArgs e)
-        {
-            PasswordTextBox.Text = broker.GenerateRndPasswrd();
-        }
-
         private void visualModeComboBox_DropDownClosed(object sender, EventArgs e)
         {
             ApplyTheme();
             SaveTheme();
-        }
-
-        private void cpyUsrNameBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Clipboard.SetText(UserNameTextBox.Text);
-        }
-
-        private void cpyPsswrdBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Clipboard.SetText(PasswordTextBox.Text);
         }
 
         private async void FindSiteTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -647,5 +631,11 @@ namespace password.manager.winforms
             CopyOnFocus(sender);
         }
         #endregion
+
+        private void PasswordTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            PasswordTextBox.Text = broker.GenerateRndPasswrd();
+            CopyOnFocus(sender);
+        }
     }
 }

@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using password.model;
+﻿using password.model;
 using password.model.Database;
 
-namespace password.encryption.tests
+namespace password.xunit.tests
 {
-    [TestClass]
     public class ModelTests
     {
-        [TestMethod]
+        [Fact]
         public void test_login_creation()
         {
             XmlPersistence repo = new XmlPersistence();
@@ -25,10 +18,10 @@ namespace password.encryption.tests
             };
 
             repo.Save(login);
-            Assert.IsTrue(login != null);
+            Assert.True(login != null);
         }
 
-        [TestMethod]
+        [Fact]
         public void test_many_logins_creation()
         {
             IRepository repo = new XmlPersistence();
@@ -40,10 +33,10 @@ namespace password.encryption.tests
                                            new Login { Site = "site3.com", UserName = "jane", Password = "HWuxhCtwAI1brFOa2+c4Zw==" }};
 
             repo.Save(logins);
-            Assert.IsTrue(logins.Count > 1);
+            Assert.True(logins.Count > 1);
         }
 
-        [TestMethod]
+        [Fact]
         public void test_login_fetch()
         {
             IRepository repo = new XmlPersistence();
@@ -51,16 +44,16 @@ namespace password.encryption.tests
 
             if (login == null)
             {
-                Assert.IsNull(login);
+                Assert.Null(login);
             }
             else
             {
-                Assert.IsTrue(!string.IsNullOrEmpty(login.UserName));
-                Assert.IsTrue(login.Password == "a8AzC8EGlsLvyFev5GOI/g==");
+                Assert.True(!string.IsNullOrEmpty(login.UserName));
+                Assert.True(login.Password == "a8AzC8EGlsLvyFev5GOI/g==");
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void test_new_database_record()
         {
 
@@ -77,10 +70,10 @@ namespace password.encryption.tests
                 saves = context.SaveChanges();
             }
 
-            Assert.IsTrue(saves > 0);
+            Assert.True(saves > 0);
         }
 
-        [TestMethod]
+        [Fact]
         public void test_new_database_record_from_plain_jo()
         {
             int saves = 0;
@@ -103,10 +96,10 @@ namespace password.encryption.tests
                 saves = context.SaveChanges();
             }
 
-            Assert.IsTrue(saves > 0);
+            Assert.True(saves > 0);
         }
 
-        [TestMethod]
+        [Fact]
         public void test_save_many_database_records()
         {
             int saves = 0;
@@ -125,10 +118,11 @@ namespace password.encryption.tests
                     Password = l.Password
                 }));
                 saves = context.SaveChanges();
-                Assert.IsTrue(saves > 0);
+                Assert.True(saves > 0);
             }
         }
-        [TestMethod]
+
+        [Fact]
         public void test_get_a_login()
         {
             var site = "madmax.com";
@@ -136,12 +130,12 @@ namespace password.encryption.tests
             using (var context = new LoginContext())
             {
                 var lgin = context.Logins.FirstOrDefault(l => l.Site.Equals(site));
-                if(lgin != null)
+                if (lgin != null)
                 {
                     login = new Login { Site = lgin.Site, UserName = lgin.Site, Password = lgin.Password };
                 }
             }
-            Assert.IsNotNull(login);
+            Assert.NotNull(login);
         }
     }
 }
