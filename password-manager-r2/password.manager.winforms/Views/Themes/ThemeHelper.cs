@@ -15,8 +15,8 @@ namespace password.manager.winforms.Views.Themes
     {
         Light = 0,
         Dark = 1,
-        Lavendar = 2,
-        Oros = 3,
+        PastelBlue = 2,
+        Lavendar = 3,
     }
     public class ThemeHelper
     {
@@ -36,8 +36,8 @@ namespace password.manager.winforms.Views.Themes
                 case Themes.Lavendar:
                     ThemeProvider.SetTheme(visual, new FlamingoTheme().ProvideTheme());
                     break;
-                case Themes.Oros:
-                    ThemeProvider.SetTheme(visual, new OrangeTheme().ProvideTheme());
+                case Themes.PastelBlue:
+                    ThemeProvider.SetTheme(visual, new PastelBlue().ProvideTheme());
                     break;
                 default:
                     ThemeProvider.SetTheme(visual, new LightTheme().ProvideTheme());
@@ -51,8 +51,8 @@ namespace password.manager.winforms.Views.Themes
             {
                 Themes.Light.ToString(),
                 Themes.Dark.ToString(),
-                Themes.Lavendar.ToString(),
-                Themes.Oros.ToString()
+                Themes.PastelBlue.ToString(),
+                Themes.Lavendar.ToString()
             };
         }
 
