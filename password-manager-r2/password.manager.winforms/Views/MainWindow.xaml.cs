@@ -35,11 +35,7 @@ namespace password.manager.winforms
             broker.DataReady += DataInputIsReady;
 
             CurrentSaltTextBox.Text = broker.Salt;
-            FilePathTextBox.Text = broker.PushPath;
-            RevertPathButton.Content = @"<< Revert";
-            PullButton.Content = @"<< Pull Logins";
             CurrentSaltTextBox.IsEnabled = false;
-            SaveSaltButton.IsEnabled = false;
             AdvancedCanvas.Visibility = Visibility.Hidden;
             loginFilePath = Settings.GetValueFromSettingKey("loginFilePath");
             siteListFilterTextBox.Focus();
@@ -71,58 +67,12 @@ namespace password.manager.winforms
             ThemeHelper.SaveThemeSetting(visualModeComboBox.SelectedIndex);
         }
 
-        private void PushLogins()
-        {
-            var pushfile = broker.PushPath;
-
-            if (pushfile == null)
-            {
-                FailedUIMessage("push configuration is not setup");
-                return;
-            }
-
-            if (File.Exists(loginFilePath))
-            {
-                File.Delete(pushfile);
-                File.Copy(loginFilePath, pushfile);
-                SuccessUIMessage("File has been pushed");
-            }
-            else
-            {
-                FailedUIMessage("No file to push");
-            }
-        }
-
-        private void PullLogins()
-        {
-            var pullfile = broker.PushPath;
-
-            if (pullfile == null)
-            {
-                FailedUIMessage("push configuration is not setup");
-                return;
-            }
-
-            if (File.Exists(pullfile))
-            {
-                File.Delete(loginFilePath);
-                File.Copy(pullfile, loginFilePath);
-                SuccessUIMessage("File has been pulled");
-            }
-            else
-            {
-                FailedUIMessage("No file to pull");
-            }
-        }
-
         private void DataInputIsReady(bool ready)
         {
             FindSiteButton.IsEnabled = ready;
             GetRecordsButton.IsEnabled = ready;
             UpdateButton.IsEnabled = ready;
             DeleteButton.IsEnabled = ready;
-            PushButton.IsEnabled = ready;
-            PullButton.IsEnabled = ready;
             ReSaltButton.IsEnabled = ready;
             SiteListBox.IsEnabled = ready;
             SelectSiteButton.IsEnabled = ready;
@@ -345,14 +295,6 @@ namespace password.manager.winforms
             UpdateRecordCountLabel(SiteListBox.Items.Count);
         }
 
-        private void ReSaltEasterEgg()
-        {
-            var enabled = ReSaltTextBox.Text.Equals("resync");
-            CurrentSaltTextBox.IsEnabled = enabled;
-            SaveSaltButton.IsEnabled = enabled;
-            ReSaltButton.IsEnabled = !enabled;
-        }
-
         private void ToggleAdvancedPanel()
         {
             if (AdvancedCanvas.Visibility == Visibility.Hidden)
@@ -456,47 +398,6 @@ namespace password.manager.winforms
             ClearUpdateUIMessage();
         }
 
-        private void PushButton_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show($"Are you sure you want to push the Logins to [{broker.PushPath}] ?", "Push Confirmation", MessageBoxButton.YesNo);
-            if (messageBoxResult == MessageBoxResult.Yes)
-            {
-                PushLogins();
-            }
-        }
-
-        private void SaveSettingButton_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want Save this Push File Path [{FilePathTextBox.Text}] ?", "Push File Path Confirmation", MessageBoxButton.YesNo);
-            if (messageBoxResult == MessageBoxResult.Yes)
-            {
-                broker.SaveSetting("push", FilePathTextBox.Text);
-            }
-        }
-
-        private void RevertPathButton_Click(object sender, RoutedEventArgs e)
-        {
-            FilePathTextBox.Text = broker.PushPath;
-        }
-
-        private void PullButton_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show($"Are you sure you want to pull the Logins from [{broker.PushPath}] ?", "Pull File Path Confirmation", MessageBoxButton.YesNo);
-            if (messageBoxResult == MessageBoxResult.Yes)
-            {
-                PullLogins();
-            }
-        }
-
-        private void SaveSaltButton_Click(object sender, RoutedEventArgs e)
-        {
-            broker.SaveSetting("salt", CurrentSaltTextBox.Text);
-            ReSaltTextBox.Text = string.Empty;
-            errorLabel.Content = string.Empty;
-            ReSaltEasterEgg();
-            broker.RefreshEncryptionSalt();
-        }
-
         private bool ResaltModalAndValidation()
         {
             MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you would like to Re-Salt?", "Re-Salt Confirmation", MessageBoxButton.YesNo);
@@ -544,11 +445,6 @@ namespace password.manager.winforms
             CurrentSaltTextBox.Text = resalt;
             ReSaltTextBox.Text = string.Empty;
             SuccessUIMessage("Re-Salting Succeeded");
-        }
-
-        private void ReSaltTextBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            ReSaltEasterEgg();
         }
 
         private void AdvancedButton_Click(object sender, RoutedEventArgs e)

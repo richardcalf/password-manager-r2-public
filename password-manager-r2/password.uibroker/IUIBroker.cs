@@ -25,11 +25,7 @@ namespace password.uibroker
 
         string Salt { get; set; }
 
-        string PushPath { get; }
-
         IEnumerable<Login> Logins { get; set; }
-
-
 
         #region methods
 

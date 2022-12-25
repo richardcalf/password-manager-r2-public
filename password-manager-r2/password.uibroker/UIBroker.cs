@@ -26,14 +26,6 @@ namespace password.uibroker
 
         public string Salt { get; set; }
 
-        public string PushPath
-        {
-            get
-            {
-                return Settings.GetValueFromSettingKey("push");
-            }
-        }
-
         public UIBroker(IRepository repo, ILoginService loginService, IResalterAsync resalter)
         {
             Salt = Settings.GetValueFromSettingKey("salt");
