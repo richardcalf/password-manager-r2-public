@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Xml.Linq;
+using password.settings;
 
 namespace password.settings
 {
@@ -10,7 +11,7 @@ namespace password.settings
     {
         public static string GetValueFromSettingKey(string value)
         {
-            var doc = XElement.Load(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+            var doc = XElement.Load(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).FilePath);
             return
                 (from setting in doc.Elements("appSettings").Elements("add")
                  select setting).Where(s => s.Attribute("key").Value == value)
@@ -44,15 +45,7 @@ namespace password.settings
         private static Configuration GetConfigurationFile()
         {
             Configuration configFile;
-            if (System.Web.HttpContext.Current != null)
-            {
-                configFile =
-                    System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
-            }
-            else
-            {
-                configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            }
+            configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             return configFile;
         }
 
@@ -62,7 +55,7 @@ namespace password.settings
             {
                 var configFile = GetConfigurationFile();
                 var settings = configFile.AppSettings.Settings;
-                foreach(var key in keys)
+                foreach (var key in keys)
                 {
                     if (settings[key] != null)
                     {
@@ -77,6 +70,5 @@ namespace password.settings
                 Console.WriteLine("Error writing app settings");
             }
         }
-
     }
 }

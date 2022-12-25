@@ -1,1 +1,2 @@
 *.config  filter=replaceDbPsswrd
+*.json filter=replaceDbPsswrd

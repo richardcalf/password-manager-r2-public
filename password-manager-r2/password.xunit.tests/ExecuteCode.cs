@@ -1,43 +1,41 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using password.encryption.tests.Code.Runner.Classes;
+using password.service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using password.encryption.tests.Code.Runner.Classes;
-using password.model;
-using password.service;
 
-namespace password.encryption.tests
+namespace password.xunit.tests
 {
-    [TestClass]
     public class ExecuteCode
     {
-        [TestMethod]
+        [Fact]
         public void copy_xml_data_do_db()
         {
             var xmlLogins = CodeRunner.xmlrepo.GetLogins().ToList();
 
             CodeRunner.dbrepo.Save(xmlLogins);
 
-            Assert.IsTrue(true);
+            Assert.True(true);
         }
-        [TestMethod]
+
+        [Fact]
         public void copy_db_data_to_xml()
         {
             var dbLogins = CodeRunner.dbrepo.GetLogins().ToList();
 
             CodeRunner.xmlrepo.Save(dbLogins);
 
-            Assert.IsTrue(true);
+            Assert.True(true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task random_db_passwords()
         {
             var dbLogins = CodeRunner.dbrepo.GetLogins().ToList();
 
-            foreach(var login in dbLogins)
+            foreach (var login in dbLogins)
             {
                 var rndPass = CodeRunner.GetRandomString();
                 //now default salt encrypt it
@@ -51,10 +49,10 @@ namespace password.encryption.tests
 
             CodeRunner.dbrepo.Save(dbLogins);
 
-            Assert.IsTrue(true);
+            Assert.True(true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task random_xml_passwords()
         {
             var xmlLogins = CodeRunner.xmlrepo.GetLogins().ToList();
@@ -73,7 +71,7 @@ namespace password.encryption.tests
 
             CodeRunner.xmlrepo.Save(xmlLogins);
 
-            Assert.IsTrue(true);
+            Assert.True(true);
         }
     }
 }
