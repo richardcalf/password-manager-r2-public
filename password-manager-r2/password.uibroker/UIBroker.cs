@@ -17,6 +17,7 @@ namespace password.uibroker
         public event Action<string> SettingSaved;
         public event Action<string> Resalted;
         public event Action<bool> DataReady;
+        public event Action<string> DataUpdate;
 
         public IRepository Repo { get; }
         public ILoginService LoginService { get; }
@@ -72,6 +73,7 @@ namespace password.uibroker
             Settings.SaveAppSetting("salt", newSalt);
             EncryptionService = new EncryptionService(newSalt);
             Resalted?.Invoke(newSalt);
+            DataUpdate?.Invoke($"update resalted all sites");
         }
 
         public void SaveSetting(string key, string value)
@@ -89,6 +91,25 @@ namespace password.uibroker
         public string GenerateRndPasswrd()
         {
             return Guid.NewGuid().ToString().Substring(0, 13);
+        }
+
+        public Login GetLogin(string site)
+        {
+            return Repo.GetLogin(site);
+        }
+
+        public void Save(Login model)
+        {
+            Repo.Save(model);
+            DataUpdate?.Invoke( $"{model.Site}" );
+        }
+
+        public bool Delete(string site)
+        {
+            var result = Repo.Delete(site);
+            if (result)
+                DataUpdate?.Invoke($"{site} deleted");
+            return result;
         }
     }
 }

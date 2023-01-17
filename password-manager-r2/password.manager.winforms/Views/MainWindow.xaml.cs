@@ -1,4 +1,5 @@
 ﻿using password.manager.winforms.Views.Themes;
+using password.model;
 using password.settings;
 using password.uibroker;
 using System;
@@ -10,8 +11,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-
-
+using CliWrap;
+using CliWrap.Buffered;
+using System.Threading;
+using CliWrap.EventStream;
+using System.Diagnostics;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.ComponentModel.Design;
 
 namespace password.manager.winforms
 {
@@ -20,7 +27,8 @@ namespace password.manager.winforms
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string loginFilePath;
+        private readonly string loginFilePath;
+        private readonly string gitRepoPath;
         private const string updateSucceeded = "Update Succeeded";
         private const string updateFailed = "Update Failed";
         private IUIBroker broker;
@@ -30,6 +38,14 @@ namespace password.manager.winforms
             InitializeData();
             InitializeThemeComboBox();
             this.broker = broker;
+            loginFilePath = Settings.GetValueFromSettingKey("loginFilePath");
+            gitRepoPath = loginFilePath.Replace(@"\Logins.xml", "");
+
+            if (Settings.GetValueFromSettingKey("GitIntegration") == "yes")
+            {
+                broker.DataUpdate += UpdateGitHub;
+                _ = StartUpPull();
+            }
             broker.SettingSaved += SettingSaved;
             broker.Resalted += ResaltingDone;
             broker.DataReady += DataInputIsReady;
@@ -37,12 +53,89 @@ namespace password.manager.winforms
             CurrentSaltTextBox.Text = broker.Salt;
             CurrentSaltTextBox.IsEnabled = false;
             AdvancedCanvas.Visibility = Visibility.Hidden;
-            loginFilePath = Settings.GetValueFromSettingKey("loginFilePath");
+            
             siteListFilterTextBox.Focus();
-
             ApplyTheme();
             _ = this.broker.GetAllRecordsAsync();
         }
+
+        #region Update GitHub
+        private async Task StartUpPull()
+        {
+            try
+            {
+                await InvokeGit(new[] { "pull" });
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    FailedUIMessage($"GitHub failed: {ex.Message}");
+                });
+            }
+        }
+        private async Task<int> InvokeGit(IEnumerable<string> commands)
+        {
+            var cmd = Cli.Wrap("git")
+                .WithArguments(commands)
+                .WithWorkingDirectory(workingDirPath: gitRepoPath);
+
+            int exitCode = 255;
+
+            await foreach (var cmdEvt in cmd.ListenAsync())
+            {
+                switch (cmdEvt)
+                {
+                    case ExitedCommandEvent exited:
+                        {
+                            exitCode = exited.ExitCode;
+                            break;
+                        }
+                }
+            }
+            return exitCode;
+        }
+
+        private async void UpdateGitHub(string updateMessage)
+        {
+            Dispatcher.Invoke(() => { DataInputIsReady(false) ; });
+            try
+            {
+                int pull = await InvokeGit(new[] { "pull" });
+                if (pull == 0)
+                {
+                    int add = await InvokeGit(new[] { "add", "Logins.xml" });
+                    if (add == 0)
+                    {
+                        int commit = await InvokeGit(new[] { "commit", "-m", $"{updateMessage}" });
+                        if (commit == 0)
+                        {
+                            int push = await InvokeGit(new[] { "push" });
+                            if (push == 0)
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    SuccessPushMessage("Data pushed to GitHub");
+                                    DataInputIsReady(true);
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+                Dispatcher.Invoke(() =>
+                {
+                    //will need to log exception message 
+                    FailedUIMessage($"git failed: {ex.Message}");
+                    DataInputIsReady(true);
+                });
+            }
+            
+        }
+        #endregion
 
         #region private UI coupled methods
         private void InitializeThemeComboBox()
@@ -78,6 +171,7 @@ namespace password.manager.winforms
             SelectSiteButton.IsEnabled = ready;
             ReSaltButton.IsEnabled = ready;
             ReSaltTextBox.IsEnabled = ready;
+            siteListFilterTextBox.IsEnabled = ready;
         }
 
         private void ClearUpdateUIMessage()
@@ -88,6 +182,13 @@ namespace password.manager.winforms
         private void SuccessUIMessage(string message)
         {
             UpdateLabel.Foreground = Brushes.Green;
+            UpdateLabel.Content = message;
+            errorLabel.Content = string.Empty;
+        }
+
+        private void SuccessPushMessage(string message)
+        {
+            UpdateLabel.Foreground = Brushes.Blue;
             UpdateLabel.Content = message;
             errorLabel.Content = string.Empty;
         }
@@ -123,7 +224,7 @@ namespace password.manager.winforms
 
         private async Task FindSite(string site)
         {
-            var login = broker.Repo.GetLogin(site);
+            var login = broker.GetLogin(site);
             await ShowLoginOnUI(login);
         }
 
@@ -133,7 +234,7 @@ namespace password.manager.winforms
         /// <param name="login"></param>
         /// <returns></returns>
         private async Task ShowLoginOnUI(model.Login login)
-        {
+        { 
             ClearDataInputs();
             if (login == null) { SiteTextBox.Text = ""; return; }
             SiteTextBox.Text = login.Site;
@@ -158,10 +259,9 @@ namespace password.manager.winforms
 
                 await Task.Run(() =>
                 {
-                    broker.Repo.Save(login);
+                    broker.Save(login);
                 });
                 SuccessUIMessage(updateSucceeded);
-                await broker.GetAllRecordsAsync();
             }
             catch (Exception ex)
             {
@@ -182,7 +282,7 @@ namespace password.manager.winforms
         {
             try
             {
-                return broker.Repo.Delete(site);
+                return broker.Delete(site);
             }
             catch (Exception ex)
             {
@@ -368,7 +468,7 @@ namespace password.manager.winforms
             Delete(SiteTextBox.Text);
         }
 
-        private async void Delete(string site)
+        private void Delete(string site)
         {
             MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to delete {site}?", "Delete Confirmation", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
@@ -379,7 +479,6 @@ namespace password.manager.winforms
                     RemoveItemFromListBox(site);
                     ClearDataInputs();
                     SuccessUIMessage("Delete Succeeded");
-                    await broker.GetAllRecordsAsync();
                 }
                 else
                 {
@@ -413,7 +512,6 @@ namespace password.manager.winforms
                     FailedUIMessage("Salt has not changed");
                     return false;
                 }
-                DataInputIsReady(false);
                 ClearUpdateUIMessage();
                 return true;
             }
@@ -432,10 +530,6 @@ namespace password.manager.winforms
                 {
                     FailedUIMessage("Re-Salting Failed");
                     PrintException(ex.Message);
-                }
-                finally
-                {
-                    DataInputIsReady(true);
                 }
             }
         }

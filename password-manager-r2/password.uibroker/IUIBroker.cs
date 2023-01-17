@@ -23,6 +23,8 @@ namespace password.uibroker
 
         event Action<bool> DataReady;
 
+        event Action<string> DataUpdate;
+
         string Salt { get; set; }
 
         IEnumerable<Login> Logins { get; set; }
@@ -42,6 +44,12 @@ namespace password.uibroker
         void RefreshEncryptionSalt();
 
         string GenerateRndPasswrd();
+
+        Login GetLogin(string site);
+
+        void Save(Login model);
+
+        bool Delete(string site);
         #endregion
     }
 }
