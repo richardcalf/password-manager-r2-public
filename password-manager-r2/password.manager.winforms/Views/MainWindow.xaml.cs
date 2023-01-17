@@ -39,7 +39,7 @@ namespace password.manager.winforms
             InitializeThemeComboBox();
             this.broker = broker;
             loginFilePath = Settings.GetValueFromSettingKey("loginFilePath");
-            gitRepoPath = loginFilePath.Replace(@"\Logins.xml", "");
+            gitRepoPath = Settings.GetValueFromSettingKey("repoPath");
 
             if (Settings.GetValueFromSettingKey("GitIntegration") == "yes")
             {
