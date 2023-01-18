@@ -1,24 +1,14 @@
 ﻿using password.manager.winforms.Views.Themes;
-using password.model;
 using password.settings;
 using password.uibroker;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using CliWrap;
-using CliWrap.Buffered;
-using System.Threading;
-using CliWrap.EventStream;
-using System.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.ComponentModel.Design;
+using password.git.integration;
 
 namespace password.manager.winforms
 {
@@ -44,7 +34,7 @@ namespace password.manager.winforms
             if (Settings.GetValueFromSettingKey("GitIntegration") == "yes")
             {
                 broker.DataUpdate += UpdateGitHub;
-                _ = StartUpPull();
+                _ = StartUpPullAsync();
             }
             broker.SettingSaved += SettingSaved;
             broker.Resalted += ResaltingDone;
@@ -60,11 +50,11 @@ namespace password.manager.winforms
         }
 
         #region Update GitHub
-        private async Task StartUpPull()
+        private async Task StartUpPullAsync()
         {
             try
             {
-                await InvokeGit(new[] { "pull" });
+                await GitIntegration.InvokeGit(new[] { "pull" }, gitRepoPath);
             }
             catch (Exception ex)
             {
@@ -74,61 +64,26 @@ namespace password.manager.winforms
                 });
             }
         }
-        private async Task<int> InvokeGit(IEnumerable<string> commands)
-        {
-            var cmd = Cli.Wrap("git")
-                .WithArguments(commands)
-                .WithWorkingDirectory(workingDirPath: gitRepoPath);
-
-            int exitCode = 255;
-
-            await foreach (var cmdEvt in cmd.ListenAsync())
-            {
-                switch (cmdEvt)
-                {
-                    case ExitedCommandEvent exited:
-                        {
-                            exitCode = exited.ExitCode;
-                            break;
-                        }
-                }
-            }
-            return exitCode;
-        }
 
         private async void UpdateGitHub(string updateMessage)
         {
-            Dispatcher.Invoke(() => { DataInputIsReady(false) ; });
+            Dispatcher.Invoke(() => { DataInputIsReady(false); });
             try
             {
-                int pull = await InvokeGit(new[] { "pull" });
-                if (pull == 0)
+                int push = await GitIntegration.UpdateGitHub(updateMessage, gitRepoPath);
+                if (push == 0)
                 {
-                    int add = await InvokeGit(new[] { "add", "Logins.xml" });
-                    if (add == 0)
+                    Dispatcher.Invoke(() =>
                     {
-                        int commit = await InvokeGit(new[] { "commit", "-m", $"{updateMessage}" });
-                        if (commit == 0)
-                        {
-                            int push = await InvokeGit(new[] { "push" });
-                            if (push == 0)
-                            {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    SuccessPushMessage("Data pushed to GitHub");
-                                    DataInputIsReady(true);
-                                });
-                            }
-                        }
-                    }
+                        SuccessPushMessage("Data pushed to GitHub");
+                        DataInputIsReady(true);
+                    });
                 }
             }
             catch (Exception ex)
             {
-                var message = ex.Message;
                 Dispatcher.Invoke(() =>
                 {
-                    //will need to log exception message 
                     FailedUIMessage($"git failed: {ex.Message}");
                     DataInputIsReady(true);
                 });
