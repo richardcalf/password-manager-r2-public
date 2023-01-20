@@ -1,4 +1,5 @@
 ﻿
+using password.git.integration;
 using password.manager.winforms.Views.Themes;
 using password.model;
 using password.settings;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.Extensions.Logging;
 
 namespace password.manager.winforms
 {
@@ -23,7 +25,6 @@ namespace password.manager.winforms
         public LoginWindow(IUIBroker broker, IPasswordManagerLoginService pwManager)
         {
             this.broker = broker;
-
             isAuthenticated = false;
             applicationLoginService = pwManager;
             InitializeComponent(); 
@@ -68,6 +69,26 @@ namespace password.manager.winforms
             if (!isAuthenticated)
             {
                 InvalidLoginUIMessage();
+            }
+            else
+            {
+                CloseWithPull();   
+            }
+        }
+
+        private async void CloseWithPull()
+        {
+            if (Settings.GetValueFromSettingKey("GitIntegration") == "yes")
+            {
+                this.Visibility = Visibility.Hidden;
+                var gitRepoPath = Settings.GetValueFromSettingKey("repoPath");
+                var pull = await GitIntegration.InvokeGit(new[] { "pull" }, gitRepoPath);
+                if (pull == 0)
+                {
+                    Close();
+                }
+                else
+                    Environment.Exit(0);
             }
             else
             {

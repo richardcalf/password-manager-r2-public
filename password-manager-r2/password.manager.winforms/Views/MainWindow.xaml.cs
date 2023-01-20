@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using password.git.integration;
+using Microsoft.Extensions.Logging;
 
 namespace password.manager.winforms
 {
@@ -34,7 +35,6 @@ namespace password.manager.winforms
             if (Settings.GetValueFromSettingKey("GitIntegration") == "yes")
             {
                 broker.DataUpdate += UpdateGitHub;
-                _ = StartUpPullAsync();
             }
             broker.SettingSaved += SettingSaved;
             broker.Resalted += ResaltingDone;
@@ -44,7 +44,7 @@ namespace password.manager.winforms
             CurrentSaltTextBox.IsEnabled = false;
             AdvancedCanvas.Visibility = Visibility.Hidden;
             
-            siteListFilterTextBox.Focus();
+            
             ApplyTheme();
             _ = this.broker.GetAllRecordsAsync();
         }
@@ -127,6 +127,10 @@ namespace password.manager.winforms
             ReSaltButton.IsEnabled = ready;
             ReSaltTextBox.IsEnabled = ready;
             siteListFilterTextBox.IsEnabled = ready;
+            if (ready)
+            {
+                siteListFilterTextBox.Focus();
+            }
         }
 
         private void ClearUpdateUIMessage()
@@ -552,13 +556,9 @@ namespace password.manager.winforms
             if (sender is TextBox)
             {
                 var textBox = sender as TextBox;
-                Clipboard.SetText(textBox.Text);
+                if (!string.IsNullOrWhiteSpace(textBox.Text))
+                    Clipboard.SetText(textBox.Text);
             }
-        }
-
-        private void FindSiteTextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            CopyOnFocus(sender);
         }
 
         private void SiteTextBox_GotFocus(object sender, RoutedEventArgs e)
