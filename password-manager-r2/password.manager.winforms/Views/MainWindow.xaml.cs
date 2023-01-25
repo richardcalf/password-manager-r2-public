@@ -9,7 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using password.git.integration;
-using Microsoft.Extensions.Logging;
 
 namespace password.manager.winforms
 {
@@ -20,6 +19,7 @@ namespace password.manager.winforms
     {
         private readonly string loginFilePath;
         private readonly string gitRepoPath;
+        private readonly bool isGitEnabled;
         private const string updateSucceeded = "Update Succeeded";
         private const string updateFailed = "Update Failed";
         private IUIBroker broker;
@@ -32,10 +32,8 @@ namespace password.manager.winforms
             loginFilePath = Settings.GetValueFromSettingKey("loginFilePath");
             gitRepoPath = Settings.GetValueFromSettingKey("repoPath");
 
-            if (Settings.GetValueFromSettingKey("GitIntegration") == "yes")
-            {
-                broker.DataUpdate += UpdateGitHub;
-            }
+            isGitEnabled = Settings.GetValueFromSettingKey("GitIntegration") == "yes";
+            SetupGitEnabledFeatures();
             broker.SettingSaved += SettingSaved;
             broker.Resalted += ResaltingDone;
             broker.DataReady += DataInputIsReady;
@@ -43,24 +41,66 @@ namespace password.manager.winforms
             CurrentSaltTextBox.Text = broker.Salt;
             CurrentSaltTextBox.IsEnabled = false;
             AdvancedCanvas.Visibility = Visibility.Hidden;
-            
-            
+
+
             ApplyTheme();
             _ = this.broker.GetAllRecordsAsync();
         }
 
-        #region Update GitHub
-        private async Task StartUpPullAsync()
+        #region GitHub Features
+        private void SetupGitEnabledFeatures()
+        {
+            if (isGitEnabled)
+            {
+                broker.DataUpdate += UpdateGitHub;
+                latestShaLabel.Visibility = Visibility.Visible;
+                labelSha.Visibility = Visibility.Visible;
+                gitPullButton.Visibility = Visibility.Visible;
+                _ = UpdateUiWithSha(false);
+            }
+            else
+            {
+                latestShaLabel.Visibility = Visibility.Hidden;
+                labelSha.Visibility = Visibility.Hidden;
+                gitPullButton.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void SetShaLabel(string value)
+        {
+            labelSha.Content = value;
+        }
+
+        private async Task UpdateUiWithSha(bool pullFirst)
         {
             try
             {
-                await GitIntegration.InvokeGit(new[] { "pull" }, gitRepoPath);
+                Dispatcher.Invoke(() => { SetShaLabel("..."); });
+                if (pullFirst)
+                {
+                    Dispatcher.Invoke(() => { DataInputIsReady(false); });
+                    var pull = await GitIntegration.InvokeGit(new[] { "pull" }, gitRepoPath);
+                    if (pull == 0)
+                    {
+                        SetShaLabel(await GitIntegration.GetLatestCommitSha(gitRepoPath));
+                    }
+                }
+                else
+                    SetShaLabel(await GitIntegration.GetLatestCommitSha(gitRepoPath));
+
             }
             catch (Exception ex)
             {
                 Dispatcher.Invoke(() =>
                 {
                     FailedUIMessage($"GitHub failed: {ex.Message}");
+                });
+            }
+            finally
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    DataInputIsReady(true);
                 });
             }
         }
@@ -72,11 +112,12 @@ namespace password.manager.winforms
             {
                 int push = await GitIntegration.UpdateGitHub(updateMessage, gitRepoPath);
                 if (push == 0)
-                {
+                {   
                     Dispatcher.Invoke(() =>
                     {
                         SuccessPushMessage("Data pushed to GitHub");
-                        DataInputIsReady(true);
+                        _ = UpdateUiWithSha(false);
+                        DataInputIsReady(false);
                     });
                 }
             }
@@ -88,11 +129,10 @@ namespace password.manager.winforms
                     DataInputIsReady(true);
                 });
             }
-            
         }
         #endregion
 
-        #region private UI coupled methods
+        #region Private UI Coupled Methods
         private void InitializeThemeComboBox()
         {
             foreach (var theme in ThemeHelper.GetThemeList())
@@ -127,6 +167,7 @@ namespace password.manager.winforms
             ReSaltButton.IsEnabled = ready;
             ReSaltTextBox.IsEnabled = ready;
             siteListFilterTextBox.IsEnabled = ready;
+            gitPullButton.IsEnabled = ready & isGitEnabled;
             if (ready)
             {
                 siteListFilterTextBox.Focus();
@@ -193,7 +234,7 @@ namespace password.manager.winforms
         /// <param name="login"></param>
         /// <returns></returns>
         private async Task ShowLoginOnUI(model.Login login)
-        { 
+        {
             ClearDataInputs();
             if (login == null) { SiteTextBox.Text = ""; return; }
             SiteTextBox.Text = login.Site;
@@ -300,19 +341,19 @@ namespace password.manager.winforms
 
         private async Task PopulateListBoxFiltered(string input)
         {
-            if(!string.IsNullOrWhiteSpace(input))
-            await Task.Run(() =>
-            {
-                Dispatcher.Invoke(() =>
+            if (!string.IsNullOrWhiteSpace(input))
+                await Task.Run(() =>
                 {
-                    foreach (var l in broker.Logins
-                                            .Where(l => l.Site.ToLower()
-                                            .Contains(input.ToLower())))
+                    Dispatcher.Invoke(() =>
                     {
-                        SiteListBox.Items.Add(l.Site);
-                    }
+                        foreach (var l in broker.Logins
+                                                .Where(l => l.Site.ToLower()
+                                                .Contains(input.ToLower())))
+                        {
+                            SiteListBox.Items.Add(l.Site);
+                        }
+                    });
                 });
-            });
         }
 
         private void UpdateRecordCountLabel(int count)
@@ -454,6 +495,8 @@ namespace password.manager.winforms
             FindSiteTextBox.Clear();
             ClearDataInputs();
             ClearUpdateUIMessage();
+            if (AdvancedCanvas.Visibility == Visibility.Visible)
+                ToggleAdvancedPanel();
         }
 
         private bool ResaltModalAndValidation()
@@ -575,12 +618,17 @@ namespace password.manager.winforms
         {
             CopyOnFocus(sender);
         }
-        #endregion
 
         private void PasswordTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             PasswordTextBox.Text = broker.GenerateRndPasswrd();
             CopyOnFocus(sender);
         }
+
+        private async void gitPullButton_Click(object sender, RoutedEventArgs e)
+        {
+            await UpdateUiWithSha(true);
+        }
+        #endregion
     }
 }

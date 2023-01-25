@@ -31,20 +31,27 @@ namespace password.git.integration
 
         public static async Task<int> UpdateGitHub(string updateMessage, string path = ".")
         {
-            int pull = await InvokeGit(new[] { "pull" }, path);
-            if (pull == 0)
+            int add = await InvokeGit(new[] { "add", "Logins.xml" }, path);
+            if (add == 0)
             {
-                int add = await InvokeGit(new[] { "add", "Logins.xml" }, path);
-                if (add == 0)
+                int commit = await InvokeGit(new[] { "commit", "-m", $"{updateMessage}" }, path);
+                if (commit == 0)
                 {
-                    int commit = await InvokeGit(new[] { "commit", "-m", $"{updateMessage}" }, path);
-                    if (commit == 0)
-                    {
-                        return await InvokeGit(new[] { "push" }, path);
-                    }
+                    return await InvokeGit(new[] { "push" }, path);
                 }
             }
             return 255;
+        }
+
+        public static async Task<string> GetLatestCommitSha(string path = ".")
+        {
+            var cmd = Cli.Wrap("git")
+                      .WithArguments(new[] { "l", "-1" })
+                      .WithWorkingDirectory(path)
+                      .ExecuteBufferedAsync();
+
+            var result = await cmd;
+            return result.StandardOutput;
         }
     }
 }
