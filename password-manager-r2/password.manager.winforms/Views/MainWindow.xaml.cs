@@ -29,7 +29,7 @@ namespace password.manager.winforms
         private readonly bool isGitEnabled;
         private readonly string gitRepoPath;
         private readonly bool gitInfoPanel;
-        private readonly int gitPullEveryMinutes;
+        private int gitPullEveryMinutes;
         private bool pauseGitCountDownTimer;
         private TimeSpan startTimeSpan;
         Timer t;
@@ -755,6 +755,18 @@ namespace password.manager.winforms
                 if (ReSaltTextBox.Text.Equals("panel on"))
                 {
                     ToggleGitCanvasPanel(true);
+                }
+
+                if (ReSaltTextBox.Text.EndsWith("minutes"))
+                {
+                    string message = ReSaltTextBox.Text;
+                    string mod = message.Replace("minutes", "");
+                    string space = mod.Replace(" ", "");
+                    int minutes = int.Parse(space);
+                    ReSaltTextBox.Clear();
+                    gitPullEveryMinutes = minutes;
+                    Settings.SaveAppSetting("GitPullEveryMinutes", minutes.ToString());
+                    startTimeSpan = new TimeSpan(0, gitPullEveryMinutes, 0);
                 }
             }
         }
