@@ -59,7 +59,7 @@
             <Button x:Name="gitPullNowButton" Content="Pull Now" Canvas.Left="130" HorizontalAlignment="Center" VerticalAlignment="Top" IsEnabled="False" Click="gitPullNowButton_Click" Width="51"/>
             <Button x:Name="pauseButton" Content="Pause" Canvas.Left="130" Canvas.Top="22" HorizontalAlignment="Left" VerticalAlignment="Center" IsEnabled="False" Click="pauseButton_Click" Width="51"/>
             <Label x:Name="ShaToolBoxlabel" Content="Label" Canvas.Top="42" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Left="-3"/>
-            <Label x:Name="LastPullLabel" Content="..." Canvas.Top="21" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="-2"/>
+            <Label x:Name="LastPullLabel" Content="..." Canvas.Top="22" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Left="-3"/>
 
 
 

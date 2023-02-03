@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Extensions.Logging;
+using password.manager.winforms.GitInformation;
 
 namespace password.manager.winforms
 {
@@ -85,6 +86,8 @@ namespace password.manager.winforms
                 var pull = await GitIntegration.InvokeGit(new[] { "pull" }, gitRepoPath);
                 if (pull == 0)
                 {
+                    var message = await GitIntegration.GetLatestCommitSha(gitRepoPath);
+                    GitPanelInformation.SetPanelInformation(message);
                     Close();
                 }
                 else

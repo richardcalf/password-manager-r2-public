@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Threading;
 using password.git.integration;
+using password.manager.winforms.GitInformation;
 
 namespace password.manager.winforms
 {
@@ -87,7 +88,7 @@ namespace password.manager.winforms
                 if(gitInfoPanel)
                 {
                     GitCanvas.Visibility = Visibility.Visible;
-                    SetLastPullLabel();
+                    ReadGitPanelInformation();
                 }
                 else
                 {
@@ -122,15 +123,24 @@ namespace password.manager.winforms
             }
         }
 
-        private void SetLastPullLabel()
-        {
-            LastPullLabel.Content = DateTime.Now.ToString("HH:mm");
-        }
-
-        private void SetShaLabel(string value)
+        private void InitGitLables(string value)
         {
             labelSha.Content = value;
             ShaToolBoxlabel.Content = value;
+            LastPullLabel.Content = value;
+        }
+
+        private void ReadGitPanelInformation()
+        {
+            LastPullLabel.Content = GitPanelInformation.LastPullTime;
+            ShaToolBoxlabel.Content = GitPanelInformation.ShaAndMessage;
+            labelSha.Content = GitPanelInformation.ShaAndMessage;//this is the one in the advanced panel
+        }
+
+        private async Task WriteGitPanelInformationData()
+        {
+            var message = await GitIntegration.GetLatestCommitSha(gitRepoPath);
+            GitPanelInformation.SetPanelInformation(message);
         }
 
         private async Task UpdateUiWithSha(bool pullFirst)
@@ -139,8 +149,12 @@ namespace password.manager.winforms
             {
                 Dispatcher.Invoke(() =>
                 {
-                    SetShaLabel("...");
-                    LastPullLabel.Content = "...";
+                    InitGitLables("...");
+                    if (GitCanvas.Visibility == Visibility.Visible)
+                    {
+                        startTimeSpan = new TimeSpan(0, gitPullEveryMinutes, 0);
+                        pauseGitCountDownTimer = false;
+                    }
                 });
                 if (pullFirst)
                 {
@@ -148,16 +162,20 @@ namespace password.manager.winforms
                     var pull = await GitIntegration.InvokeGit(new[] { "pull" }, gitRepoPath);
                     if (pull == 0)
                     {
-                        SetShaLabel(await GitIntegration.GetLatestCommitSha(gitRepoPath));
-                        Dispatcher.Invoke(() => 
+                        await WriteGitPanelInformationData();
+                        Dispatcher.Invoke(() =>
                         {
-                            SetLastPullLabel();
+                            
+                            ReadGitPanelInformation();
                             _ = broker.GetAllRecordsAsync();
                         });
                     }
                 }
                 else
-                    SetShaLabel(await GitIntegration.GetLatestCommitSha(gitRepoPath));
+                {
+                    await WriteGitPanelInformationData();
+                    ReadGitPanelInformation();
+                }
 
             }
             catch (Exception ex)
@@ -704,8 +722,6 @@ namespace password.manager.winforms
 
         private async void gitPullNowButton_Click(object sender, RoutedEventArgs e)
         {
-            startTimeSpan = new TimeSpan(0, gitPullEveryMinutes, 0);
-            pauseGitCountDownTimer = false;
             await UpdateUiWithSha(true);
         }
 
