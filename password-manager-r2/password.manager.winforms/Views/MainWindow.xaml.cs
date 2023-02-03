@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Threading;
 using password.git.integration;
 
 namespace password.manager.winforms
@@ -18,11 +19,22 @@ namespace password.manager.winforms
     public partial class MainWindow : Window
     {
         private readonly string loginFilePath;
-        private readonly string gitRepoPath;
-        private readonly bool isGitEnabled;
+        
         private const string updateSucceeded = "Update Succeeded";
         private const string updateFailed = "Update Failed";
         private IUIBroker broker;
+
+        #region git integration members
+        private readonly bool isGitEnabled;
+        private readonly string gitRepoPath;
+        private readonly bool gitInfoPanel;
+        private readonly int gitPullEveryMinutes;
+        private bool pauseGitCountDownTimer;
+        private TimeSpan startTimeSpan;
+        Timer t;
+        #endregion
+
+
         public MainWindow(IUIBroker broker)
         {
             InitializeComponent();
@@ -31,8 +43,10 @@ namespace password.manager.winforms
             this.broker = broker;
             loginFilePath = Settings.GetValueFromSettingKey("loginFilePath");
             gitRepoPath = Settings.GetValueFromSettingKey("repoPath");
-
+            gitPullEveryMinutes = int.Parse(Settings.GetValueFromSettingKey("GitPullEveryMinutes"));
+            GitCanvas.Visibility = Visibility.Hidden;
             isGitEnabled = Settings.GetValueFromSettingKey("GitIntegration") == "yes";
+            gitInfoPanel = Settings.GetValueFromSettingKey("GitInfoPanel") == "yes";
             SetupGitEnabledFeatures();
             broker.SettingSaved += SettingSaved;
             broker.Resalted += ResaltingDone;
@@ -42,9 +56,23 @@ namespace password.manager.winforms
             CurrentSaltTextBox.IsEnabled = false;
             AdvancedCanvas.Visibility = Visibility.Hidden;
 
-
             ApplyTheme();
             _ = this.broker.GetAllRecordsAsync();
+        }
+
+        private void TimerCallback(Object o)
+        {
+            if (!pauseGitCountDownTimer)
+            {
+                startTimeSpan = startTimeSpan.Subtract(new TimeSpan(0, 0, 1));
+                if (startTimeSpan < new TimeSpan(0, 0, 0))
+                {
+
+                    Dispatcher.Invoke(() => { _ = UpdateUiWithSha(true); });
+                    startTimeSpan = new TimeSpan(0, gitPullEveryMinutes, 0);
+                }
+                Dispatcher.Invoke(() => { timerLabel.Content = startTimeSpan.ToString(); });
+            }
         }
 
         #region GitHub Features
@@ -53,10 +81,19 @@ namespace password.manager.winforms
             if (isGitEnabled)
             {
                 broker.DataUpdate += UpdateGitHub;
-                latestShaLabel.Visibility = Visibility.Visible;
-                labelSha.Visibility = Visibility.Visible;
-                gitPullButton.Visibility = Visibility.Visible;
+                startTimeSpan = new TimeSpan(0, gitPullEveryMinutes, 0);
+                t = new Timer(TimerCallback, null, 0, 1000);
                 _ = UpdateUiWithSha(false);
+                if(gitInfoPanel)
+                {
+                    GitCanvas.Visibility = Visibility.Visible;
+                    SetLastPullLabel();
+                }
+                else
+                {
+                    pauseGitCountDownTimer = true;
+                    GitCanvas.Visibility = Visibility.Hidden;
+                }
             }
             else
             {
@@ -66,16 +103,45 @@ namespace password.manager.winforms
             }
         }
 
+        private void ToggleGitCanvasPanel(bool status)
+        {
+            if (isGitEnabled)
+            {
+                if (status)
+                {
+                    pauseGitCountDownTimer = false;
+                    GitCanvas.Visibility = Visibility.Visible;
+                    Settings.SaveAppSetting("GitInfoPanel", "yes");
+                }
+                else
+                {
+                    pauseGitCountDownTimer = true;
+                    GitCanvas.Visibility = Visibility.Hidden;
+                    Settings.SaveAppSetting("GitInfoPanel", "no");
+                }
+            }
+        }
+
+        private void SetLastPullLabel()
+        {
+            LastPullLabel.Content = DateTime.Now.ToString("HH:mm");
+        }
+
         private void SetShaLabel(string value)
         {
             labelSha.Content = value;
+            ShaToolBoxlabel.Content = value;
         }
 
         private async Task UpdateUiWithSha(bool pullFirst)
         {
             try
             {
-                Dispatcher.Invoke(() => { SetShaLabel("..."); });
+                Dispatcher.Invoke(() =>
+                {
+                    SetShaLabel("...");
+                    LastPullLabel.Content = "...";
+                });
                 if (pullFirst)
                 {
                     Dispatcher.Invoke(() => { DataInputIsReady(false); });
@@ -83,6 +149,11 @@ namespace password.manager.winforms
                     if (pull == 0)
                     {
                         SetShaLabel(await GitIntegration.GetLatestCommitSha(gitRepoPath));
+                        Dispatcher.Invoke(() => 
+                        {
+                            SetLastPullLabel();
+                            _ = broker.GetAllRecordsAsync();
+                        });
                     }
                 }
                 else
@@ -168,6 +239,8 @@ namespace password.manager.winforms
             ReSaltTextBox.IsEnabled = ready;
             siteListFilterTextBox.IsEnabled = ready;
             gitPullButton.IsEnabled = ready & isGitEnabled;
+            gitPullNowButton.IsEnabled = ready & isGitEnabled;
+            pauseButton.IsEnabled = ready & isGitEnabled;
             if (ready)
             {
                 siteListFilterTextBox.Focus();
@@ -401,11 +474,13 @@ namespace password.manager.winforms
             {
                 AdvancedCanvas.Visibility = Visibility.Visible;
                 AdvancedButton.Content = "Advanced <<";
+                ReSaltTextBox.Focus();
             }
             else
             {
                 AdvancedCanvas.Visibility = Visibility.Hidden;
                 AdvancedButton.Content = "Advanced >>";
+                ReSaltTextBox.Text = string.Empty;
             }
         }
         #endregion
@@ -495,6 +570,7 @@ namespace password.manager.winforms
             FindSiteTextBox.Clear();
             ClearDataInputs();
             ClearUpdateUIMessage();
+            siteListFilterTextBox.Focus();
             if (AdvancedCanvas.Visibility == Visibility.Visible)
                 ToggleAdvancedPanel();
         }
@@ -624,11 +700,47 @@ namespace password.manager.winforms
             PasswordTextBox.Text = broker.GenerateRndPasswrd();
             CopyOnFocus(sender);
         }
+        #endregion
+
+        private async void gitPullNowButton_Click(object sender, RoutedEventArgs e)
+        {
+            startTimeSpan = new TimeSpan(0, gitPullEveryMinutes, 0);
+            pauseGitCountDownTimer = false;
+            await UpdateUiWithSha(true);
+        }
+
+        private void pauseButton_Click(object sender, RoutedEventArgs e)
+        {
+            pauseGitCountDownTimer = !pauseGitCountDownTimer;
+            if(pauseGitCountDownTimer)
+            {
+                pauseButton.Content = "Play";
+            }
+            else
+            {
+                pauseButton.Content = "Pause";
+            }
+        }
 
         private async void gitPullButton_Click(object sender, RoutedEventArgs e)
         {
             await UpdateUiWithSha(true);
         }
-        #endregion
+
+        private void ReSaltTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                if (ReSaltTextBox.Text.Equals("panel off"))
+                {
+                    ToggleGitCanvasPanel(false);
+                }
+
+                if (ReSaltTextBox.Text.Equals("panel on"))
+                {
+                    ToggleGitCanvasPanel(true);
+                }
+            }
+        }
     }
 }

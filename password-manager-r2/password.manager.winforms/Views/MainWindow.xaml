@@ -38,17 +38,35 @@
             <Label x:Name="CurrentSaltLabel" Content="Current Salt" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="7" Canvas.Top="1"/>
             <Label x:Name="ReSaltLabel" Content="Re-Salt" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="7" Canvas.Top="26"/>
             <TextBox x:Name="CurrentSaltTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="228" Canvas.Left="104" Canvas.Top="1"/>
-            <TextBox x:Name="ReSaltTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="228"  Canvas.Left="104" Canvas.Top="31"/>
+            <TextBox x:Name="ReSaltTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="228"  Canvas.Left="104" Canvas.Top="31" KeyUp="ReSaltTextBox_KeyUp"/>
             <Button x:Name="ReSaltButton" Content="Re-Salt" HorizontalAlignment="Center" VerticalAlignment="Top" Width="75" Click="ReSaltButton_Click" Canvas.Left="337" Canvas.Top="2" IsEnabled="False" />
             <Label x:Name="latestShaLabel" Content="Latest Sha" Canvas.Left="7" Canvas.Top="55" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            <Label x:Name="labelSha" Content="label&#xD;&#xA;" Canvas.Left="101" Canvas.Top="56" HorizontalAlignment="Left" VerticalAlignment="Center" Height="30"/>
+            <Label x:Name="labelSha" Content="label" Canvas.Left="101" Canvas.Top="56" HorizontalAlignment="Left" VerticalAlignment="Center" Height="30"/>
             <Button x:Name="gitPullButton" Content="git pull" Canvas.Left="104" Canvas.Top="89" HorizontalAlignment="Center" VerticalAlignment="Center" Click="gitPullButton_Click" IsEnabled="False" RenderTransformOrigin="1.411,0.393"/>
+
         </Canvas>
+
         <Button x:Name="AdvancedButton" Content="Advanced >>" HorizontalAlignment="Left" Margin="223,352,0,0" VerticalAlignment="Top" Width="75" Click="AdvancedButton_Click" Focusable="False" />
         <Label x:Name="CountRecordslabel" Content="" HorizontalAlignment="Left" Margin="104,325,0,0" VerticalAlignment="Top"/>
 
         <ComboBox x:Name="visualModeComboBox" HorizontalAlignment="Left" Margin="739,10,0,0" VerticalAlignment="Top" Width="120" DropDownClosed="visualModeComboBox_DropDownClosed" Focusable="False" />
 
         <Label x:Name="siteListFilterLabel" Content="Filter" HorizontalAlignment="Left" Margin="146,89,0,0" VerticalAlignment="Top" Width="69" Height="27" Focusable="False" />
+
+        <Canvas x:Name="GitCanvas" HorizontalAlignment="Left" Width="218" Margin="223,6,0,470" >
+
+            <Label x:Name="timerLabel" Content="Label" Canvas.Top="2" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="-3"/>
+            <Button x:Name="gitPullNowButton" Content="Pull Now" Canvas.Left="130" HorizontalAlignment="Center" VerticalAlignment="Top" IsEnabled="False" Click="gitPullNowButton_Click" Width="51"/>
+            <Button x:Name="pauseButton" Content="Pause" Canvas.Left="130" Canvas.Top="22" HorizontalAlignment="Left" VerticalAlignment="Center" IsEnabled="False" Click="pauseButton_Click" Width="51"/>
+            <Label x:Name="ShaToolBoxlabel" Content="Label" Canvas.Top="42" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Left="-3"/>
+            <Label x:Name="LastPullLabel" Content="..." Canvas.Top="21" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="-2"/>
+
+
+
+
+        </Canvas>
+
+
+
     </Grid>
 </Window>
