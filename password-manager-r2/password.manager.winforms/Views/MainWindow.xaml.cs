@@ -252,7 +252,6 @@ namespace password.manager.winforms
             DeleteButton.IsEnabled = ready;
             ReSaltButton.IsEnabled = ready;
             SiteListBox.IsEnabled = ready;
-            SelectSiteButton.IsEnabled = ready;
             ReSaltButton.IsEnabled = ready;
             ReSaltTextBox.IsEnabled = ready;
             siteListFilterTextBox.IsEnabled = ready;
@@ -524,12 +523,6 @@ namespace password.manager.winforms
         private void ClearDataButton_Click(object sender, RoutedEventArgs e)
         {
             ClearDataInputs();
-        }
-
-        private void button_Click(object sender, EventArgs e)
-        {
-            SetSearchText();
-            ClearUpdateUIMessage();
         }
 
         private async void SiteListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
