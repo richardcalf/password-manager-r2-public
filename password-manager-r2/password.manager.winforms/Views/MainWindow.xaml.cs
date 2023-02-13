@@ -24,6 +24,7 @@ namespace password.manager.winforms
         private const string updateSucceeded = "Update Succeeded";
         private const string updateFailed = "Update Failed";
         private IUIBroker broker;
+        private string searchText = "";
 
         #region git integration members
         private readonly bool isGitEnabled;
@@ -246,7 +247,6 @@ namespace password.manager.winforms
 
         private void DataInputIsReady(bool ready)
         {
-            FindSiteButton.IsEnabled = ready;
             GetRecordsButton.IsEnabled = ready;
             UpdateButton.IsEnabled = ready;
             DeleteButton.IsEnabled = ready;
@@ -406,12 +406,12 @@ namespace password.manager.winforms
             {
                 if (SiteListBox.HasItems)
                 {
-                    FindSiteTextBox.Text = (string)SiteListBox.Items[0];
+                    searchText = (string)SiteListBox.Items[0];
                 }
             }
             else
             {
-                FindSiteTextBox.Text = (string)SiteListBox.SelectedItem;
+                searchText = (string)SiteListBox.SelectedItem;
             }
         }
 
@@ -509,17 +509,6 @@ namespace password.manager.winforms
             ClearUpdateUIMessage();
         }
 
-        private async void FindSiteButton_Click(object sender, RoutedEventArgs e)
-        {
-            await FindSite(FindSiteTextBox.Text);
-        }
-
-        private void ClearSearchButton_Click(object sender, RoutedEventArgs e)
-        {
-            FindSiteTextBox.Clear();
-            ClearUpdateUIMessage();
-        }
-
         private void ClearDataButton_Click(object sender, RoutedEventArgs e)
         {
             ClearDataInputs();
@@ -528,7 +517,7 @@ namespace password.manager.winforms
         private async void SiteListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             SetSearchText();
-            await FindSite(FindSiteTextBox.Text);
+            await FindSite(searchText);
         }
 
         private async void GetRecordsButton_Click(object sender, RoutedEventArgs e)
@@ -578,7 +567,6 @@ namespace password.manager.winforms
             siteListFilterTextBox.Clear();
             SiteListBox.Items.Clear();
             CountRecordslabel.Content = string.Empty;
-            FindSiteTextBox.Clear();
             ClearDataInputs();
             ClearUpdateUIMessage();
             siteListFilterTextBox.Focus();
@@ -641,20 +629,12 @@ namespace password.manager.winforms
             SaveTheme();
         }
 
-        private async void FindSiteTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                await FindSite(FindSiteTextBox.Text);
-            }
-        }
-
         private async void EnterKeySetSearchFindSite(KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
                 SetSearchText();
-                await FindSite(FindSiteTextBox.Text);
+                await FindSite(searchText);
             }
         }
 
